@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="English Adventure Family — Reward Shop" />
+    <title>English Adventure Family — Reward Shop</title>
+    <style>
+      :root {
+        --ink: #5b3a44;
+        --muted: #8a5a5e;
+        --berry: #b65e73;
+        --berry-dark: #8f3f52;
+        --teal: #0f6664;
+        --paper: #fffdf9;
+        --cream: #fff8f5;
+        --line: #e9c9b3;
+        --gold: #f1c967;
+        --gold-dark: #8b6512;
+        --shadow: 0 22px 55px rgba(130, 83, 92, 0.18);
+      }
+      * { box-sizing: border-box; }
+      html { background: #fffdf9; }
+      body {
+        min-width: 320px;
+        margin: 0;
+        color: var(--ink);
+        font-family: ui-rounded, "Nunito", "Noto Sans KR", system-ui, sans-serif;
+        background:
+          radial-gradient(circle at 12% 10%, rgba(255, 225, 203, 0.48), transparent 24rem),
+          radial-gradient(circle at 92% 6%, rgba(204, 241, 233, 0.55), transparent 24rem),
+          var(--paper);
+      }
+      a { color: inherit; }
+      button { font: inherit; }
+      button:focus-visible { outline: 3px solid #f2b8c5; outline-offset: 3px; }
+      .shell { width: min(100% - 2rem, 900px); margin: 0 auto; padding: 1.35rem 0 3rem; }
+
+      .topbar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.1rem; flex-wrap: wrap; }
+      .brand { display: flex; align-items: center; gap: .7rem; font-weight: 900; }
+      .brand-mark { display: grid; width: 2.9rem; height: 2.9rem; place-items: center; border-radius: 1rem; color: white; background: var(--teal); font-size: 1.4rem; box-shadow: 0 8px 18px rgba(15, 102, 100, .3); }
+      .brand-title { font-family: Georgia, "Times New Roman", serif; font-size: 1.1rem; }
+      .brand small { display: block; margin-top: .05rem; font-size: .62rem; letter-spacing: .12em; color: var(--muted); font-weight: 800; }
+      .home-link { display: inline-flex; align-items: center; gap: .45rem; border: 0; border-radius: 999px; padding: .75rem 1.05rem; color: white; font-weight: 900; font-size: .82rem; background: var(--teal); text-decoration: none; box-shadow: 0 8px 18px rgba(15, 102, 100, .3); }
+
+      .wallet-bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem 1.2rem; border: 2px solid var(--line); border-radius: 1.3rem; background: white; box-shadow: var(--shadow); margin-bottom: 1.3rem; flex-wrap: wrap; }
+      .wallet-badge { display: flex; align-items: center; gap: .55rem; font-weight: 900; }
+      .wallet-badge .icon { display: grid; width: 2.6rem; height: 2.6rem; place-items: center; border-radius: 999px; background: var(--cream); font-size: 1.35rem; }
+      .wallet-badge .num { font-size: 1.3rem; }
+      .wallet-badge .label { display: block; color: var(--muted); font-size: .65rem; font-weight: 800; letter-spacing: .04em; }
+
+      h1 { margin: 0 0 .3rem; font-family: Georgia, "Times New Roman", serif; font-size: clamp(1.7rem, 5vw, 2.3rem); }
+      .lede { margin: 0 0 1.3rem; color: #5f4544; font-size: .92rem; font-weight: 700; }
+
+      .tabs { display: flex; gap: .5rem; margin-bottom: 1rem; }
+      .tab { border: 2px solid var(--line); border-radius: 999px; padding: .55rem 1.1rem; background: white; color: var(--muted); font-weight: 900; font-size: .82rem; cursor: pointer; }
+      .tab[aria-selected="true"] { border-color: var(--berry); color: var(--berry-dark); background: #fff0f3; }
+
+      .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: .75rem; }
+      .reward-card { border: 2px solid var(--line); border-radius: 1.25rem; padding: 1rem .7rem; background: white; text-align: center; box-shadow: 0 6px 16px rgba(130,83,92,.08); }
+      .reward-badge { display: grid; width: 3.6rem; height: 3.6rem; margin: 0 auto .6rem; place-items: center; border-radius: 999px; background: var(--cream); font-size: 1.9rem; }
+      .reward-title { display: block; font-size: .8rem; font-weight: 900; }
+      .reward-korean { display: block; margin-top: .15rem; color: var(--muted); font-size: .68rem; font-weight: 800; }
+      .reward-price { display: flex; align-items: center; justify-content: center; gap: .3rem; margin: .6rem 0; font-size: .82rem; font-weight: 900; color: var(--gold-dark); }
+      .reward-btn { width: 100%; border: 0; border-radius: 999px; padding: .55rem 0; font-weight: 900; font-size: .78rem; color: white; background: var(--berry); cursor: pointer; }
+      .reward-btn.owned { background: var(--teal); }
+      .reward-btn.equipped { background: var(--gold-dark); }
+      .reward-btn:disabled { background: #d9cfc9; cursor: not-allowed; }
+
+      .toast { min-height: 1.3rem; margin: 1rem 0 0; text-align: center; color: var(--gold-dark); font-size: .9rem; font-weight: 900; }
+
+      @media (max-width: 700px) {
+        .grid { grid-template-columns: repeat(2, 1fr); }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div class="brand" aria-label="English Adventure Family">
+          <span class="brand-mark" aria-hidden="true">🧭</span>
+          <span><span class="brand-title">English Adventure</span><small>FAMILY</small></span>
+        </div>
+        <a class="home-link" href="index.html">🏠 홈으로</a>
+      </header>
+
+      <div class="wallet-bar">
+        <div class="wallet-badge"><span class="icon" aria-hidden="true">⭐</span><span><span class="num" id="starCount">0</span><span class="label">보유 별</span></span></div>
+        <div class="wallet-badge"><span class="icon" aria-hidden="true">🔥</span><span><span class="num" id="streakCount">0</span><span class="label">연속 출석일</span></span></div>
+      </div>
+
+      <h1>🎁 리워드 상점</h1>
+      <p class="lede">모은 별로 캐릭터와 스티커를 사고 꾸며보세요.</p>
+
+      <div class="tabs" role="tablist">
+        <button class="tab" id="tabProfile" type="button" role="tab" aria-selected="true">캐릭터</button>
+        <button class="tab" id="tabSticker" type="button" role="tab" aria-selected="false">스티커</button>
+      </div>
+
+      <div class="grid" id="grid"></div>
+      <p class="toast" id="toast" role="status" aria-live="polite"></p>
+    </main>
+
+    <script src="shared.js"></script>
+    <script>
+      let currentTab = 'profile';
+      const grid = document.querySelector('#grid');
+      const toast = document.querySelector('#toast');
+      const starCount = document.querySelector('#starCount');
+      const streakCount = document.querySelector('#streakCount');
+      const tabProfile = document.querySelector('#tabProfile');
+      const tabSticker = document.querySelector('#tabSticker');
+
+      function refreshWalletBar() {
+        const wallet = eafGetWallet();
+        starCount.textContent = wallet.stars;
+        streakCount.textContent = wallet.streak;
+        return wallet;
+      }
+
+      function render() {
+        const wallet = refreshWalletBar();
+        const items = eafRewardCatalog.filter((item) => item.category === currentTab);
+        grid.innerHTML = items.map((item) => {
+          const owned = wallet.ownedRewardIds.includes(item.id);
+          const isEquipped = item.category === 'profile'
+            ? wallet.equippedAvatarId === item.id
+            : wallet.activeStickerIds.includes(item.id);
+          let label = `${item.price} ⭐`;
+          let btnLabel = '구매하기';
+          let btnClass = '';
+          let disabled = !owned && wallet.stars < item.price;
+          if (owned) {
+            btnClass = isEquipped ? 'equipped' : 'owned';
+            btnLabel = item.category === 'profile'
+              ? (isEquipped ? '착용중' : '착용하기')
+              : (isEquipped ? '해제하기' : '붙이기');
+            disabled = item.category === 'profile' && isEquipped;
+          }
+          return `
+            <div class="reward-card">
+              <span class="reward-badge" aria-hidden="true">${item.emoji}</span>
+              <span class="reward-title">${item.title}</span>
+              <span class="reward-korean">${item.korean}</span>
+              <span class="reward-price">${owned ? (isEquipped ? '사용중 ✅' : '보유중') : label}</span>
+              <button class="reward-btn ${btnClass}" type="button" data-id="${item.id}" ${disabled ? 'disabled' : ''}>${btnLabel}</button>
+            </div>
+          `;
+        }).join('');
+        grid.querySelectorAll('[data-id]').forEach((btn) => {
+          btn.addEventListener('click', () => handleBuy(btn.dataset.id));
+        });
+      }
+
+      function handleBuy(id) {
+        const { action } = eafBuyOrToggleReward(id);
+        const item = eafRewardCatalog.find((r) => r.id === id);
+        if (action === 'insufficient') toast.textContent = `⭐ 별이 부족해요. ${item.price}개가 필요해요!`;
+        else if (action === 'purchased') toast.textContent = `🎉 ${item.title}을(를) 구매했어요!`;
+        else if (action === 'equipped') toast.textContent = `✨ ${item.title} 착용!`;
+        else if (action === 'removed') toast.textContent = `${item.title}을(를) 뗐어요.`;
+        else if (action === 'limit') toast.textContent = '스티커는 최대 3개까지 붙일 수 있어요.';
+        render();
+      }
+
+      tabProfile.addEventListener('click', () => { currentTab = 'profile'; tabProfile.setAttribute('aria-selected','true'); tabSticker.setAttribute('aria-selected','false'); render(); });
+      tabSticker.addEventListener('click', () => { currentTab = 'sticker'; tabSticker.setAttribute('aria-selected','true'); tabProfile.setAttribute('aria-selected','false'); render(); });
+
+      render();
+    </script>
+  </body>
+</html>

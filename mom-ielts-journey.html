@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="English Adventure Family — Mom's IELTS 7.0 Journey" />
+    <title>English Adventure Family — Mom's IELTS Journey</title>
+    <style>
+      :root {
+        --ink: #2b2f4a;
+        --muted: #6b6f92;
+        --navy: #3b4d7a;
+        --navy-dark: #2a3860;
+        --gold: #c99a3f;
+        --gold-dark: #8b6512;
+        --paper: #fafaff;
+        --cream: #f2f3fb;
+        --line: #d9dcf0;
+        --shadow: 0 22px 55px rgba(43, 47, 74, 0.16);
+      }
+      * { box-sizing: border-box; }
+      html { background: #fafaff; }
+      body {
+        min-width: 320px;
+        margin: 0;
+        color: var(--ink);
+        font-family: ui-rounded, "Nunito", "Noto Sans KR", system-ui, sans-serif;
+        background:
+          radial-gradient(circle at 10% 8%, rgba(217, 220, 240, 0.55), transparent 24rem),
+          radial-gradient(circle at 92% 4%, rgba(240, 224, 195, 0.4), transparent 24rem),
+          var(--paper);
+      }
+      a { color: inherit; }
+      button { font: inherit; }
+      button:focus-visible { outline: 3px solid #b7c0ea; outline-offset: 3px; }
+      .shell { width: min(100% - 2rem, 1100px); margin: 0 auto; padding: 1.35rem 0 3rem; }
+
+      .topbar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.25rem; }
+      .brand { display: flex; align-items: center; gap: .7rem; font-weight: 900; }
+      .brand-mark { display: grid; width: 3.1rem; height: 3.1rem; place-items: center; border-radius: 1rem; color: white; background: var(--navy); font-size: 1.5rem; box-shadow: 0 8px 18px rgba(59, 77, 122, .32); }
+      .brand-title { font-family: Georgia, "Times New Roman", serif; font-size: 1.2rem; }
+      .brand small { display: block; margin-top: .05rem; font-size: .64rem; letter-spacing: .13em; color: var(--muted); font-weight: 800; }
+      .home-link { display: inline-flex; align-items: center; gap: .45rem; border: 0; border-radius: 999px; padding: .8rem 1.15rem; color: white; font-weight: 900; font-size: .85rem; background: var(--navy); text-decoration: none; box-shadow: 0 8px 18px rgba(59, 77, 122, .3); }
+
+      .layout { display: grid; grid-template-columns: minmax(210px, .63fr) minmax(0, 1.25fr); align-items: center; gap: 2.75rem; }
+      .eyebrow { display: inline-flex; align-items: center; gap: .5rem; margin: 0 0 1rem; padding: .55rem .85rem; border: 2px solid var(--navy); border-radius: 999px; color: var(--navy-dark); font-size: .74rem; font-weight: 900; letter-spacing: .08em; background: white; box-shadow: 0 5px 15px rgba(43, 47, 74, .08); }
+      h1 { max-width: 9ch; margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(2.6rem, 5.4vw, 4.6rem); line-height: .95; letter-spacing: -.05em; color: var(--ink); }
+      h1 em { color: var(--gold); font-weight: 400; font-style: normal; }
+      .intro { max-width: 29rem; margin: 1.35rem 0 1.25rem; color: #3f4468; font-size: 1rem; font-weight: 700; line-height: 1.7; }
+      .icon-strip { display: flex; align-items: center; gap: .5rem; padding: .7rem .85rem; border: 2px solid var(--line); border-radius: 1rem; color: var(--navy-dark); font-size: .78rem; font-weight: 900; background: white; box-shadow: 0 8px 20px rgba(43, 47, 74, .08); }
+      .icon-strip span { display: grid; width: 2.3rem; height: 2.3rem; place-items: center; border-radius: .7rem; background: var(--cream); font-size: 1.3rem; }
+      .goal-chip { display: inline-flex; align-items: center; gap: .5rem; margin-top: 1rem; padding: .6rem .9rem; border-radius: .9rem; background: var(--cream); font-size: .78rem; font-weight: 900; color: var(--navy-dark); }
+
+      .study-card { overflow: hidden; border: 2px solid #c9d0ec; border-radius: 1.65rem; padding: .8rem; background: white; box-shadow: var(--shadow); }
+      .stage {
+        position: relative; display: grid; place-items: center; aspect-ratio: 16 / 10; border-radius: 1.2rem;
+        overflow: hidden; background: var(--stage-bg, linear-gradient(160deg, #e3e6f7, #f6f7fd)); border: 2px solid #dfe3f6;
+      }
+      .stage-emoji { font-size: clamp(4rem, 14vw, 6.5rem); filter: drop-shadow(0 10px 18px rgba(0,0,0,.1)); transition: transform .35s ease-out; }
+      .stage.playing .stage-emoji { animation: bob 1.1s ease-in-out infinite; }
+      @keyframes bob { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-.4rem) scale(1.03); } }
+      .stage-note { position: absolute; top: .6rem; right: .6rem; padding: .35rem .65rem; border-radius: 999px; background: rgba(255,255,255,.92); color: var(--navy-dark); font-size: .62rem; font-weight: 900; letter-spacing: .05em; box-shadow: 0 3px 8px rgba(0,0,0,.1); }
+
+      .control-row { display: flex; align-items: center; justify-content: space-between; gap: .8rem; margin-top: .8rem; padding: .8rem; border-radius: 1rem; background: var(--cream); }
+      .status { min-width: 0; color: var(--navy-dark); font-size: .68rem; font-weight: 900; letter-spacing: .08em; }
+      .play { display: inline-flex; align-items: center; gap: .55rem; min-height: 3.1rem; flex: 0 0 auto; border: 0; border-radius: 999px; padding: .7rem 1.3rem; color: white; font-weight: 900; font-size: 1rem; background: var(--gold-dark); cursor: pointer; box-shadow: 0 8px 17px rgba(139, 101, 18, .28); }
+      .play span[aria-hidden] { font-size: 1.2rem; }
+      .play:hover { background: #6f4f0d; }
+      .sentence { margin-top: .65rem; padding: .8rem .95rem; border: 2px solid var(--line); border-radius: 1rem; text-align: center; background: #fcfcff; }
+      .sentence strong { display: block; font-size: clamp(1rem, 2.2vw, 1.25rem); }
+      .sentence span { display: block; margin-top: .3rem; color: var(--muted); font-size: .75rem; font-weight: 800; }
+
+      .shelf { margin-top: .9rem; }
+      .shelf-head { display: flex; justify-content: space-between; gap: 1rem; margin: 0 .1rem .55rem; color: var(--navy-dark); font-size: .72rem; font-weight: 900; letter-spacing: .08em; }
+      .shelf-head span:last-child { color: var(--muted); letter-spacing: 0; }
+      .stories { display: grid; grid-template-columns: repeat(3, 1fr); gap: .6rem; }
+      .story-card { position: relative; overflow: hidden; min-width: 0; padding: 0; border: 2px solid #d7dcf2; border-radius: 1rem; text-align: left; color: inherit; background: white; cursor: pointer; box-shadow: 0 3px 10px rgba(43, 47, 74, .08); transition: transform .16s ease-out, border-color .16s ease-out, box-shadow .16s ease-out; }
+      .story-card:hover { transform: translateY(-2px); }
+      .story-card[aria-pressed="true"] { border-color: var(--navy); box-shadow: 0 0 0 3px #dbe0f7; }
+      .story-thumb { display: grid; place-items: center; width: 100%; aspect-ratio: 16 / 10; font-size: 2.2rem; }
+      .story-badge { position: absolute; top: .35rem; left: .35rem; display: grid; width: 2.1rem; height: 2.1rem; place-items: center; border-radius: 999px; background: white; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(0,0,0,.18); }
+      .story-copy { display: block; min-height: 4.1rem; padding: .45rem .5rem .5rem; }
+      .story-title, .story-words, .story-play { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .story-title { font-size: .76rem; font-weight: 900; color: var(--ink); }
+      .story-words { margin-top: .2rem; color: var(--muted); font-size: .64rem; font-weight: 800; }
+      .story-play { margin-top: .32rem; color: var(--navy-dark); font-size: .6rem; font-weight: 900; letter-spacing: .06em; }
+      .listen-row { display: flex; align-items: center; justify-content: space-between; gap: .7rem; margin-top: .6rem; padding: .55rem .7rem; border-radius: .85rem; color: #3f4468; font-size: .72rem; font-weight: 800; background: var(--cream); }
+      .listen-row p { overflow: hidden; margin: 0; text-overflow: ellipsis; white-space: nowrap; }
+      .listen { flex: 0 0 auto; display: inline-flex; align-items: center; gap: .35rem; border: 2px solid var(--navy); border-radius: 999px; padding: .42rem .75rem; color: var(--navy-dark); font-size: .7rem; font-weight: 900; background: white; cursor: pointer; box-shadow: 0 2px 6px rgba(43,47,74,.1); }
+      .listen span { font-size: .95rem; }
+
+      .actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: .65rem; margin-top: .9rem; }
+      .action { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .4rem; min-height: 6.4rem; border: 2px solid var(--line); border-radius: 1.15rem; color: var(--ink); font-weight: 900; background: white; cursor: pointer; transition: transform .16s ease-out; }
+      .action-badge { display: grid; width: 3.1rem; height: 3.1rem; place-items: center; border-radius: 999px; font-size: 1.7rem; background: var(--cream); }
+      .action small { display: block; font-size: .75rem; font-weight: 900; }
+      .action.watch { border-color: #aab4e2; background: #eef0fb; color: var(--navy-dark); }
+      .action.watch .action-badge { background: #d7dcf6; }
+      .action.listen-action { border-color: #e0c485; background: #fbf3e0; color: var(--gold-dark); }
+      .action.listen-action .action-badge { background: #f3e2b3; }
+      .action.say { border-color: #9fc2c0; background: #eaf6f5; color: #1f5f5c; }
+      .action.say .action-badge { background: #c8e8e6; }
+      .action.star { border-color: #a9c6bc; background: #f6fbf9; color: #2f5e56; }
+      .action.star .action-badge { background: #d7ece2; }
+      .action.star.done { border-color: var(--gold); background: #fbeec6; color: var(--gold-dark); }
+      .action.star.done .action-badge { background: var(--gold); }
+      .celebration { min-height: 1.3rem; margin: .8rem 0 0; text-align: center; color: var(--gold-dark); font-size: .9rem; font-weight: 900; }
+
+      @media (max-width: 760px) {
+        .shell { width: min(100% - 1rem, 560px); padding-top: .7rem; }
+        .topbar { margin-bottom: .8rem; }
+        .brand-title { font-size: 1.05rem; }
+        .layout { display: block; }
+        .intro-panel { display: none; }
+        .study-card { border-radius: 1.35rem; padding: .65rem; }
+        .story-copy { min-height: 3.7rem; }
+        .action { min-height: 5.6rem; }
+        .action-badge { width: 2.7rem; height: 2.7rem; font-size: 1.45rem; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation: none !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div class="brand" aria-label="English Adventure Family">
+          <span class="brand-mark" aria-hidden="true">🧭</span>
+          <span><span class="brand-title">English Adventure</span><small>FAMILY</small></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:.5rem;">
+          <span id="walletBadge" style="display:inline-flex;align-items:center;gap:.35rem;padding:.6rem .85rem;border-radius:999px;background:white;border:2px solid var(--line);font-weight:900;font-size:.8rem;color:var(--navy-dark);">⭐ <span id="walletStars">0</span></span>
+          <a class="home-link" href="index.html">🏠 홈으로</a>
+        </div>
+      </header>
+
+      <section class="layout" aria-label="Mom's IELTS journey">
+        <aside class="intro-panel">
+          <p class="eyebrow">🎓 MOM'S IELTS 7.0 JOURNEY</p>
+          <h1>Speak.<br /><em>Believe. Grow.</em></h1>
+          <p class="intro">오늘의 문장을 세 번 듣고 따라 말하며, 첫걸음부터 IELTS 7.0까지 차근차근 나아가요.</p>
+          <div class="icon-strip" aria-hidden="true"><span>📖</span><span>👂</span><span>🗣️</span><span>⭐</span> 읽고 · 듣고 · 말하고 · 별!</div>
+          <div class="goal-chip">🎯 Today · A0 foundations · 20분 목표</div>
+        </aside>
+
+        <section class="study-card" aria-label="IELTS practice activity">
+          <!-- TODO: this stage is a placeholder — swap for a real <video> or audio-recording UI later
+               if lesson footage becomes available; the 3x-repeat logic below is ready to reuse. -->
+          <div class="stage" id="stage">
+            <span class="stage-emoji" id="stageEmoji">📘</span>
+            <span class="stage-note">오늘의 문장</span>
+          </div>
+
+          <div class="control-row">
+            <p class="status" id="status">DAILY GREETING · 0/3 ⭐</p>
+            <button class="play" id="playButton" type="button" aria-label="Play sentence"><span aria-hidden="true">▶</span><span id="playText">Play</span></button>
+          </div>
+
+          <div class="sentence">
+            <strong id="englishSentence">I am learning English every day.</strong>
+            <span id="koreanSentence">나는 매일 영어를 배우고 있어요.</span>
+          </div>
+
+          <section class="shelf" aria-label="Practice sentence shelf">
+            <div class="shelf-head"><span>PICK A PRACTICE</span><span>오늘의 문장을 골라요</span></div>
+            <div class="stories" id="storyCards"></div>
+            <div class="listen-row"><p id="listenPhrase">📘 I am learning English every day.</p><button class="listen" id="listenButton" type="button"><span aria-hidden="true">🔊</span>듣기</button></div>
+          </section>
+
+          <div class="actions" aria-label="Choose an IELTS practice activity">
+            <button class="action watch" id="watchButton" type="button"><span class="action-badge" aria-hidden="true">📖</span><small>연습</small></button>
+            <button class="action listen-action" id="slowButton" type="button"><span class="action-badge" aria-hidden="true">👂</span><small>듣기</small></button>
+            <button class="action say" id="sayButton" type="button"><span class="action-badge" aria-hidden="true">🗣️</span><small>말하기</small></button>
+            <button class="action star" id="starButton" type="button"><span class="action-badge" aria-hidden="true">⭐</span><small>별</small></button>
+          </div>
+          <p class="celebration" id="celebration" role="status" aria-live="polite"></p>
+        </section>
+      </section>
+    </main>
+
+    <script src="shared.js"></script>
+    <script>
+      const REPEAT_TARGET = 3;
+
+      const stories = [
+        {
+          id: 'daily-greeting', icon: '📘', label: 'Daily Greeting', words: 'learning · every day',
+          bg: 'linear-gradient(160deg, #e3e6f7, #f6f7fd)',
+          english: 'I am learning English every day.', korean: '나는 매일 영어를 배우고 있어요.',
+        },
+        {
+          id: 'self-intro', icon: '🙋', label: 'Self Intro', words: 'name · nice to meet you',
+          bg: 'linear-gradient(160deg, #eee2d3, #fbf6ee)',
+          english: 'My name is Jieun. Nice to meet you.', korean: '제 이름은 지은입니다. 만나서 반가워요.',
+        },
+        {
+          id: 'opinion-starter', icon: '💬', label: 'Opinion Starter', words: 'I think · good idea',
+          bg: 'linear-gradient(160deg, #d9ece7, #f2faf8)',
+          english: 'I think that is a good idea.', korean: '저는 그것이 좋은 생각이라고 생각해요.',
+        },
+      ];
+
+      const stage = document.querySelector('#stage');
+      const stageEmoji = document.querySelector('#stageEmoji');
+      const cards = document.querySelector('#storyCards');
+      const status = document.querySelector('#status');
+      const playButton = document.querySelector('#playButton');
+      const playText = document.querySelector('#playText');
+      const englishSentence = document.querySelector('#englishSentence');
+      const koreanSentence = document.querySelector('#koreanSentence');
+      const listenPhrase = document.querySelector('#listenPhrase');
+      const celebration = document.querySelector('#celebration');
+      const starButton = document.querySelector('#starButton');
+
+      let selected = stories[0];
+      let repeats = 0;
+      let playing = false;
+      let completed = false;
+
+      function speak(text, rate = 0.85, onend) {
+        if (!('speechSynthesis' in window)) { if (onend) onend(); return; }
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = rate;
+        if (onend) utterance.onend = onend;
+        window.speechSynthesis.speak(utterance);
+      }
+
+      function updateStatus() {
+        status.textContent = `${selected.label.toUpperCase()} · ${repeats}/${REPEAT_TARGET} ⭐`;
+        starButton.classList.toggle('done', completed);
+        starButton.querySelector('small').textContent = completed ? '완료!' : '별';
+      }
+
+      function renderCards() {
+        cards.innerHTML = stories.map((story) => `
+          <button class="story-card" type="button" data-story="${story.id}" aria-pressed="${selected.id === story.id}" aria-label="${story.korean}">
+            <span class="story-thumb" style="background:${story.bg}" aria-hidden="true">${story.icon}</span>
+            <span class="story-badge" aria-hidden="true">${story.icon}</span>
+            <span class="story-copy">
+              <span class="story-title">${story.icon} ${story.label}</span>
+              <span class="story-words">${story.words}</span>
+              <span class="story-play">PRACTICE NOW</span>
+            </span>
+          </button>
+        `).join('');
+        cards.querySelectorAll('[data-story]').forEach((card) => {
+          card.addEventListener('click', () => selectStory(card.dataset.story));
+        });
+      }
+
+      function selectStory(id) {
+        selected = stories.find((story) => story.id === id) || stories[0];
+        repeats = 0;
+        playing = false;
+        completed = false;
+        stage.style.background = selected.bg;
+        stageEmoji.textContent = selected.icon;
+        stage.classList.remove('playing');
+        englishSentence.textContent = selected.english;
+        koreanSentence.textContent = selected.korean;
+        listenPhrase.textContent = `${selected.icon} ${selected.english}`;
+        celebration.textContent = '';
+        playText.textContent = 'Play';
+        updateStatus();
+        renderCards();
+        speak(selected.english, 0.85);
+      }
+
+      function playOnce(onDone) {
+        playing = true;
+        stage.classList.add('playing');
+        playText.textContent = 'Playing…';
+        speak(selected.english, 0.85, () => {
+          stage.classList.remove('playing');
+          playText.textContent = 'Play';
+          playing = false;
+          if (onDone) onDone();
+        });
+      }
+
+      function startThreeRepeats() {
+        if (playing) return;
+        repeats = 0;
+        completed = false;
+        celebration.textContent = '세 번 듣고 별을 받아요!';
+        updateStatus();
+        const step = () => {
+          playOnce(() => {
+            repeats = Math.min(repeats + 1, REPEAT_TARGET);
+            updateStatus();
+            if (repeats < REPEAT_TARGET) {
+              window.setTimeout(step, 450);
+            } else {
+              completed = true;
+              updateStatus();
+              const wallet = eafAddStars(1);
+              document.querySelector('#walletStars').textContent = wallet.stars;
+              celebration.textContent = '⭐ Great job! 세 번 모두 연습했어요. 별 1개 획득!';
+              speak('Great job! You practiced three times.', 0.85);
+            }
+          });
+        };
+        step();
+      }
+
+      playButton.addEventListener('click', () => { if (!playing) playOnce(); });
+      document.querySelector('#watchButton').addEventListener('click', startThreeRepeats);
+      document.querySelector('#slowButton').addEventListener('click', () => speak(selected.english, 0.62));
+      document.querySelector('#sayButton').addEventListener('click', () => {
+        speak(selected.english, 0.9);
+        celebration.textContent = '🗣️ 들은 뒤 소리 내어 따라 말해 보세요.';
+      });
+      document.querySelector('#listenButton').addEventListener('click', () => speak(selected.english, 0.85));
+      starButton.addEventListener('click', () => {
+        if (completed) celebration.textContent = '⭐ 이미 별을 받았어요. 다음 문장도 연습해 보세요!';
+        else startThreeRepeats();
+      });
+
+      selectStory(selected.id);
+      document.querySelector('#walletStars').textContent = eafGetWallet().stars;
+    </script>
+  </body>
+</html>

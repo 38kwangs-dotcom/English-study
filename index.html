@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="English Adventure Family — Choose your explorer" />
+    <title>English Adventure Family</title>
+    <style>
+      :root {
+        --ink: #5b3a44;
+        --muted: #8a5a5e;
+        --berry: #b65e73;
+        --berry-dark: #8f3f52;
+        --teal: #0f6664;
+        --teal-dark: #0a4c4a;
+        --paper: #fffdf9;
+        --cream: #fff8f5;
+        --line: #e9c9b3;
+        --gold: #f1c967;
+        --shadow: 0 22px 55px rgba(130, 83, 92, 0.18);
+      }
+      * { box-sizing: border-box; }
+      html { background: #fffdf9; }
+      body {
+        min-width: 320px;
+        margin: 0;
+        color: var(--ink);
+        font-family: ui-rounded, "Nunito", "Noto Sans KR", system-ui, sans-serif;
+        background:
+          radial-gradient(circle at 12% 10%, rgba(255, 225, 203, 0.48), transparent 24rem),
+          radial-gradient(circle at 92% 6%, rgba(204, 241, 233, 0.55), transparent 24rem),
+          var(--paper);
+      }
+      a { text-decoration: none; color: inherit; }
+      .shell { width: min(100% - 2rem, 720px); margin: 0 auto; padding: 1.75rem 0 3rem; }
+
+      .brand { display: flex; align-items: center; gap: .7rem; font-weight: 900; margin-bottom: 2rem; }
+      .brand-mark { display: grid; width: 3.1rem; height: 3.1rem; place-items: center; border-radius: 1rem; color: white; background: var(--teal); font-size: 1.5rem; box-shadow: 0 8px 18px rgba(15, 102, 100, .32); }
+      .brand-title { font-family: Georgia, "Times New Roman", serif; font-size: 1.25rem; }
+      .brand small { display: block; margin-top: .05rem; font-size: .64rem; letter-spacing: .13em; color: var(--muted); font-weight: 800; }
+
+      .eyebrow { display: inline-flex; align-items: center; gap: .5rem; margin: 0 0 .8rem; padding: .5rem .8rem; border: 2px solid var(--berry); border-radius: 999px; color: var(--berry-dark); font-size: .72rem; font-weight: 900; letter-spacing: .06em; background: white; }
+      h1 { margin: 0 0 .6rem; font-family: Georgia, "Times New Roman", serif; font-size: clamp(2.1rem, 6vw, 2.8rem); line-height: 1.1; letter-spacing: -.03em; }
+      .lede { margin: 0 0 1.8rem; max-width: 34rem; color: #5f4544; font-size: 1rem; font-weight: 700; line-height: 1.65; }
+
+      .explorers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+      .explorer-card { display: block; border: 2px solid var(--line); border-radius: 1.5rem; padding: 1.4rem 1.1rem; background: white; box-shadow: var(--shadow); transition: transform .16s ease-out; }
+      .explorer-card:active { transform: scale(.97); }
+      .explorer-badge { display: grid; width: 4.6rem; height: 4.6rem; margin: 0 auto .9rem; place-items: center; border-radius: 999px; font-size: 2.5rem; }
+      .explorer-card.ocean { border-color: #7fbfd9; }
+      .explorer-card.ocean .explorer-badge { background: #dff3fb; }
+      .explorer-card.princess { border-color: #f0a9bc; }
+      .explorer-card.princess .explorer-badge { background: #ffe3ea; }
+      .explorer-card.mom { border-color: #aab4e2; }
+      .explorer-card.mom .explorer-badge { background: #e6e9f8; }
+      .explorer-name { display: block; text-align: center; font-size: 1.05rem; font-weight: 900; margin-bottom: .3rem; }
+      .explorer-theme { display: block; text-align: center; color: var(--muted); font-size: .78rem; font-weight: 800; margin-bottom: .9rem; }
+      .explorer-cta { display: flex; align-items: center; justify-content: center; gap: .4rem; border-radius: 999px; padding: .6rem 0; font-size: .82rem; font-weight: 900; color: white; }
+      .explorer-card.ocean .explorer-cta { background: var(--teal); }
+      .explorer-card.princess .explorer-cta { background: var(--berry); }
+      .explorer-card.mom .explorer-cta { background: #3b4d7a; }
+
+      .wallet-bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem 1.2rem; border: 2px solid var(--line); border-radius: 1.3rem; background: white; box-shadow: var(--shadow); margin-bottom: 1.6rem; flex-wrap: wrap; }
+      .wallet-badges { display: flex; gap: 1.1rem; flex-wrap: wrap; }
+      .wallet-badge { display: flex; align-items: center; gap: .55rem; font-weight: 900; }
+      .wallet-badge .icon { display: grid; width: 2.5rem; height: 2.5rem; place-items: center; border-radius: 999px; background: var(--cream); font-size: 1.25rem; }
+      .wallet-badge .num { font-size: 1.2rem; }
+      .wallet-badge .label { display: block; color: var(--muted); font-size: .62rem; font-weight: 800; letter-spacing: .04em; }
+      .shop-link { display: inline-flex; align-items: center; gap: .4rem; border: 0; border-radius: 999px; padding: .65rem 1.05rem; color: white; font-weight: 900; font-size: .8rem; background: var(--gold-dark, #8b6512); text-decoration: none; }
+
+      @media (max-width: 700px) {
+        .explorers { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <div class="brand" aria-label="English Adventure Family">
+        <span class="brand-mark" aria-hidden="true">🧭</span>
+        <span><span class="brand-title">English Adventure</span><small>FAMILY</small></span>
+      </div>
+
+      <div class="wallet-bar">
+        <div class="wallet-badges">
+          <div class="wallet-badge"><span class="icon" aria-hidden="true">⭐</span><span><span class="num" id="starCount">0</span><span class="label">보유 별</span></span></div>
+          <div class="wallet-badge"><span class="icon" aria-hidden="true">🔥</span><span><span class="num" id="streakCount">0</span><span class="label">연속 출석일</span></span></div>
+        </div>
+        <a class="shop-link" href="reward-shop.html">🎁 상점</a>
+      </div>
+
+      <p class="eyebrow">👋 WELCOME</p>
+      <h1>누가 오늘의<br />탐험가일까요?</h1>
+      <p class="lede">아이콘을 눌러 자기 탐험 화면으로 들어가요.</p>
+
+      <section class="explorers" aria-label="탐험가 선택">
+        <a class="explorer-card ocean" href="first-ocean-explorer.html" aria-label="첫째의 바다 탐험으로 이동">
+          <span class="explorer-badge" aria-hidden="true">🐬</span>
+          <span class="explorer-name">첫째</span>
+          <span class="explorer-theme">동물원 · 바다 탐험</span>
+          <span class="explorer-cta"><span aria-hidden="true">▶</span> 시작하기</span>
+        </a>
+
+        <a class="explorer-card princess" href="second-princess-library.html" aria-label="둘째의 공주님 극장으로 이동">
+          <span class="explorer-badge" aria-hidden="true">👑</span>
+          <span class="explorer-name">둘째</span>
+          <span class="explorer-theme">공주님 극장</span>
+          <span class="explorer-cta"><span aria-hidden="true">▶</span> 시작하기</span>
+        </a>
+
+        <a class="explorer-card mom" href="mom-ielts-journey.html" aria-label="엄마의 IELTS 여정으로 이동">
+          <span class="explorer-badge" aria-hidden="true">🎓</span>
+          <span class="explorer-name">엄마</span>
+          <span class="explorer-theme">IELTS 7.0 여정</span>
+          <span class="explorer-cta"><span aria-hidden="true">▶</span> 시작하기</span>
+        </a>
+      </section>
+    </main>
+
+    <script src="shared.js"></script>
+    <script>
+      const wallet = eafGetWallet();
+      document.querySelector('#starCount').textContent = wallet.stars;
+      document.querySelector('#streakCount').textContent = wallet.streak;
+    </script>
+  </body>
+</html>
