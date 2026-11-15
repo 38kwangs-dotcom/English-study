@@ -1,0 +1,1952 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FFF6D6">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>우리집 패밀리 보드!</title>
+<style>
+:root{
+  --cream:#FFFBF0; --cream2:#FFF5D8; --ink:#4B3B2A; --ink-soft:#8C7A64; --ink-mute:#B3A28B;
+  --yellow:#FFE9A6; --yellow-d:#F2BE3C; --yellow-soft:#FFF7DB;
+  --pink:#FFD9E2; --pink-d:#EE7F9B; --pink-soft:#FFF1F4;
+  --mint:#CFEBC2; --mint-d:#6FBE7E; --mint-soft:#F1FAEB;
+  --lav:#E4DCF8; --lav-d:#9E86DE; --lav-soft:#F6F2FF;
+  --sky:#D9ECFB; --sky-d:#6FB3E0; --peach:#FFE0C7; --peach-d:#E89A5C;
+  --card:#FFFFFF; --line:#F2E6CC;
+  --shadow:0 10px 24px rgba(198,164,96,.13), 0 2px 6px rgba(198,164,96,.07);
+  --shadow-sm:0 4px 12px rgba(198,164,96,.10);
+  --r:26px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Noto Sans CJK KR","Malgun Gothic",system-ui,sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(1200px 620px at 8% -12%, #FFF3C9 0%, rgba(255,243,201,0) 62%),
+    radial-gradient(900px 520px at 102% -6%, #FFE6EC 0%, rgba(255,230,236,0) 58%),
+    linear-gradient(180deg,#FFFDF6 0%,#FFF8E6 100%);
+  background-attachment:fixed;
+  min-height:100vh;font-size:16px;line-height:1.45;
+  padding-bottom:48px;
+}
+.wrap{max-width:1340px;margin:0 auto;padding:0 20px}
+button{font-family:inherit;color:inherit;cursor:pointer;border:none;background:none}
+h1,h2,h3,h4,p{margin:0}
+::selection{background:#FFE9A6}
+
+/* ---------- header ---------- */
+.hd{position:sticky;top:0;z-index:40;background:linear-gradient(180deg,rgba(255,250,232,.97),rgba(255,247,220,.92));
+  border-bottom:1px solid rgba(240,222,180,.8);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.hd-in{max-width:1340px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.hd-left{display:flex;align-items:center;gap:11px;min-width:0}
+.logo{width:44px;height:44px;border-radius:15px;background:linear-gradient(160deg,#FFF2B8,#FFE07A);
+  display:grid;place-items:center;font-size:23px;box-shadow:var(--shadow-sm);flex:0 0 auto}
+.hd h1{font-size:20px;font-weight:800;letter-spacing:-.4px;white-space:nowrap}
+.hd-sub{font-size:11.5px;color:var(--ink-soft);font-weight:600;margin-top:1px}
+.hd-right{margin-left:auto;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.clock{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid var(--line);
+  border-radius:16px;padding:5px 13px 5px 9px;box-shadow:var(--shadow-sm)}
+.clock-ico{font-size:18px}
+.clock b{display:block;font-size:15px;font-weight:800;letter-spacing:-.2px;white-space:nowrap}
+.clock small{display:block;font-size:10.5px;color:var(--ink-soft);font-weight:600;white-space:nowrap}
+.user-pill{display:flex;align-items:center;gap:8px;background:#FFE9A6;border:1.5px solid #F6D06A;
+  border-radius:16px;padding:5px 12px 5px 6px;font-weight:800;font-size:14px;box-shadow:var(--shadow-sm)}
+.user-pill .av{width:28px;height:28px;border-radius:10px;overflow:hidden;background:#fff;flex:0 0 auto}
+.user-pill .av svg{width:100%;height:100%;display:block}
+.user-pill .caret{font-size:10px;color:#A98A3C}
+.icon-btn{width:40px;height:40px;border-radius:14px;background:#fff;border:1.5px solid var(--line);
+  display:grid;place-items:center;font-size:18px;box-shadow:var(--shadow-sm);transition:transform .15s}
+.icon-btn:active{transform:scale(.94)}
+.admin-flag{font-size:10px;font-weight:800;background:#fff;border:1px solid #EADFC6;border-radius:9px;padding:1px 6px;color:var(--ink-soft)}
+
+/* ---------- banner ---------- */
+.banner{margin:14px 0 0;display:flex;align-items:center;gap:12px;cursor:pointer;
+  background:linear-gradient(100deg,#FFE6EC,#FFD9E2 60%,#FFE9A6);border:1.5px solid #F7C3D1;
+  border-radius:20px;padding:12px 16px;box-shadow:var(--shadow);animation:slideDown .35s ease}
+.banner .b-emoji{font-size:26px;animation:wiggle 1.6s infinite}
+.banner b{font-size:15.5px}
+.banner p{font-size:12.5px;color:#9C6D7E;font-weight:600}
+.banner .go{margin-left:auto;background:#fff;border-radius:13px;padding:8px 14px;font-weight:800;font-size:13px;color:var(--pink-d);box-shadow:var(--shadow-sm);white-space:nowrap}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+@keyframes wiggle{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(8deg)}}
+
+/* ---------- kids ---------- */
+.kids-band{margin-top:16px;background:linear-gradient(170deg,#DCF0C6,#CBE8B1 70%,#C3E3A7);
+  border-radius:34px;padding:14px;box-shadow:inset 0 2px 0 rgba(255,255,255,.7),var(--shadow)}
+.kids{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.kids.single{grid-template-columns:minmax(0,1fr);max-width:660px;margin:0 auto}
+.kid-card{background:#fff;border-radius:26px;padding:14px 16px;border:2px solid #fff;
+  box-shadow:0 6px 16px rgba(120,150,90,.16);display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden}
+.kid-card::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:24px;
+  background:radial-gradient(120px 60px at 100% 0,rgba(255,233,166,.55),transparent 70%)}
+.kid-top{display:flex;align-items:center;gap:11px}
+.kid-avatar{width:62px;height:62px;border-radius:20px;background:#FFF8EC;border:2px solid #F6E7C8;
+  padding:2px;flex:0 0 auto;box-shadow:var(--shadow-sm)}
+.kid-avatar svg{width:100%;height:100%;display:block}
+.kid-id{min-width:0;flex:1}
+.kid-name{font-size:19px;font-weight:900;letter-spacing:-.4px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.kid-nick{font-size:11.5px;font-weight:700;color:#fff;background:var(--pink-d);border-radius:8px;padding:1px 7px}
+.kid-age{font-size:11.5px;color:var(--ink-soft);font-weight:700;margin-top:1px}
+.star-pill{display:flex;align-items:center;gap:5px;background:#FFF6D6;border:1.5px solid #F7DFA0;
+  border-radius:15px;padding:6px 12px;font-weight:900;font-size:19px;color:#B98A16;line-height:1;flex:0 0 auto}
+.star-pill span{font-size:15px}
+.star-pill.bump{animation:bump .5s}
+@keyframes bump{0%{transform:scale(1)}35%{transform:scale(1.22) rotate(-4deg)}100%{transform:scale(1)}}
+.goal{display:flex;align-items:center;gap:9px}
+.goal-bar{flex:1;height:11px;border-radius:99px;background:#F4EEDF;overflow:hidden}
+.goal-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#FFDA62,#F5B93B);transition:width .4s}
+.goal-txt{font-size:11px;font-weight:800;color:var(--ink-soft);white-space:nowrap}
+.kid-stats{display:flex;gap:6px;flex-wrap:wrap}
+.chip{display:flex;align-items:center;gap:5px;background:#FFFBF0;border:1px solid #F3E7CE;border-radius:11px;
+  padding:4px 9px;font-size:12px;font-weight:700;color:var(--ink-soft)}
+.chip b{color:var(--ink);font-weight:900}
+.kid-cta{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--kid-soft,#F3FAEC);
+  border:1.5px solid var(--kid-line,#DCEEC9);border-radius:14px;padding:8px 12px;font-weight:800;font-size:13px;width:100%}
+.kid-cta b{font-size:13px;color:var(--kid-deep,#5C9C5A)}
+.kid-cta .arw{font-size:12px;color:var(--ink-mute)}
+
+/* ---------- grid & cards ---------- */
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:16px;align-items:start}
+.card{background:var(--card);border-radius:var(--r);border:1.5px solid #fff;box-shadow:var(--shadow);
+  padding:16px 17px;display:flex;flex-direction:column;gap:11px;min-width:0;position:relative}
+.span2{grid-column:span 2}
+.span4{grid-column:span 4}
+.card-head{display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.ico{width:40px;height:40px;border-radius:14px;display:grid;place-items:center;font-size:20px;
+  background:var(--ic,#FFF3D0);flex:0 0 auto}
+.card-head h3{font-size:16.5px;font-weight:900;letter-spacing:-.3px;white-space:nowrap}
+.card-head p{font-size:11.5px;color:var(--ink-soft);font-weight:700;margin-top:1px}
+.card-head>div{min-width:0}
+.more{margin-left:auto;font-size:11.5px;font-weight:800;color:var(--ink-soft);background:#FFFBF0;
+  border:1px solid #F0E5CD;border-radius:10px;padding:5px 9px;white-space:nowrap}
+.more:active{transform:scale(.96)}
+.card-soft{background:linear-gradient(170deg,#FFF8E2,#FFF3D2)}
+.card-soft .big-btn{margin-top:auto}
+
+/* checklist rows */
+.rows{display:flex;flex-direction:column;gap:7px}
+.row{display:flex;align-items:center;gap:10px;background:#FFFDF6;border:1.5px solid #F3E9D3;
+  border-radius:15px;padding:8px 11px;text-align:left;width:100%;transition:transform .12s,background .18s}
+.row:active{transform:scale(.985)}
+.row .r-ico{font-size:17px;width:22px;text-align:center;flex:0 0 auto}
+.row .r-label{font-size:13.5px;font-weight:800;flex:1;min-width:0}
+.row .box{width:24px;height:24px;border-radius:9px;border:2px solid #E4D6B8;display:grid;place-items:center;
+  font-size:13px;color:transparent;flex:0 0 auto;background:#fff;transition:all .18s}
+.row.on{background:#F2FAEA;border-color:#CDE7B8}
+.row.on .r-label{color:#6C8F5E}
+.row.on .box{background:#8CCB7E;border-color:#8CCB7E;color:#fff}
+.pill-badge{font-size:10.5px;font-weight:900;border-radius:8px;padding:2px 7px;background:#FFE9A6;color:#9A6D0E}
+
+/* pictograms */
+.pics{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.pic{width:100%;aspect-ratio:1/1;height:auto;border-radius:15px;display:grid;place-items:center;font-size:21px;background:var(--pb,#FFF3D0);
+  border:1.5px solid rgba(255,255,255,.9);box-shadow:0 3px 8px rgba(190,160,100,.16);transition:transform .14s}
+.pic:active{transform:scale(.92)}
+.pic-lg{width:auto;height:auto;min-height:88px;flex-direction:column;gap:2px;padding:10px 6px;font-size:30px;justify-content:center}
+.pics-lg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.pic-lg .pt{font-size:12.5px;font-weight:800;line-height:1.25;text-align:center;color:var(--ink)}
+.pic-lg.sel{border-color:var(--pink-d);box-shadow:0 0 0 3px rgba(238,127,155,.22),var(--shadow)}
+
+/* mail extras */
+.mail-stat{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:800;color:var(--ink-soft);flex-wrap:wrap}
+.dot-sep{width:3px;height:3px;border-radius:99px;background:#DCCDAE}
+.big-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;border-radius:16px;
+  font-weight:900;font-size:15px;background:linear-gradient(160deg,#FFB6C9,#F58BA6);color:#fff;
+  box-shadow:0 6px 14px rgba(238,127,155,.32);transition:transform .12s,filter .2s}
+.big-btn:active{transform:scale(.98)}
+.big-btn.off{filter:grayscale(.55) opacity(.75)}
+.big-btn.mint{background:linear-gradient(160deg,#A9DF9C,#79C46F);box-shadow:0 6px 14px rgba(110,180,100,.3)}
+.big-btn.soft{background:#FFF3F6;color:var(--pink-d);border:1.5px solid #FBD3DE;box-shadow:none}
+.big-btn.sm{min-height:40px;font-size:13.5px;border-radius:13px}
+.ghost{display:inline-flex;align-items:center;gap:6px;background:#FFFBF0;border:1.5px solid #F1E6CE;
+  border-radius:12px;padding:7px 12px;font-weight:800;font-size:12.5px;color:var(--ink-soft)}
+.ghost:active{transform:scale(.97)}
+
+/* food */
+.foods{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.food{position:relative;border-radius:16px;background:#FFFDF6;border:1.5px solid #F2E8D2;
+  padding:9px 4px 7px;display:flex;flex-direction:column;align-items:center;gap:2px;transition:transform .12s,background .2s}
+.food .f-ico{font-size:23px;filter:grayscale(.25) opacity(.75);transition:filter .2s}
+.food .f-name{font-size:10px;font-weight:800;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-align:center;max-width:100%}
+.food .f-cnt{position:absolute;top:3px;right:4px;background:#FFF0C2;color:#A97C13;font-size:9px;font-weight:900;
+  min-width:14px;text-align:center;border-radius:7px;padding:0 3px;z-index:2}
+.food.on{background:#F1FAEA;border-color:#CDE7B8}
+.food.on .f-ico{filter:none}
+.food.on .f-name{color:#5C8F4E}
+.food:active{transform:scale(.95)}
+
+/* growth */
+.scene{width:100%;height:78px;display:block;border-radius:16px;overflow:hidden}
+.grow-nums{display:flex;gap:8px}
+.grow-num{flex:1;background:#FFFBF0;border:1.5px solid #F3E7CE;border-radius:14px;padding:7px 9px}
+.grow-num small{font-size:10.5px;color:var(--ink-soft);font-weight:800;display:block}
+.grow-num b{font-size:17px;font-weight:900;letter-spacing:-.3px}
+.grow-num b i{font-size:11px;font-style:normal;color:var(--ink-soft);margin-left:2px}
+.delta{font-size:10.5px;font-weight:800;color:#6FAF60}
+
+/* calendar */
+.cal-head{display:flex;align-items:center;gap:6px}
+.cal-head b{font-size:14px;font-weight:900}
+.cal-nav{margin-left:auto;display:flex;gap:4px}
+.cal-nav button{width:26px;height:26px;border-radius:9px;background:#FFFBF0;border:1px solid #F0E5CD;font-size:12px;display:grid;place-items:center}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal .wd{text-align:center;font-size:10px;font-weight:900;color:var(--ink-mute);padding:2px 0}
+.cal.mini .day{aspect-ratio:auto;height:32px;font-size:11px;border-radius:9px}
+.cal.mini .day .evd{bottom:2px;width:3.5px;height:3.5px}
+.cal .wd.sun{color:#E08A8A}.cal .wd.sat{color:#8AA6D8}
+.day{position:relative;aspect-ratio:1/1;border-radius:10px;display:grid;place-items:center;font-size:11.5px;font-weight:800;
+  color:var(--ink);background:transparent;border:1px solid transparent}
+.day.dim{color:#D9CDB6}
+.day.today{background:#FFE9A6;box-shadow:inset 0 0 0 1.5px #F2BE3C}
+.day.has{background:#F7F4FF;border-color:#E7DFF8}
+.day.has.trip{background:#E8F5FF;border-color:#C4E3F7}
+.day .evd{position:absolute;bottom:3px;width:4px;height:4px;border-radius:99px;background:var(--lav-d)}
+.day.has.trip .evd{background:var(--sky-d)}
+.day:active{transform:scale(.93)}
+
+/* upcoming */
+.up{display:flex;align-items:center;gap:10px;background:#FFFDF6;border:1.5px solid #F3E9D3;border-radius:15px;padding:8px 10px}
+.up.trip{background:linear-gradient(100deg,#EAF6FF,#DCEFFF);border-color:#C6E4F8}
+.up .up-ico{font-size:20px;width:26px;text-align:center}
+.up .up-t{flex:1;min-width:0}
+.up .up-t b{display:block;font-size:13px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.up .up-t small{font-size:10.5px;color:var(--ink-soft);font-weight:700}
+.dday{font-size:12px;font-weight:900;color:#fff;background:var(--sky-d);border-radius:10px;padding:3px 8px;white-space:nowrap}
+.dday.soon{background:#F2BE3C}
+.dday.done{background:#D8CBB2}
+
+/* pills / meds */
+.med-row{display:flex;align-items:center;gap:9px;background:#FFFDF6;border:1.5px solid #F3E9D3;border-radius:15px;padding:8px 10px}
+.med-row .m-name{flex:1;min-width:0;font-size:12.5px;font-weight:800}
+.med-row .m-name small{display:block;font-size:10.5px;color:var(--ink-mute);font-weight:700}
+.med-chips{display:flex;gap:5px}
+.med-chip{font-size:11px;font-weight:800;border-radius:10px;padding:5px 8px;background:#F4EEDF;color:#9C8C74;border:1.5px solid transparent}
+.med-chip.on{background:#8CCB7E;color:#fff;border-color:#8CCB7E}
+.med-chip:active{transform:scale(.95)}
+
+/* progress bars per kid (todo card) */
+.kid-prog{display:flex;align-items:center;gap:8px}
+.kid-prog .kp-name{font-size:12px;font-weight:900;width:52px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kid-prog .kp-bar{flex:1;height:9px;border-radius:99px;background:#F4EEDF;overflow:hidden}
+.kid-prog .kp-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#B6DFA6,#79C46F);transition:width .4s}
+.kid-prog .kp-n{font-size:11px;font-weight:900;color:var(--ink-soft);width:32px;text-align:right}
+
+/* admin panel */
+.qa{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.qa button{background:#FFFDF6;border:1.5px solid #F3E9D3;border-radius:14px;padding:10px 8px;font-size:12.5px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;gap:6px;transition:transform .12s}
+.qa button:active{transform:scale(.96)}
+
+/* ---------- modal ---------- */
+.modal-open{overflow:hidden}
+.backdrop{position:fixed;inset:0;background:rgba(74,59,42,.34);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  display:flex;align-items:center;justify-content:center;padding:18px;z-index:100;animation:fade .18s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.sheet{background:linear-gradient(180deg,#FFFDF7,#FFFBF0);border-radius:30px;width:min(960px,100%);max-height:92vh;
+  overflow:auto;box-shadow:0 30px 70px rgba(80,60,30,.28);border:2px solid #fff;animation:pop .22s cubic-bezier(.2,1.2,.4,1);
+  -webkit-overflow-scrolling:touch}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+.sheet.narrow{width:min(560px,100%)}
+.sheet.wide{width:min(1100px,100%)}
+.sh-head{display:flex;align-items:flex-start;gap:11px;padding:18px 20px 12px;position:sticky;top:0;
+  background:linear-gradient(180deg,#FFFDF7 76%,rgba(255,253,247,.75));backdrop-filter:blur(6px);z-index:2}
+.sh-head h2{font-size:19px;font-weight:900;letter-spacing:-.4px}
+.sh-head p{font-size:12px;color:var(--ink-soft);font-weight:700;margin-top:2px}
+.sh-close{margin-left:auto;width:34px;height:34px;border-radius:12px;background:#fff;border:1.5px solid var(--line);
+  font-size:16px;display:grid;place-items:center;flex:0 0 auto}
+.sh-body{padding:0 20px 22px;display:flex;flex-direction:column;gap:14px}
+.sec{background:#fff;border:1.5px solid #F4E9D2;border-radius:20px;padding:14px}
+.sec h4{font-size:13px;font-weight:900;color:var(--ink-soft);letter-spacing:.2px;margin-bottom:9px;
+  display:flex;align-items:center;gap:6px}
+.hint{font-size:11.5px;color:var(--ink-mute);font-weight:700;line-height:1.5}
+.cols{display:grid;gap:12px}
+.cols.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.kid-col{background:#FFFBF0;border:1.5px solid #F3E7CE;border-radius:20px;padding:12px}
+.kid-col .kc-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.kid-col .kc-av{width:38px;height:38px;border-radius:13px;overflow:hidden;background:#fff;border:1.5px solid #F2E3C6;flex:0 0 auto}
+.kid-col .kc-av svg{width:100%;height:100%;display:block}
+.kid-col .kc-name{font-size:15px;font-weight:900}
+.kid-col .kc-sub{font-size:10.5px;font-weight:800;color:var(--ink-soft)}
+.kid-col .kc-badge{margin-left:auto;font-size:10.5px;font-weight:900;background:#FFE9A6;border-radius:9px;padding:3px 8px;color:#9A6D0E;white-space:nowrap}
+.done-badge{background:#8CCB7E;color:#fff !important;animation:bump .5s}
+
+/* compose */
+.to-chips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.to-chip{background:#FFFDF6;border:2px solid #F1E6CE;border-radius:16px;padding:11px 8px;font-size:14px;font-weight:900;
+  display:flex;align-items:center;justify-content:center;gap:7px;transition:all .16s}
+.to-chip.on{background:#FFF1F4;border-color:var(--pink-d);color:var(--pink-d);box-shadow:0 0 0 3px rgba(238,127,155,.14)}
+.tf{display:flex;gap:8px;align-items:center}
+.tf input{flex:1;min-width:0;height:48px;border-radius:15px;border:2px solid #F1E6CE;background:#FFFDF6;
+  padding:0 14px;font-size:15px;font-family:inherit;font-weight:700;color:var(--ink)}
+.tf input:focus{outline:none;border-color:#F5C97E;background:#fff}
+.tf textarea{width:100%;min-height:78px;border-radius:15px;border:2px solid #F1E6CE;background:#FFFDF6;
+  padding:11px 13px;font-size:14px;font-family:inherit;font-weight:700;color:var(--ink);resize:vertical;line-height:1.5}
+.tf textarea:focus{outline:none;border-color:#F5C97E;background:#fff}
+.counter{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:800;color:var(--ink-soft);
+  background:#FFF7E0;border:1px dashed #EFD9A6;border-radius:13px;padding:9px 12px}
+.counter.warn{background:#FFF0F0;border-color:#F3C7C7;color:#C0758A}
+
+/* letters */
+.letter{background:#FFFDF6;border:1.5px solid #F2E6CC;border-radius:18px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.letter.new{background:linear-gradient(170deg,#FFF6F9,#FFF1F4);border-color:#F9D2DD}
+.l-top{display:flex;align-items:center;gap:8px}
+.l-av{width:30px;height:30px;border-radius:10px;overflow:hidden;background:#FFF8EC;border:1px solid #F0E2C8;flex:0 0 auto}
+.l-av svg{width:100%;height:100%;display:block}
+.l-who{font-size:12.5px;font-weight:900}
+.l-who small{display:block;font-size:10px;color:var(--ink-mute);font-weight:700}
+.l-time{margin-left:auto;font-size:10.5px;color:var(--ink-mute);font-weight:700;white-space:nowrap}
+.l-text{font-size:14.5px;font-weight:800;line-height:1.5;white-space:pre-wrap;word-break:break-word}
+.l-text.speaking{background:#FFF6D6;border-radius:10px;box-shadow:0 0 0 3px #FFF6D6}
+.reply{background:#EFF9E9;border:1.5px solid #D6ECCB;border-radius:15px;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.reply .r-who{font-size:10.5px;font-weight:900;color:#6C8F5E;display:flex;align-items:center;gap:6px}
+.reply .r-text{font-size:13.5px;font-weight:700;line-height:1.5;white-space:pre-wrap}
+.speak-btn{display:inline-flex;align-items:center;gap:5px;background:#fff;border:1.5px solid #EADFC6;border-radius:11px;
+  padding:5px 10px;font-size:11.5px;font-weight:800;color:var(--ink-soft);align-self:flex-start}
+.speak-btn:active{transform:scale(.96)}
+.speak-btn.on{background:#FFE9A6;border-color:#F2BE3C;color:#8A6206}
+
+/* settings */
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:10px}
+.field label{font-size:11.5px;font-weight:900;color:var(--ink-soft)}
+.field input,.field select{height:42px;border-radius:12px;border:1.5px solid #F0E5CD;background:#FFFDF6;padding:0 12px;
+  font-size:14px;font-family:inherit;font-weight:700;color:var(--ink);width:100%}
+.field input:focus,.field select:focus{outline:none;border-color:#F5C97E;background:#fff}
+.field-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.field-row3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.avatar-pick{display:flex;gap:8px;flex-wrap:wrap}
+.av-opt{width:52px;height:52px;border-radius:16px;background:#FFF8EC;border:2px solid #F1E4C9;overflow:hidden;padding:1px}
+.av-opt svg{width:100%;height:100%;display:block}
+.av-opt.on{border-color:var(--pink-d);box-shadow:0 0 0 3px rgba(238,127,155,.16)}
+.switch{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:800;padding:9px 0}
+.switch input{width:20px;height:20px;accent-color:#8CCB7E}
+.dev-opt{display:flex;align-items:center;gap:11px;width:100%;background:#FFFDF6;border:2px solid #F1E6CE;
+  border-radius:18px;padding:12px 14px;text-align:left;margin-bottom:9px}
+.dev-opt.on{border-color:#F2BE3C;background:#FFF8DF;box-shadow:0 0 0 3px rgba(242,190,60,.14)}
+.dev-opt .d-ico{font-size:24px}
+.dev-opt b{font-size:14.5px;display:block;font-weight:900}
+.dev-opt small{font-size:11px;color:var(--ink-soft);font-weight:700}
+.dev-opt .chk{margin-left:auto;font-size:16px;color:#F2BE3C}
+.pinpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:260px;margin:0 auto}
+.pinpad button{height:56px;border-radius:16px;background:#FFFDF6;border:1.5px solid #F0E5CD;font-size:20px;font-weight:900}
+.pinpad button:active{transform:scale(.95);background:#FFF3D2}
+.pin-dots{display:flex;justify-content:center;gap:10px;margin:6px 0 14px}
+.pin-dots i{width:14px;height:14px;border-radius:99px;background:#EFE4CC;display:block}
+.pin-dots i.on{background:#F2BE3C}
+.role-opt{display:flex;align-items:center;gap:12px;width:100%;background:#FFFDF6;border:2px solid #F1E6CE;
+  border-radius:18px;padding:11px 14px;text-align:left;margin-bottom:9px}
+.role-opt .ro-av{width:44px;height:44px;border-radius:14px;overflow:hidden;background:#fff;border:1.5px solid #F1E4C9;flex:0 0 auto}
+.role-opt .ro-av svg{width:100%;height:100%;display:block}
+.role-opt b{font-size:14.5px;display:block;font-weight:900}
+.role-opt small{font-size:11px;color:var(--ink-soft);font-weight:700}
+.role-opt.on{border-color:#F2BE3C;background:#FFF8DF}
+.role-opt .em{margin-left:auto;font-size:19px}
+
+/* toast */
+#toastRoot{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:200;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
+.toast{background:rgba(74,59,42,.94);color:#fff;font-size:13.5px;font-weight:800;padding:11px 18px;border-radius:99px;
+  box-shadow:0 10px 24px rgba(60,45,25,.3);animation:toastIn .28s cubic-bezier(.2,1.2,.4,1)}
+.toast.ok{background:rgba(111,175,96,.96)}
+.toast.warn{background:rgba(224,138,138,.96)}
+@keyframes toastIn{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
+.burst{position:fixed;z-index:210;font-size:24px;pointer-events:none;animation:burstUp 1s ease-out forwards}
+@keyframes burstUp{0%{opacity:0;transform:translate(0,0) scale(.6)}20%{opacity:1}100%{opacity:0;transform:translate(var(--dx),-120px) scale(1.15)}}
+
+/* responsive */
+@media (max-width:1160px){
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .span2{grid-column:span 2}
+.span4{grid-column:span 4}
+}
+@media (max-width:820px){
+  .kids{grid-template-columns:1fr}
+  .cols.two{grid-template-columns:1fr}
+  .hd h1{font-size:17px}
+  .hd-sub{display:none}
+  .wrap{padding:0 12px}
+  .hd-in{padding:8px 12px;gap:8px}
+  .clock small{display:none}
+}
+@media (max-width:640px){
+  body{font-size:15px}
+  .grid{grid-template-columns:1fr;gap:12px}
+  .span2,.span4{grid-column:span 1}
+  .hd-right{width:100%;margin-left:0;justify-content:space-between}
+  .kids-band{padding:10px;border-radius:26px}
+  .kid-card{padding:12px}
+  .pics-lg{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .foods{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .sheet{border-radius:22px;max-height:94vh}
+  .sh-body{padding:0 14px 18px}
+  .sh-head{padding:14px 14px 10px}
+  .field-row,.field-row3{grid-template-columns:1fr}
+  .qa{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hd" id="hdRoot"></header>
+  <main id="app"></main>
+</div>
+<div id="modalRoot"></div>
+<div id="toastRoot"></div>
+<div id="burstRoot"></div>
+<script>
+/* =========================================================
+   우리집 패밀리 보드!  (single-file app, localStorage 기반)
+   ========================================================= */
+const LS_KEY='familyBoard.v3';
+const KIDS=['elder','younger'];
+const WEEK=['일','월','화','수','목','금','토'];
+const ROLES={
+  elder:{id:'elder',label:'큰딸',kind:'kid',kid:'elder',emoji:'🐻'},
+  younger:{id:'younger',label:'작은딸',kind:'kid',kid:'younger',emoji:'🐰'},
+  parents:{id:'parents',label:'엄마·아빠',kind:'admin',inbox:'parents',emoji:'💗'},
+  grandparents:{id:'grandparents',label:'할머니·할아버지',kind:'admin',inbox:'grandparents',emoji:'🌷'},
+  family:{id:'family',label:'가족 공용 보드',kind:'family',emoji:'🏠'}
+};
+const RECIPIENTS={parents:{label:'엄마·아빠',emoji:'💗'},grandparents:{label:'할머니·할아버지',emoji:'🌷'}};
+const ROUTINE=[
+  {id:'toys',icon:'🧸',label:'장난감 정리'},
+  {id:'homework',icon:'✏️',label:'숙제 확인'},
+  {id:'teeth',icon:'🪥',label:'양치질'},
+  {id:'clothes',icon:'👕',label:'내일 옷 꺼내기'},
+  {id:'bag',icon:'🎒',label:'책가방 싸기'},
+  {id:'pajama',icon:'🌙',label:'잠옷 입기'}
+];
+const FOODS=[
+  {id:'rice',icon:'🍚',label:'밥'},
+  {id:'soup',icon:'🍲',label:'국·찌개'},
+  {id:'meat',icon:'🍗',label:'고기'},
+  {id:'egg',icon:'🥚',label:'계란'},
+  {id:'veg',icon:'🥦',label:'채소'},
+  {id:'fruit',icon:'🍓',label:'과일'},
+  {id:'milk',icon:'🥛',label:'우유'},
+  {id:'water',icon:'💧',label:'물'}
+];
+const HOMESCHOOL={
+  elder:[{id:'korean',icon:'📝',label:'받아쓰기 5개'},{id:'math',icon:'🔢',label:'수학 문제 10개'},
+         {id:'english',icon:'🔤',label:'영어 단어 5개'},{id:'book',icon:'📚',label:'책 읽고 이야기하기'}],
+  younger:[{id:'hangul',icon:'🅰️',label:'한글 놀이'},{id:'number',icon:'🧮',label:'숫자 놀이'},
+           {id:'draw',icon:'🎨',label:'그림 그리기'},{id:'story',icon:'📖',label:'동화책 읽기'}]
+};
+const PICS=[
+  {t:'보고 싶어요 💛',e:'💛',bg:'#FFF0BE'},
+  {t:'사랑해요 ❤️',e:'❤️',bg:'#FFDCE3'},
+  {t:'오늘 숙제 다 했어요 ⭐',e:'⭐',bg:'#E4F6D8'},
+  {t:'맛있는 거 사주세요 🍓',e:'🍓',bg:'#FFE0E6'},
+  {t:'오늘 재밌었어요 🎈',e:'🎈',bg:'#E3E9FF'},
+  {t:'안아주세요 🐻',e:'🐻',bg:'#FFEBD3'}
+];
+const MOODS=['😊','🥰','😴','🤗','😆'];
+const MAIL_WINDOW=3600*1000;
+const LIMIT=3;
+
+/* ---------- 작은 도구들 ---------- */
+const $=s=>document.querySelector(s);
+const pad=n=>String(n).padStart(2,'0');
+const dkey=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parseD=s=>{const p=String(s).split('-').map(Number);return new Date(p[0],(p[1]||1)-1,p[2]||1);};
+const todayKey=()=>dkey(new Date());
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const won=n=>Number(n||0).toLocaleString('ko-KR');
+const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+const num=v=>{const n=Number(String(v).replace(/[^0-9.-]/g,''));return isFinite(n)?n:0;};
+function fmtClock(d){
+  const h=d.getHours(),m=d.getMinutes();
+  const p=h<5?'새벽':h<9?'아침':h<12?'오전':h<14?'점심':h<18?'오후':h<21?'저녁':'밤';
+  const k=((h+11)%12)+1;
+  return `${p} ${k}시 ${pad(m)}분`;
+}
+function fmtDateKR(d){return `${d.getMonth()+1}월 ${d.getDate()}일 ${WEEK[d.getDay()]}요일`;}
+function relTime(ts){
+  const diff=Date.now()-ts;
+  if(diff<60e3) return '방금 전';
+  if(diff<3600e3) return `${Math.floor(diff/60e3)}분 전`;
+  if(diff<86400e3) return `${Math.floor(diff/3600e3)}시간 전`;
+  const d=new Date(ts);
+  if(diff<172800e3) return '어제';
+  return `${d.getMonth()+1}/${d.getDate()}`;
+}
+function dayDiff(a,b){ // a-b in days (dates only)
+  return Math.round((parseD(a)-parseD(b))/86400000);
+}
+function ageOf(birth){
+  const y=Number(String(birth||'').split('-')[0]);
+  if(!y) return '-';
+  return new Date().getFullYear()-y+1; /* 세는나이 */
+}
+function birthLabel(birth){
+  const p=String(birth||'').split('-').map(Number);
+  if(!p[0]) return '';
+  return `${p[0]}년 ${p[1]||1}월생`;
+}
+function money(n){return `${won(n)}원`;}
+
+/* ---------- 저장소 ---------- */
+let storageOK=true;
+try{const t='__t';localStorage.setItem(t,'1');localStorage.removeItem(t);}catch(e){storageOK=false;}
+let memStore=null;
+
+function defaultKid(id){
+  const t=todayKey();
+  return {
+    id,
+    name:id==='elder'?'큰딸':'작은딸',
+    nickname:id==='elder'?'첫째':'둘째',
+    birth:id==='elder'?'2017-07':'2021-11',
+    avatar:id==='elder'?'bear':'bunny',
+    color:id==='elder'?'#F2C14E':'#F08FA8',
+    stars:0, goal:30, money:0, stickers:0,
+    height:id==='elder'?128:112, weight:id==='elder'?28:20,
+    routine:{date:t,done:{}}, food:{date:t,eaten:{},tried:{},totals:{}},
+    pills:{date:t,taken:{}}, home:{date:t,done:{}},
+    meds:[{id:'morning',icon:'🌞',label:id==='elder'?'비타민':'비타민'},{id:'evening',icon:'🌙',label:id==='elder'?'유산균':'유산균'}],
+    growth:[], sends:[], unlimited:false, mood:'😊'
+  };
+}
+function defaultState(){
+  const t=todayKey();
+  const now=Date.now();
+  const s={
+    v:3,
+    device:{user:'',locked:false},
+    currentUser:'family',
+    settings:{limit:LIMIT,pin:'',onboarded:false},
+    cloud:{url:'',key:''},
+    drafts:{mailText:'',mailPic:'',mailTo:'parents',sender:'elder',calDate:''},
+    kids:{elder:defaultKid('elder'),younger:defaultKid('younger')},
+    letters:[
+      {id:'seed-1',from:'parents',to:'elder',kid:'elder',text:'우리 큰딸, 오늘 하루도 잘 보냈구나! 엄마·아빠가 많이 사랑해 💛',ts:now-1000*60*24*1,read:false,reply:null},
+      {id:'seed-2',from:'elder',kid:'elder',to:'parents',text:'보고 싶어요 💛',ts:now-1000*60*95,read:true,
+        reply:{text:'우리 딸, 엄마도 많이 보고 싶어! 오늘 재밌게 놀고 있지? 이따 안아줄게 💗',ts:now-1000*60*40,by:'엄마·아빠'},replyRead:false},
+      {id:'seed-3',from:'younger',kid:'younger',to:'parents',text:'사랑해요 ❤️',ts:now-1000*60*60*30,read:true,reply:null},
+      {id:'seed-4',from:'parents',to:'grandparents',text:'어머니, 이번 주 일요일에 아이들 데리고 들를게요 :)',ts:now-1000*60*60*50,read:false,reply:null}
+    ],
+    events:[
+      {id:'ev-trip',date:'2026-12-03',end:'2026-12-06',title:'다롄 가족 여행',emoji:'✈️',kind:'trip'},
+      {id:'ev-trip2',date:'2026-12-06',end:'2026-12-06',title:'다롄에서 집으로',emoji:'🧳',kind:'trip'}
+    ],
+    cal:{y:new Date().getFullYear(),m:new Date().getMonth()}
+  };
+  s.kids.elder.growth=[{date:'2026-03-02',height:124.5,weight:26},{date:'2026-06-15',height:126.2,weight:27.1},{date:'2026-09-20',height:127.4,weight:27.8}];
+  s.kids.younger.growth=[{date:'2026-03-02',height:108.4,weight:18.6},{date:'2026-06-15',height:110.1,weight:19.2},{date:'2026-09-20',height:111.3,weight:19.7}];
+  return s;
+}
+function loadState(){
+  if(!storageOK) return defaultState();
+  try{
+    const raw=localStorage.getItem(LS_KEY);
+    if(!raw) return defaultState();
+    const p=JSON.parse(raw);
+    return migrate(p);
+  }catch(e){console.warn('[board] 불러오기 실패',e);return defaultState();}
+}
+function migrate(p){
+  const base=defaultState();
+  if(!p||typeof p!=='object') return base;
+  p.v=3;
+  p.device=Object.assign({user:'',locked:false},p.device||{});
+  p.settings=Object.assign({limit:LIMIT,pin:'',onboarded:false},p.settings||{});
+  p.cloud=Object.assign({url:'',key:''},p.cloud||{});
+  p.drafts=Object.assign({mailText:'',mailPic:'',mailTo:'parents',sender:'elder',calDate:''},p.drafts||{});
+  p.letters=Array.isArray(p.letters)?p.letters:[];
+  p.events=Array.isArray(p.events)?p.events:base.events;
+  p.cal=Object.assign({y:new Date().getFullYear(),m:new Date().getMonth()},p.cal||{});
+  KIDS.forEach(k=>{
+    p.kids=p.kids||{};
+    p.kids[k]=Object.assign(defaultKid(k),p.kids[k]||{});
+    const kd=p.kids[k];
+    kd.routine=Object.assign({date:todayKey(),done:{}},kd.routine||{});
+    kd.food=Object.assign({date:todayKey(),eaten:{},tried:{},totals:{}},kd.food||{});
+    kd.pills=Object.assign({date:todayKey(),taken:{}},kd.pills||{});
+    kd.home=Object.assign({date:todayKey(),done:{}},kd.home||{});
+    if(!Array.isArray(kd.growth)) kd.growth=[];
+    if(!Array.isArray(kd.sends)) kd.sends=[];
+    if(!Array.isArray(kd.meds)||!kd.meds.length) kd.meds=defaultKid(k).meds;
+  });
+  return p;
+}
+let S=loadState();
+function save(){
+  if(!storageOK){memStore=JSON.stringify(S);return;}
+  try{localStorage.setItem(LS_KEY,JSON.stringify(S));}catch(e){console.warn('[board] 저장 실패',e);}
+}
+function ensureToday(){
+  const t=todayKey();
+  let changed=false;
+  KIDS.forEach(k=>{
+    const kd=S.kids[k];
+    if(kd.routine.date!==t){kd.routine={date:t,done:{}};changed=true;}
+    if(kd.food.date!==t){kd.food.eaten={};kd.food.tried={};kd.food.date=t;changed=true;}
+    if(kd.pills.date!==t){kd.pills.taken={};kd.pills.date=t;changed=true;}
+    if(kd.home.date!==t){kd.home.done={};kd.home.date=t;changed=true;}
+  });
+  if(changed) save();
+}
+
+/* ---------- 아바타 ---------- */
+function avatarSVG(o){
+  const kind=o&&o.avatar?o.avatar:'bear';
+  const c=(o&&o.color)||'#F2C14E';
+  const eye='#4B3B2A';
+  const face='#FCE6C8';
+  const base=`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="캐릭터">`;
+  if(kind==='bear') return base+`
+    <rect width="100" height="100" rx="24" fill="#FFF7E9"/>
+    <circle cx="23" cy="25" r="13" fill="${c}"/><circle cx="77" cy="25" r="13" fill="${c}"/>
+    <circle cx="23" cy="25" r="7" fill="#FFE9C4"/><circle cx="77" cy="25" r="7" fill="#FFE9C4"/>
+    <circle cx="50" cy="56" r="31" fill="${face}"/>
+    <ellipse cx="50" cy="66" rx="17" ry="13" fill="#FFF7E9"/>
+    <circle cx="38" cy="52" r="4.3" fill="${eye}"/><circle cx="62" cy="52" r="4.3" fill="${eye}"/>
+    <circle cx="39.4" cy="50.6" r="1.6" fill="#fff"/><circle cx="63.4" cy="50.6" r="1.6" fill="#fff"/>
+    <ellipse cx="50" cy="63" rx="4.2" ry="3.1" fill="${eye}"/>
+    <path d="M43.5 69 Q50 75 56.5 69" stroke="${eye}" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+    <circle cx="27" cy="63" r="5" fill="#F9B9B0" opacity=".6"/><circle cx="73" cy="63" r="5" fill="#F9B9B0" opacity=".6"/>
+    <path d="M36 30 q6 -7 14 -5" stroke="${c}" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".5"/>
+  </svg>`;
+  if(kind==='bunny') return base+`
+    <rect width="100" height="100" rx="24" fill="#FFF4F7"/>
+    <ellipse cx="35" cy="20" rx="8" ry="18" fill="${c}" transform="rotate(-10 35 20)"/>
+    <ellipse cx="65" cy="20" rx="8" ry="18" fill="${c}" transform="rotate(10 65 20)"/>
+    <ellipse cx="35" cy="21" rx="4" ry="12" fill="#FFDDE6" transform="rotate(-10 35 21)"/>
+    <ellipse cx="65" cy="21" rx="4" ry="12" fill="#FFDDE6" transform="rotate(10 65 21)"/>
+    <circle cx="50" cy="58" r="30" fill="${face}"/>
+    <circle cx="39" cy="55" r="4.3" fill="${eye}"/><circle cx="61" cy="55" r="4.3" fill="${eye}"/>
+    <circle cx="40.4" cy="53.6" r="1.6" fill="#fff"/><circle cx="62.4" cy="53.6" r="1.6" fill="#fff"/>
+    <path d="M50 63 l-3.5 3 h7 z" fill="#F1929F"/>
+    <path d="M44 69 Q50 75 56 69" stroke="${eye}" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+    <circle cx="29" cy="65" r="5" fill="#F9B9B0" opacity=".65"/><circle cx="71" cy="65" r="5" fill="#F9B9B0" opacity=".65"/>
+  </svg>`;
+  if(kind==='cat') return base+`
+    <rect width="100" height="100" rx="24" fill="#F3F6FF"/>
+    <path d="M20 40 L26 16 L44 30 Z" fill="${c}"/><path d="M80 40 L74 16 L56 30 Z" fill="${c}"/>
+    <path d="M27 33 L30 22 L39 30 Z" fill="#FFDDE6"/><path d="M73 33 L70 22 L61 30 Z" fill="#FFDDE6"/>
+    <circle cx="50" cy="57" r="30" fill="${face}"/>
+    <circle cx="39" cy="54" r="4.5" fill="${eye}"/><circle cx="61" cy="54" r="4.5" fill="${eye}"/>
+    <circle cx="40.5" cy="52.5" r="1.7" fill="#fff"/><circle cx="62.5" cy="52.5" r="1.7" fill="#fff"/>
+    <path d="M47 64 h6 l-3 3 z" fill="#F1929F"/>
+    <path d="M42 68 Q50 76 58 68" stroke="${eye}" stroke-width="2.3" fill="none" stroke-linecap="round"/>
+    <g stroke="${eye}" stroke-width="1.4" opacity=".45" stroke-linecap="round">
+      <path d="M22 60 l9 2"/><path d="M22 66 l9 -1"/><path d="M78 60 l-9 2"/><path d="M78 66 l-9 -1"/>
+    </g>
+    <circle cx="29" cy="64" r="4.5" fill="#F9B9B0" opacity=".55"/><circle cx="71" cy="64" r="4.5" fill="#F9B9B0" opacity=".55"/>
+  </svg>`;
+  /* chick */
+  return base+`
+    <rect width="100" height="100" rx="24" fill="#FFFAE8"/>
+    <path d="M50 20 q3 -10 9 -8 q-4 4 -3 9" stroke="${c}" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <circle cx="50" cy="57" r="31" fill="${face}"/>
+    <circle cx="39" cy="53" r="4.4" fill="${eye}"/><circle cx="61" cy="53" r="4.4" fill="${eye}"/>
+    <circle cx="40.4" cy="51.6" r="1.6" fill="#fff"/><circle cx="62.4" cy="51.6" r="1.6" fill="#fff"/>
+    <path d="M46 62 L54 62 L50 68 Z" fill="#F5A65B"/>
+    <path d="M43 71 Q50 77 57 71" stroke="${eye}" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+    <circle cx="28" cy="63" r="5" fill="#F9B9B0" opacity=".6"/><circle cx="72" cy="63" r="5" fill="#F9B9B0" opacity=".6"/>
+    <ellipse cx="50" cy="88" rx="16" ry="3" fill="${c}" opacity=".25"/>
+  </svg>`;
+}
+const AVATARS=['bear','bunny','cat','chick'];
+function kidAvatar(k,extraStyle){
+  const kd=S.kids[k];
+  return `<div class="kid-avatar" style="${extraStyle||''}">${avatarSVG(kd)}</div>`;
+}
+function roleAvatar(roleId){
+  const r=ROLES[roleId];
+  if(r.kind==='kid') return avatarSVG(S.kids[r.kid]);
+  const emoji=r.kind==='admin'?'👩‍👦':'🏠';
+  const bg=r.kind==='admin'?'#FFF0D8':'#EAF7E0';
+  return `<svg viewBox="0 0 100 100"><rect width="100" height="100" rx="24" fill="${bg}"/><text x="50" y="66" font-size="46" text-anchor="middle">${emoji}</text></svg>`;
+}
+
+/* =========================================================
+   현재 사용자 / 공통 계산
+   ========================================================= */
+function isAdmin(){const r=ROLES[S.currentUser];return !!r&&r.kind==='admin';}
+function isFamily(){const r=ROLES[S.currentUser];return !!r&&r.kind==='family';}
+function isKid(){const r=ROLES[S.currentUser];return !!r&&r.kind==='kid';}
+function myKid(){const r=ROLES[S.currentUser];return r&&r.kid||null;}
+function visibleKids(){ if(isKid()) return [myKid()]; return KIDS.slice(); }
+function focusKid(){
+  if(isKid()) return myKid();
+  const f=S.drafts.focus||'elder';
+  return S.kids[f]?f:'elder';
+}
+function routineDone(k){return ROUTINE.filter(i=>S.kids[k].routine.done[i.id]).length;}
+function homeDone(k){return HOMESCHOOL[k].filter(i=>S.kids[k].home.done[i.id]).length;}
+function foodDone(k){return FOODS.filter(f=>S.kids[k].food.eaten[f.id]).length;}
+function sendsLastHour(k){
+  const now=Date.now();
+  S.kids[k].sends=(S.kids[k].sends||[]).filter(t=>now-t<MAIL_WINDOW);
+  return S.kids[k].sends;
+}
+function limitOf(k){
+  const kd=S.kids[k];
+  if(kd.unlimited) return {unlimited:true,used:0,left:99,minLeft:0};
+  const used=sendsLastHour(k).length;
+  const left=Math.max(0,LIMIT-used);
+  let minLeft=0;
+  if(left===0&&used>0){
+    const oldest=Math.min.apply(null,S.kids[k].sends.slice(-LIMIT));
+    minLeft=Math.max(1,Math.ceil((MAIL_WINDOW-(Date.now()-oldest))/60000));
+  }
+  return {unlimited:false,used,left,minLeft};
+}
+function lettersFor(kid){
+  return S.letters.filter(l=>l.from===kid).sort((a,b)=>b.ts-a.ts);
+}
+function unreadReplies(kid){
+  return S.letters.filter(l=>l.from===kid&&l.reply&&!l.replyRead).sort((a,b)=>b.reply.ts-a.reply.ts);
+}
+function inboxFor(roleId){
+  const r=ROLES[roleId];
+  if(!r||r.kind!=='admin') return [];
+  return S.letters.filter(l=>l.to===r.inbox).sort((a,b)=>b.ts-a.ts);
+}
+function unreadInbox(roleId){
+  return inboxFor(roleId).filter(l=>!l.read).length;
+}
+function eventsOn(ds){
+  return S.events.filter(ev=>ds>=ev.date&&ds<=(ev.end||ev.date))
+    .sort((a,b)=>(a.kind==='trip'?-1:0)-(b.kind==='trip'?-1:0));
+}
+function upcomingEvents(limit){
+  const t=todayKey();
+  const list=S.events.filter(ev=>(ev.end||ev.date)>=t).slice()
+    .sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:0);
+  return limit?list.slice(0,limit):list;
+}
+function ddayLabel(ev){
+  const t=todayKey();
+  const d=dayDiff(ev.date,t);
+  if(d>0) return 'D-'+d;
+  if(d===0) return 'D-DAY';
+  const e=ev.end||ev.date;
+  if(t<=e) return '진행 중';
+  return '지났어요';
+}
+function kidName(k){return esc(S.kids[k].name);}
+function devName(){
+  if(!S.device.user) return '이 기기 설정 전';
+  const r=ROLES[S.device.user];
+  if(!r) return '이 기기 설정 전';
+  return S.device.user==='family'?'가족 공용 보드':(r.kind==='kid'?S.kids[r.kid].name+' 태블릿':r.label+' 모드');
+}
+
+/* =========================================================
+   토스트 / 반짝임
+   ========================================================= */
+function toast(msg,kind){
+  const el=document.createElement('div');
+  el.className='toast'+(kind?' '+kind:'');
+  el.textContent=msg;
+  document.getElementById('toastRoot').appendChild(el);
+  setTimeout(()=>{el.style.transition='opacity .3s,transform .3s';el.style.opacity='0';el.style.transform='translateY(8px)';},2200);
+  setTimeout(()=>el.remove(),2600);
+}
+function burst(emoji,n){
+  const root=document.getElementById('burstRoot');
+  const cnt=n||7;
+  for(let i=0;i<cnt;i++){
+    const s=document.createElement('span');
+    s.className='burst';
+    s.textContent=emoji;
+    s.style.left=(48+Math.random()*10)+'%';
+    s.style.top=(30+Math.random()*20)+'%';
+    s.style.setProperty('--dx',(Math.random()*160-80)+'px');
+    s.style.animationDelay=(i*45)+'ms';
+    root.appendChild(s);
+    setTimeout(()=>s.remove(),1400);
+  }
+}
+
+/* =========================================================
+   렌더링
+   ========================================================= */
+function render(){
+  ensureToday();
+  document.getElementById('hdRoot').innerHTML=headerHTML();
+  document.getElementById('app').innerHTML=bannerHTML()+kidsBandHTML()+gridHTML()+footerHTML();
+  drawClock();
+}
+function drawClock(){
+  const c=document.getElementById('clockTxt');
+  if(c){c.textContent=fmtClock(new Date());}
+  const d=document.getElementById('clockDate');
+  if(d){d.textContent=fmtDateKR(new Date());}
+}
+function headerHTML(){
+  const u=S.currentUser,r=ROLES[u]||ROLES.family;
+  return `<div class="hd-in">
+    <div class="hd-left">
+      <div class="logo">🏠</div>
+      <div>
+        <h1>우리집 패밀리 보드!</h1>
+        <p class="hd-sub">${esc(devName())} · 오늘도 우리 가족 화이팅 💛</p>
+      </div>
+    </div>
+    <div class="hd-right">
+      <div class="clock"><span class="clock-ico">🕰️</span>
+        <div><b id="clockTxt">${fmtClock(new Date())}</b><small id="clockDate">${fmtDateKR(new Date())}</small></div>
+      </div>
+      <button class="user-pill" onclick="openRoleMenu()" aria-label="사용자 바꾸기">
+        <span class="av">${roleAvatar(u)}</span>${esc(r.label)}
+        ${r.kind==='admin'?'<span class="admin-flag">관리자</span>':''}
+        <span class="caret">▼</span>
+      </button>
+      <button class="icon-btn" onclick="openSettings()" aria-label="설정">⚙️</button>
+    </div>
+  </div>`;
+}
+function bannerHTML(){
+  if(!isKid()) return '';
+  const kid=myKid();
+  const list=unreadReplies(kid);
+  if(!list.length) return '';
+  return `<div class="banner" onclick="openReplies()">
+    <span class="b-emoji">💌</span>
+    <div><b>${esc(S.kids[kid].name)}에게 답장이 ${list.length}통 왔어요!</b>
+      <p>눌러서 편지를 열고 소리로 들어 보세요</p></div>
+    <span class="go">읽어주기 ▶</span>
+  </div>`;
+}
+function kidsBandHTML(){
+  const kids=visibleKids();
+  return `<section class="kids-band"><div class="kids ${kids.length===1?'single':''}">${kids.map(kidCardHTML).join('')}</div></section>`;
+}
+function kidCardHTML(k){
+  const kd=S.kids[k];
+  const done=routineDone(k),tot=ROUTINE.length;
+  const starPct=clamp(Math.round(kd.stars/Math.max(1,kd.goal)*100),0,100);
+  const latest=kd.growth[kd.growth.length-1];
+  const ds=isKid()?'':'display:none';
+  return `<div class="kid-card" style="--kid-soft:#F4FAEE;--kid-line:#DCEEC9;--kid-deep:#5C9C5A">
+    <div class="kid-top">
+      <div class="kid-avatar">${avatarSVG(kd)}</div>
+      <div class="kid-id">
+        <div class="kid-name">${esc(kd.name)}${kd.nickname?`<span class="kid-nick">${esc(kd.nickname)}</span>`:''}</div>
+        <div class="kid-age">${ageOf(kd.birth)}살 · ${birthLabel(kd.birth)} · ${kd.mood||'😊'}</div>
+      </div>
+      <button class="star-pill" id="star-${k}" onclick="openRoutine('${k}')" aria-label="${esc(kd.name)} 별 포인트">
+        <span>⭐</span>${kd.stars}</button>
+    </div>
+    <div class="goal">
+      <div class="goal-bar"><i style="width:${starPct}%"></i></div>
+      <div class="goal-txt">목표 ${kd.goal}개 · ${starPct}%</div>
+    </div>
+    <div class="kid-stats">
+      <span class="chip">🐷 <b>${won(kd.money)}</b>원</span>
+      <span class="chip">📏 <b>${kd.height}</b>cm · <b>${kd.weight}</b>kg${latest?` <span class="delta">+${Math.max(0,(kd.height-latest.height)).toFixed(1)}</span>`:''}</span>
+      <span class="chip">✨ 칭찬 <b>${kd.stickers}</b></span>
+    </div>
+    <button class="kid-cta" onclick="openRoutine('${k}')">
+      <span>🌙 오늘의 루틴 <b>${done}/${tot}</b></span>
+      <span class="arw">${done>=tot?'다 했어요! 🎉':'체크하러 가기 →'}</span>
+    </button>
+  </div>`;
+}
+function footerHTML(){
+  return `<div style="text-align:center;padding:26px 10px 6px;color:#B9A98F;font-size:11.5px;font-weight:700;line-height:1.7">
+    우리집 패밀리 보드 · 모든 기록은 이 기기(${storageOK?'이 브라우저':'임시 메모리'})에 저장돼요<br>
+    ${storageOK?'':'<span style="color:#D08A8A">지금은 저장이 안 되는 화면이에요(Safari에서 열거나 홈 화면에 추가해 주세요)</span><br>'}
+    마지막 저장 ${new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit'})}
+  </div>`;
+}
+
+/* ---------- 카드들 ---------- */
+function kidSegHTML(){
+  if(isKid()) return '';
+  const f=focusKid();
+  return `<div style="display:flex;gap:6px;margin-left:auto">
+    ${KIDS.map(k=>`<button class="ghost" style="padding:4px 9px;font-size:11px;${k===f?'background:#FFF3D2;border-color:#F2BE3C;color:#8A6206':''}"
+      onclick="setFocus('${k}')">${esc(S.kids[k].name)}</button>`).join('')}
+  </div>`;
+}
+function todoCardHTML(){
+  const k=focusKid(),kd=S.kids[k];
+  const done=routineDone(k),tot=ROUTINE.length;
+  const rows=ROUTINE.map(i=>{
+    const on=!!kd.routine.done[i.id];
+    return `<button class="row${on?' on':''}" onclick="toggleRoutine('${k}','${i.id}')">
+      <span class="r-ico">${i.icon}</span>
+      <span class="r-label">${i.label}</span>
+      <span class="box">✓</span>
+    </button>`;
+  }).join('');
+  const progs=visibleKids().map(kk=>{
+    const d=routineDone(kk);
+    return `<div class="kid-prog"><span class="kp-name">${esc(S.kids[kk].name)}</span>
+      <span class="kp-bar"><i style="width:${Math.round(d/ROUTINE.length*100)}%"></i></span>
+      <span class="kp-n">${d}/${ROUTINE.length}</span></div>`;
+  }).join('');
+  return `<section class="card">
+    <div class="card-head"><span class="ico" style="--ic:#EDE6FB">📋</span>
+      <div><h3>오늘의 할 일</h3><p>체크하면 별 +1${done>=tot?' · 오늘 다 했어요 🎉':''}</p></div>
+      ${kidSegHTML()}
+    </div>
+    <div class="rows">${rows}</div>
+    ${visibleKids().length>1?`<div style="display:flex;flex-direction:column;gap:6px;margin-top:2px">${progs}</div>`:''}
+  </section>`;
+}
+function mailCardHTML(){
+  if(isAdmin()){
+    const role=S.currentUser, list=inboxFor(role), unread=list.filter(l=>!l.read).length;
+    const last=list[0];
+    return `<section class="card card-soft" style="--ic:#FFE3EA">
+      <div class="card-head"><span class="ico" style="--ic:#FFE3EA">💌</span>
+        <div><h3>받은 편지함</h3><p>${esc(ROLES[role].label)} · 답장을 보내 주세요</p></div>
+        <button class="more" onclick="openInbox()">열기</button></div>
+      <div class="mail-stat"><span class="pill-badge">${unread}통 새 편지</span><span class="dot-sep"></span>전체 ${list.length}통</div>
+      ${last?`<div class="letter${!last.read?' new':''}" style="gap:5px">
+        <div class="l-top"><span class="l-who">${esc(last.kid?S.kids[last.kid].name:ROLES[last.from]?.label||'가족')}
+          <small>${relTime(last.ts)}</small></span></div>
+        <div class="l-text" style="font-size:13.5px">${esc(last.text)}</div></div>`
+      :`<div class="hint">아직 받은 편지가 없어요. 아이가 편지를 보내면 여기에 쏙 들어와요.</div>`}
+      <button class="big-btn" onclick="openInbox()">편지함 열기 💌</button>
+    </section>`;
+  }
+  const k=isKid()?myKid():focusKid();
+  const lim=limitOf(k);
+  const sent=lettersFor(k).length;
+  return `<section class="card card-soft" style="--ic:#FFE3EA">
+    <div class="card-head"><span class="ico" style="--ic:#FFE3EA">💌</span>
+      <div><h3>우체통</h3><p>마음을 편지로 보내요</p></div>
+      <button class="more" onclick="openMail()">열기</button></div>
+    <div class="pics">${PICS.map(p=>`<button class="pic" style="--pb:${p.bg}" onclick="openMail('${esc(p.t)}')" aria-label="${esc(p.t)}">${p.e}</button>`).join('')}</div>
+    <div class="mail-stat">
+      ${lim.unlimited?'<span class="pill-badge" style="background:#E4F6D8;color:#4E7A45">오늘은 마음껏 💛</span>':`<span>1시간 ${lim.used}/${LIMIT}통</span><span class="dot-sep"></span><span>${lim.left>0?lim.left+'통 더 보낼 수 있어요':'조금 이따 또!'}</span>`}
+      <span class="dot-sep"></span><span>보낸 편지 ${sent}통</span>
+      ${unreadReplies(k).length?`<span class="dot-sep"></span><span class="pill-badge">새 답장 ${unreadReplies(k).length}통 💌</span>`:''}
+    </div>
+    ${(()=>{const l=lettersFor(k)[0];
+      return `<div class="mail-stat" style="background:#FFF9E9;border:1px dashed #F0E0B8;border-radius:13px;padding:8px 11px;display:block">
+        ${l?`💌 최근 마음 <b>「${esc(l.text)}」</b>${l.reply?' · <span style="color:#6C8F5E;font-weight:900">답장 도착 💚</span>':' · 답장 기다리는 중 ⏳'}`
+            :'💌 아직 보낸 편지가 없어요. 첫 마음을 보내 볼까요?'}</div>`;})()}
+    <button class="big-btn" onclick="openMail()">편지 쓰러 가기 ✏️</button>
+  </section>`;
+}
+function foodCardHTML(){
+  const k=focusKid(),kd=S.kids[k];
+  const done=foodDone(k);
+  const tiles=FOODS.map(f=>{
+    const on=!!kd.food.eaten[f.id];
+    const n=kd.food.totals[f.id]||0;
+    return `<button class="food${on?' on':''}" onclick="toggleFood('${k}','${f.id}')" aria-label="${f.label} 먹었어요">
+      ${n?`<span class="f-cnt">${n}</span>`:''}
+      <span class="f-ico">${f.icon}</span><span class="f-name">${f.label}</span></button>`;
+  }).join('');
+  return `<section class="card">
+    <div class="card-head"><span class="ico" style="--ic:#FFEBC8">🥗</span>
+      <div><h3>골고루 먹자</h3><p>오늘 ${done}/${FOODS.length}가지</p></div>
+      ${kidSegHTML()}
+    </div>
+    <div class="foods">${tiles}</div>
+    <button class="ghost" onclick="openFood()" style="align-self:flex-start">다음에 도전 기록 보기 →</button>
+  </section>`;
+}
+function sceneSVG(){
+  return `<svg class="scene" viewBox="0 0 300 90" preserveAspectRatio="none" aria-hidden="true">
+    <rect width="300" height="90" fill="#F3FAFF"/>
+    <circle cx="248" cy="26" r="13" fill="#FFE18A"/>
+    <path d="M60 78a58 58 0 0 1 116 0" fill="none" stroke="#FFC2CF" stroke-width="9"/>
+    <path d="M72 78a46 46 0 0 1 92 0" fill="none" stroke="#FFE08A" stroke-width="9"/>
+    <path d="M84 78a34 34 0 0 1 68 0" fill="none" stroke="#BFE6A8" stroke-width="9"/>
+    <path d="M0 78q40 -22 80 0t80 0 80 0 60 0v12H0z" fill="#CFE9B6"/>
+    <text x="40" y="74" font-size="16">🌱</text><text x="152" y="74" font-size="14">🌷</text>
+    <text x="268" y="76" font-size="16">🌳</text>
+  </svg>`;
+}
+function growthCardHTML(){
+  const k=focusKid(),kd=S.kids[k];
+  const g=kd.growth.slice().sort((a,b)=>a.date<b.date?-1:1);
+  const last=g[g.length-1];
+  const dh=last?(kd.height-last.height):0;
+  const dw=last?(kd.weight-last.weight):0;
+  return `<section class="card">
+    <div class="card-head"><span class="ico" style="--ic:#DCEFFB">🌱</span>
+      <div><h3>이만큼 자랐어요</h3><p>${esc(kd.name)} 성장 기록</p></div>
+      ${kidSegHTML()}
+    </div>
+    ${sceneSVG()}
+    <div class="grow-nums">
+      <div class="grow-num"><small>키</small><b>${kd.height}<i>cm</i></b>
+        ${dh>0?`<div class="delta">지난 기록보다 +${dh.toFixed(1)}cm</div>`:''}</div>
+      <div class="grow-num"><small>몸무게</small><b>${kd.weight}<i>kg</i></b>
+        ${dw!==0?`<div class="delta">${dw>0?'+':''}${dw.toFixed(1)}kg</div>`:''}</div>
+    </div>
+    <button class="ghost" onclick="openGrowth('${k}')" style="align-self:flex-start">기록 전체 보기 →</button>
+  </section>`;
+}
+function monthGridHTML(y,m,mini){
+  const first=new Date(y,m,1),start=first.getDay(),days=new Date(y,m+1,0).getDate();
+  const t=todayKey();
+  let cells='';
+  for(let i=0;i<start;i++) cells+='<span></span>';
+  for(let d=1;d<=days;d++){
+    const ds=`${y}-${pad(m+1)}-${pad(d)}`;
+    const evs=eventsOn(ds);
+    const cls=['day'];
+    if(ds===t) cls.push('today');
+    if(evs.length){cls.push('has');if(evs.some(e=>e.kind==='trip'))cls.push('trip');}
+    cells+=`<button class="${cls.join(' ')}" onclick="openCalendar('${ds}')" aria-label="${m+1}월 ${d}일${evs.length?' 일정 '+evs.length+'개':''}">${d}${evs.length?'<i class="evd"></i>':''}</button>`;
+  }
+  const heads=WEEK.map((w,i)=>`<span class="wd${i===0?' sun':i===6?' sat':''}">${w}</span>`).join('');
+  return `<div class="cal${mini?' mini':''}">${heads}${cells}</div>`;
+}
+function calendarCardHTML(){
+  const y=S.cal.y,m=S.cal.m;
+  const monthEvents=S.events.filter(ev=>{
+    const s=ev.date,e=ev.end||ev.date;
+    const ms=`${y}-${pad(m+1)}-01`, me=`${y}-${pad(m+1)}-31`;
+    return s<=me && e>=ms;
+  });
+  return `<section class="card">
+    <div class="card-head"><span class="ico" style="--ic:#E4DCF8">📅</span>
+      <div><h3>우리 가족 일정</h3><p>${y}년 ${m+1}월 · ${monthEvents.length}개 일정</p></div>
+      <div class="cal-nav" style="margin-left:auto">
+        <button onclick="moveMonth(-1)" aria-label="이전 달">◀</button>
+        <button onclick="moveMonth(1)" aria-label="다음 달">▶</button>
+      </div>
+    </div>
+    ${monthGridHTML(y,m,true)}
+    <button class="ghost" onclick="openCalendar()" style="align-self:flex-start">일정 추가하기 →</button>
+  </section>`;
+}
+function upRowHTML(ev){
+  const lbl=ddayLabel(ev);
+  const cls=lbl==='D-DAY'?'soon':(lbl==='진행 중'?'':(lbl==='지났어요'?'done':''));
+  const d=parseD(ev.date);
+  return `<div class="up${ev.kind==='trip'?' trip':''}">
+    <span class="up-ico">${ev.emoji||'📌'}</span>
+    <span class="up-t"><b>${esc(ev.title)}</b><small>${d.getMonth()+1}월 ${d.getDate()}일 ${WEEK[d.getDay()]}요일${ev.end&&ev.end!==ev.date?' ~ '+(parseD(ev.end).getMonth()+1)+'/'+parseD(ev.end).getDate():''}</small></span>
+    <span class="dday ${cls}">${lbl}</span>
+  </div>`;
+}
+function upcomingCardHTML(){
+  const list=upcomingEvents(4);
+  return `<section class="card">
+    <div class="card-head"><span class="ico" style="--ic:#DCEFFB">⏰</span>
+      <div><h3>다가오는 일정</h3><p>우리 가족의 다음 약속</p></div>
+      <button class="more" onclick="openCalendar()">달력</button>
+    </div>
+    <div class="rows">${list.length?list.map(upRowHTML).join(''):'<div class="hint">아직 다가오는 일정이 없어요. 달력에서 추가해 보세요!</div>'}</div>
+  </section>`;
+}
+function homeCardHTML(){
+  const k=focusKid(),kd=S.kids[k];
+  const items=HOMESCHOOL[k];
+  const d=homeDone(k);
+  return `<section class="card">
+    <div class="card-head"><span class="ico" style="--ic:#E4F6D8">🎓</span>
+      <div><h3>홈스쿨</h3><p>${esc(kd.name)} 오늘 ${d}/${items.length} 완료</p></div>
+      ${kidSegHTML()}
+    </div>
+    <div class="rows">${items.map(i=>{
+      const on=!!kd.home.done[i.id];
+      return `<button class="row${on?' on':''}" onclick="toggleHome('${k}','${i.id}')">
+        <span class="r-ico">${i.icon}</span><span class="r-label">${i.label}</span><span class="box">✓</span></button>`;
+    }).join('')}</div>
+  </section>`;
+}
+function pillsCardHTML(){
+  const rows=visibleKids().map(k=>{
+    const kd=S.kids[k];
+    const taken=Object.keys(kd.pills.taken).filter(x=>kd.pills.taken[x]).length;
+    const med=kd.meds.map(m=>{
+      const on=!!kd.pills.taken[m.id];
+      return `<button class="med-chip${on?' on':''}" onclick="togglePill('${k}','${m.id}')">${m.icon} ${esc(m.label)}</button>`;
+    }).join('');
+    return `<div class="med-row">
+      <span class="m-name">${esc(kd.name)}<small>${taken>=kd.meds.length?'오늘 약 다 챙겼어요 🎉':taken+'/'+kd.meds.length+' 챙겼어요'}</small></span>
+      <span class="med-chips">${med}</span></div>`;
+  }).join('');
+  return `<section class="card">
+    <div class="card-head"><span class="ico" style="--ic:#FFE3EA">💊</span>
+      <div><h3>약 챙기기</h3><p>오늘 먹을 약을 눌러 체크</p></div>
+    </div>
+    <div class="rows">${rows}</div>
+  </section>`;
+}
+function adminCardHTML(){
+  const k=focusKid();
+  return `<section class="card span4" style="background:linear-gradient(170deg,#FBF8FF,#F4F0FF)">
+    <div class="card-head"><span class="ico" style="--ic:#E9E1FF">🛠️</span>
+      <div><h3>${esc(ROLES[S.currentUser].label)} 관리</h3><p>${esc(S.kids[k].name)}에게 바로 선물하기</p></div>
+      ${kidSegHTML()}
+    </div>
+    <div class="qa">
+      <button onclick="giveStar('${k}',1)">⭐ 별 +1</button>
+      <button onclick="giveStar('${k}',-1)">➖ 별 -1</button>
+      <button onclick="giveMoney('${k}',1000)">🐷 용돈 +1,000원</button>
+      <button onclick="giveSticker('${k}')">✨ 칭찬 스티커 +1</button>
+      <button onclick="openInbox()">💌 받은 편지함</button>
+      <button onclick="openSettings()">⚙️ 설정 열기</button>
+    </div>
+    <div class="mail-stat">${S.kids[k].unlimited?'<span class="pill-badge" style="background:#E4F6D8;color:#4E7A45">편지 제한 해제됨</span>':'<span>편지 1시간 3통 제한 중</span>'}
+      <span class="dot-sep"></span><span>별 ${S.kids[k].stars}개 · 용돈 ${won(S.kids[k].money)}원</span></div>
+  </section>`;
+}
+function gridHTML(){
+  const cards=[todoCardHTML(),mailCardHTML(),foodCardHTML(),growthCardHTML(),
+    calendarCardHTML(),upcomingCardHTML(),homeCardHTML(),pillsCardHTML()];
+  if(isAdmin()||isFamily()) cards.push(adminCardHTML());
+  return `<div class="grid">${cards.join('')}</div>`;
+}
+
+/* =========================================================
+   모달 기본
+   ========================================================= */
+let modal={type:null,args:[]};
+function setModal(html,cls){
+  document.getElementById('modalRoot').innerHTML=
+    `<div class="backdrop" onclick="backdropClick(event)"><div class="sheet ${cls||''}" role="dialog" aria-modal="true" onclick="event.stopPropagation()">${html}</div></div>`;
+  document.body.classList.add('modal-open');
+}
+function backdropClick(e){ if(e.target.classList.contains('backdrop')) closeModal(); }
+function closeModal(){
+  document.getElementById('modalRoot').innerHTML='';
+  document.body.classList.remove('modal-open');
+  modal={type:null,args:[]};
+}
+function drawModal(){
+  if(!modal.type) return;
+  const t=modal.type,a=modal.args;
+  if(t==='routine') return openRoutine(a[0],true);
+  if(t==='food') return openFood(true);
+  if(t==='mail') return openMail(a[0],true);
+  if(t==='inbox') return openInbox(true);
+  if(t==='replies') return openReplies(true);
+  if(t==='growth') return openGrowth(a[0],true);
+  if(t==='calendar') return openCalendar(a[0],true);
+  if(t==='settings') return openSettings(true);
+  if(t==='rolemenu') return openRoleMenu(true);
+  if(t==='read') return openRead(a[0],true);
+}
+function shHead(title,sub,icon){
+  return `<div class="sh-head">
+    ${icon?`<span class="ico" style="--ic:#FFF3D0">${icon}</span>`:''}
+    <div><h2>${title}</h2><p>${sub||''}</p></div>
+    <button class="sh-close" onclick="closeModal()" aria-label="닫기">✕</button>
+  </div>`;
+}
+
+/* =========================================================
+   루틴 (할 일) 모달
+   ========================================================= */
+function openRoutine(k, redraw){
+  const kids=k?[k]:visibleKids();
+  modal={type:'routine',args:[k]};
+  const cols=kids.map(kk=>{
+    const kd=S.kids[kk],done=routineDone(kk),tot=ROUTINE.length;
+    const all=done>=tot;
+    return `<div class="kid-col">
+      <div class="kc-head">
+        <span class="kc-av">${avatarSVG(kd)}</span>
+        <span><span class="kc-name">${esc(kd.name)}</span><span class="kc-sub"> · ${done}/${tot} 완료</span></span>
+        <span class="kc-badge ${all?'done-badge':''}">${all?'다 했어요! 🎉':'⭐ +'+done}</span>
+      </div>
+      <div class="rows">${ROUTINE.map(i=>{
+        const on=!!kd.routine.done[i.id];
+        return `<button class="row${on?' on':''}" onclick="toggleRoutine('${kk}','${i.id}')">
+          <span class="r-ico">${i.icon}</span><span class="r-label">${i.label}</span><span class="box">✓</span></button>`;
+      }).join('')}</div>
+      <div style="display:flex;gap:6px;margin-top:9px">
+        <button class="ghost" onclick="toggleRoutineAll('${kk}',true)">모두 체크</button>
+        <button class="ghost" onclick="toggleRoutineAll('${kk}',false)">다시 하기</button>
+      </div>
+    </div>`;
+  }).join('');
+  const html=shHead('🌙 오늘의 저녁 루틴','체크할 때마다 별 +1 · 취소하면 별도 돌아가요','📋')+
+    `<div class="sh-body">
+      <div class="cols ${kids.length>1?'two':''}">${cols}</div>
+      ${isKid()?'':'<div class="hint">부모님은 아래 관리 카드에서 별을 직접 조정할 수도 있어요.</div>'}
+    </div>`;
+  setModal(html,kids.length>1?'wide':'narrow');
+}
+function toggleRoutine(k,id){
+  const kd=S.kids[k];
+  const on=!kd.routine.done[id];
+  if(on){kd.routine.done[id]=true;kd.stars+=1;}
+  else{delete kd.routine.done[id];kd.stars=Math.max(0,kd.stars-1);}
+  save(); render(); drawModal();
+  const el=document.getElementById('star-'+k);
+  if(el){el.classList.remove('bump');void el.offsetWidth;el.classList.add('bump');}
+  if(on){
+    burst('⭐',4);
+    if(routineDone(k)>=ROUTINE.length){burst('🎉',12);toast('와! 오늘 루틴을 다 했어요! 🎉','ok');}
+    else toast(`별 +1 · ${S.kids[k].name} 별 ${kd.stars}개 ⭐`,'ok');
+  }
+}
+function toggleRoutineAll(k,on){
+  const kd=S.kids[k];
+  ROUTINE.forEach(i=>{
+    if(on&&!kd.routine.done[i.id]){kd.routine.done[i.id]=true;kd.stars+=1;}
+    if(!on&&kd.routine.done[i.id]){delete kd.routine.done[i.id];kd.stars=Math.max(0,kd.stars-1);}
+  });
+  save();render();drawModal();
+  toast(on?'오늘 루틴 모두 체크! 🎉':'루틴을 처음부터 다시 시작해요','ok');
+}
+
+/* =========================================================
+   골고루 먹자
+   ========================================================= */
+function openFood(redraw){
+  modal={type:'food',args:[]};
+  const kids=visibleKids();
+  const cols=kids.map(k=>{
+    const kd=S.kids[k];
+    const eaten=FOODS.filter(f=>kd.food.eaten[f.id]);
+    const tried=FOODS.filter(f=>kd.food.tried[f.id]);
+    return `<div class="kid-col">
+      <div class="kc-head">
+        <span class="kc-av">${avatarSVG(kd)}</span>
+        <span><span class="kc-name">${esc(kd.name)}</span><span class="kc-sub"> · 오늘 ${eaten.length}/${FOODS.length}가지</span></span>
+        <span class="kc-badge">${eaten.length>=6?'골고루 최고! 🌈':'조금 더!'}</span>
+      </div>
+      <div class="foods">${FOODS.map(f=>{
+        const on=!!kd.food.eaten[f.id];
+        const n=kd.food.totals[f.id]||0;
+        return `<button class="food${on?' on':''}" onclick="toggleFood('${k}','${f.id}')">
+          ${n?`<span class="f-cnt">${n}</span>`:''}
+          <span class="f-ico">${f.icon}</span><span class="f-name">${f.label}</span></button>`;
+      }).join('')}</div>
+      <div style="margin-top:10px">
+        <div class="hint" style="font-weight:800;color:var(--ink-soft);margin-bottom:5px">⏭ 다음에 도전 <span style="font-weight:700;color:var(--ink-mute)">· 눌러서 기록</span></div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px">
+          ${FOODS.map(f=>`<button class="med-chip${kd.food.tried[f.id]?' on':''}" onclick="toggleTried('${k}','${f.id}')">${f.icon} ${f.label}</button>`).join('')}
+        </div>
+        ${tried.length?`<div class="hint" style="margin-top:6px">오늘의 도전: ${tried.map(f=>f.label).join(', ')} — 내일은 한 입 먹어 볼까요? 💪</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+  setModal(shHead('🥗 골고루 먹자','먹은 음식은 콕 눌러 주세요. 안 먹은 건 "다음에 도전"에 기록!','🥗')+
+    `<div class="sh-body"><div class="cols ${kids.length>1?'two':''}">${cols}</div>
+      <div class="hint">음식 버튼을 다시 누르면 오늘 기록에서 빠져요. 오른쪽 위 숫자는 지금까지 먹은 횟수예요.</div></div>`,kids.length>1?'wide':'narrow');
+}
+function toggleFood(k,id){
+  const kd=S.kids[k];
+  const on=!kd.food.eaten[id];
+  if(on){kd.food.eaten[id]=true;kd.food.totals[id]=(kd.food.totals[id]||0)+1;delete kd.food.tried[id];
+    burst('🥗',3);}
+  else{delete kd.food.eaten[id];kd.food.totals[id]=Math.max(0,(kd.food.totals[id]||0)-1);}
+  save();render();drawModal();
+  if(on) toast('잘 먹었어요! 골고루 +1 🥗','ok');
+}
+function toggleTried(k,id){
+  const kd=S.kids[k];
+  if(kd.food.tried[id]) delete kd.food.tried[id];
+  else{kd.food.tried[id]=true;delete kd.food.eaten[id];}
+  save();render();drawModal();
+}
+
+/* =========================================================
+   우체통 - 아이 화면
+   ========================================================= */
+function openMail(pic, redraw){
+  if(isAdmin()) return openInbox(redraw);
+  if(pic!=null) S.drafts.mailPic=pic;
+  const k=isKid()?myKid():(S.drafts.sender||'elder');
+  if(!S.kids[k]) return;
+  S.drafts.sender=k;
+  modal={type:'mail',args:[null]};
+  const lim=limitOf(k);
+  const blocked=!lim.unlimited&&lim.left<=0;
+  const sel=S.drafts.mailPic||'';
+  const to=RECIPIENTS[S.drafts.mailTo]?S.drafts.mailTo:'parents';
+  const counter=lim.unlimited
+    ? `💛 오늘은 제한 없이 마음을 보낼 수 있어요`
+    : (blocked
+      ? `⏳ 1시간에 ${LIMIT}통까지 보낼 수 있어요. 약 ${lim.minLeft}분 뒤에 또 보내요!`
+      : `⏳ 1시간에 ${LIMIT}통까지 · 지금 ${lim.left}통 더 보낼 수 있어요`);
+  const html=shHead('💌 마음 편지 보내기',`${esc(S.kids[k].name)} → ${RECIPIENTS[to].label}`,'💌')+
+    `<div class="sh-body">
+      ${isFamily()?`<div class="sec"><h4>누가 보내나요?</h4><div class="to-chips">
+        ${KIDS.map(kk=>`<button class="to-chip ${kk===k?'on':''}" onclick="setSender('${kk}')">${esc(S.kids[kk].name)}</button>`).join('')}
+      </div></div>`:''}
+      <div class="sec"><h4>누구에게 보낼까요?</h4>
+        <div class="to-chips">
+          <button class="to-chip ${to==='parents'?'on':''}" onclick="setTo('parents')">💗 엄마·아빠</button>
+          <button class="to-chip ${to==='grandparents'?'on':''}" onclick="setTo('grandparents')">🌷 할머니·할아버지</button>
+        </div>
+      </div>
+      <div class="sec"><h4>마음을 콕 골라 보세요</h4>
+        <div class="pics-lg">${PICS.map(p=>{
+          const label=p.t.replace(p.e,'').trim();
+          return `<button class="pic pic-lg ${sel===p.t?'sel':''}" style="--pb:${p.bg}" onclick="pickPic('${esc(p.t)}')">
+            <span>${p.e}</span><span class="pt">${esc(label)}</span></button>`;
+        }).join('')}</div>
+      </div>
+      <div class="sec"><h4>직접 쓰고 싶어요</h4>
+        <div class="tf">
+          <input id="mailText" placeholder="하고 싶은 말을 적어 주세요" value="${esc(S.drafts.mailText)}" oninput="S.drafts.mailText=this.value">
+          <button class="big-btn sm" style="width:auto;padding:0 15px" onclick="sendTyped()">보내기</button>
+        </div>
+      </div>
+      <div class="counter ${blocked?'warn':''}">${counter}
+        ${lim.unlimited?'':`<span style="margin-left:auto">${lim.used}/${LIMIT}</span>`}</div>
+      <button class="big-btn ${(!sel||blocked)?'off':''}" onclick="sendPicked()">
+        ${sel?`「${esc(sel)}」 보내기 💌`:'마음을 먼저 골라 주세요'}</button>
+      <div class="sec"><h4>내가 보낸 편지 · 받은 답장</h4>${myLettersHTML(k)}</div>
+    </div>`;
+  setModal(html,'narrow');
+}
+function myLettersHTML(k){
+  const list=lettersFor(k).slice(0,6);
+  if(!list.length) return '<div class="hint">아직 보낸 편지가 없어요. 첫 마음을 보내 볼까요? 💛</div>';
+  return `<div style="display:flex;flex-direction:column;gap:9px">${list.map(l=>{
+    const r=RECIPIENTS[l.to]||{label:'가족'};
+    return `<div class="letter${l.reply&&!l.replyRead?' new':''}">
+      <div class="l-top"><span class="l-who">${r.label}에게<small>${relTime(l.ts)}</small></span>
+        <button class="speak-btn" onclick="speakLetter('${l.id}',this)">🔊 읽기</button></div>
+      <div class="l-text">${esc(l.text)}</div>
+      ${l.reply?`<div class="reply">
+          <div class="r-who">💚 ${esc(l.reply.by)} 답장 · ${relTime(l.reply.ts)}
+            <button class="speak-btn" style="margin-left:auto" onclick="speakReply('${l.id}',this)">🔊 읽어주기</button></div>
+          <div class="r-text">${esc(l.reply.text)}</div></div>`
+        :'<div class="hint">아직 답장을 기다리는 중이에요 ⏳</div>'}
+    </div>`;
+  }).join('')}</div>`;
+}
+function pickPic(t){S.drafts.mailPic=t;S.drafts.mailText='';save();drawModal();}
+function setTo(v){S.drafts.mailTo=v;save();drawModal();}
+function setSender(k){S.drafts.sender=k;save();drawModal();}
+function setFocus(k){S.drafts.focus=k;save();render();}
+function sendPicked(){
+  const sel=S.drafts.mailPic;
+  if(!sel) return toast('어떤 마음을 보낼지 먼저 골라 주세요','warn');
+  doSend(sel);
+}
+function sendTyped(){
+  const el=document.getElementById('mailText');
+  const t=el?el.value.trim():'';
+  if(!t) return toast('하고 싶은 말을 적어 주세요','warn');
+  doSend(t);
+}
+function doSend(text){
+  const k=isKid()?myKid():(S.drafts.sender||'elder');
+  const lim=limitOf(k);
+  if(!lim.unlimited&&lim.left<=0){
+    return toast(`1시간에 ${LIMIT}통까지 보낼 수 있어요. 약 ${lim.minLeft}분 뒤에 다시 보내요 ⏳`,'warn');
+  }
+  const letter={id:'l'+Date.now()+Math.random().toString(36).slice(2,6),from:k,kid:k,to:S.drafts.mailTo||'parents',
+    text:text,ts:Date.now(),read:false,reply:null};
+  S.letters.push(letter);
+  S.kids[k].sends=sendsLastHour(k).concat(Date.now());
+  S.drafts.mailPic='';S.drafts.mailText='';
+  save();render();drawModal();
+  burst('💌',8);
+  toast(`${RECIPIENTS[letter.to].label}에게 마음을 보냈어요 💌`,'ok');
+}
+
+/* =========================================================
+   우체통 - 관리자(부모/조부모) 편지함
+   ========================================================= */
+function openInbox(redraw){
+  if(!isAdmin()){toast('관리자 모드에서 열 수 있어요','warn');return;}
+  modal={type:'inbox',args:[]};
+  const role=S.currentUser;
+  const list=inboxFor(role);
+  list.forEach(l=>{l.read=true;});
+  save();
+  const kids=visibleKids();
+  const replies=list.filter(l=>l.reply);
+  const body=list.length?list.map(l=>{
+    const fromName=l.kid?S.kids[l.kid].name:(ROLES[l.from]?ROLES[l.from].label:'가족');
+    return `<div class="letter${l.reply?'':' new'}">
+      <div class="l-top">
+        <span class="l-av">${l.kid?avatarSVG(S.kids[l.kid]):'💗'}</span>
+        <span class="l-who">${esc(fromName)}<small>${RECIPIENTS[l.to]?RECIPIENTS[l.to].label:''}에게 · ${relTime(l.ts)}</small></span>
+        <button class="speak-btn" onclick="speakLetter('${l.id}',this)">🔊 읽어보기</button>
+      </div>
+      <div class="l-text">${esc(l.text)}</div>
+      ${l.reply
+        ? `<div class="reply"><div class="r-who">💚 보낸 답장 · ${relTime(l.reply.ts)}
+             <button class="speak-btn" style="margin-left:auto" onclick="speakReply('${l.id}',this)">🔊</button></div>
+           <div class="r-text">${esc(l.reply.text)}</div></div>`
+        : `<div class="tf" style="flex-direction:column;align-items:stretch;gap:6px">
+             <textarea id="reply-${l.id}" placeholder="따뜻한 답장을 적어 주세요"></textarea>
+             <div style="display:flex;gap:5px;flex-wrap:wrap">
+               <button class="ghost" onclick="quickReply('${l.id}','사랑해 💗')">사랑해 💗</button>
+               <button class="ghost" onclick="quickReply('${l.id}','잘했어! 💛')">잘했어! 💛</button>
+               <button class="ghost" onclick="quickReply('${l.id}','보고 싶어 🥰')">보고 싶어 🥰</button>
+               <button class="big-btn sm" style="flex:1;min-width:110px" onclick="sendReply('${l.id}')">답장 보내기 💌</button>
+             </div>
+           </div>`}
+    </div>`;
+  }).join(''):'<div class="hint">아직 받은 편지가 없어요. 아이가 편지를 보내면 여기에 도착해요.</div>';
+  setModal(shHead('💌 받은 편지함',`${esc(ROLES[role].label)} · 새 편지 ${list.filter(l=>!l.read).length}통 · 답장 ${replies.length}통`,'💌')+
+    `<div class="sh-body">
+      <div class="counter">📮 이 기기 안에서 주고받는 편지예요. 답장하면 아이 화면에 바로 알림이 떠요.</div>
+      <div style="display:flex;flex-direction:column;gap:11px">${body}</div>
+      <div class="hint">아이별 편지 수: ${kids.map(k=>`${esc(S.kids[k].name)} ${lettersFor(k).length}통`).join(' · ')}</div>
+    </div>`,'wide');
+}
+function quickReply(id,txt){
+  const el=document.getElementById('reply-'+id);
+  if(el) el.value=txt;
+}
+function sendReply(id){
+  const l=S.letters.find(x=>x.id===id);
+  if(!l) return;
+  const el=document.getElementById('reply-'+id);
+  const txt=el?el.value.trim():'';
+  if(!txt) return toast('답장 내용을 적어 주세요','warn');
+  l.reply={text:txt,ts:Date.now(),by:ROLES[S.currentUser].label};
+  l.replyRead=false;
+  save();render();drawModal();
+  burst('💚',8);
+  toast(`${l.kid?S.kids[l.kid].name+'에게':'답장을'} 보냈어요! 아이 화면에 알림이 떠요 💌`,'ok');
+}
+
+/* =========================================================
+   답장 알림 (아이)
+   ========================================================= */
+function openReplies(redraw){
+  const k=isKid()?myKid():(S.drafts.sender||'elder');
+  const list=unreadReplies(k);
+  if(!list.length){toast('새 답장이 없어요. 편지함을 열어 볼까요?','ok');return openMail(null,true);}
+  modal={type:'replies',args:[k]};
+  const html=shHead('💌 답장이 도착했어요!',`${esc(S.kids[k].name)}에게 온 마음 · 눌러서 들어 보세요`,'💌')+
+    `<div class="sh-body">
+      ${list.map(l=>`<div class="letter new">
+        <div class="l-top"><span class="l-av">${l.reply.by.indexOf('할머니')>=0?'🌷':'💗'}</span>
+          <span class="l-who">${esc(l.reply.by)}<small>${relTime(l.reply.ts)} · 내가 보낸 「${esc(l.text)}」</small></span>
+        </div>
+        <div class="l-text">${esc(l.reply.text)}</div>
+        <div style="display:flex;gap:6px">
+          <button class="big-btn sm" style="width:auto;padding:0 14px" onclick="speakReply('${l.id}',this)">🔊 읽어주기</button>
+          <button class="ghost" onclick="openRead('${l.id}')">편지 크게 보기</button>
+        </div>
+      </div>`).join('')}
+      <button class="big-btn mint" onclick="markRepliesRead('${k}')">다 읽었어요 ✓</button>
+    </div>`;
+  setModal(html,'narrow');
+  setTimeout(()=>{
+    const first=list[0];
+    const btn=document.querySelector('.big-btn.sm');
+    speak([first.text,first.reply.text].join('. '),btn);
+  },350);
+}
+function markRepliesRead(k){
+  S.letters.filter(l=>l.from===k&&l.reply).forEach(l=>{l.replyRead=true;});
+  save();closeModal();render();
+  burst('💗',6);toast('답장을 모두 읽었어요 💗','ok');
+}
+function openRead(id){
+  const l=S.letters.find(x=>x.id===id);
+  if(!l) return;
+  if(!l.reply) return;
+  modal={type:'read',args:[id]};
+  const fromName=l.reply.by;
+  const html=shHead('💌 편지 읽기',`${esc(fromName)}의 답장`, '💌')+
+    `<div class="sh-body">
+      <div class="letter">
+        <div class="l-who">내가 보낸 마음<small>${relTime(l.ts)}</small></div>
+        <div class="l-text">${esc(l.text)}</div>
+      </div>
+      <div class="letter new">
+        <div class="l-top"><span class="l-who">${esc(fromName)}<small>${relTime(l.reply.ts)}</small></span>
+          <button class="speak-btn" onclick="speakReply('${l.id}',this)">🔊 다시 읽기</button></div>
+        <div class="l-text" id="readText">${esc(l.reply.text)}</div>
+      </div>
+      <button class="big-btn" onclick="speakAll('${l.id}',this)">🔊 편지 전체 읽어주기</button>
+    </div>`;
+  setModal(html,'narrow');
+  if(l.from===myKid()&&!l.replyRead){l.replyRead=true;save();}
+  setTimeout(()=>{
+    const btn=document.querySelector('.speak-btn.on')||document.querySelector('.big-btn');
+    speak([l.text,l.reply.text].join('. '),btn);
+  },320);
+}
+function speakAll(id,el){
+  const l=S.letters.find(x=>x.id===id);
+  if(l&&l.reply) speak([l.text,l.reply.text].join('. '),el);
+}
+
+/* =========================================================
+   이만큼 자랐어요 (성장 기록)
+   ========================================================= */
+function growthChart(kd){
+  const g=kd.growth.slice().sort((a,b)=>a.date<b.date?-1:1);
+  const pts=g.concat([{date:todayKey(),height:kd.height,weight:kd.weight}]);
+  if(pts.length<2) return '';
+  const hs=pts.map(p=>Number(p.height)||0);
+  const min=Math.min.apply(null,hs)-1,max=Math.max.apply(null,hs)+1;
+  const W=300,H=96,padx=10,pady=12;
+  const xs=i=>padx+i*(W-padx*2)/(pts.length-1);
+  const ys=h=>H-pady-((h-min)/Math.max(.1,max-min))*(H-pady*2);
+  const line=pts.map((p,i)=>`${i?'L':'M'}${xs(i).toFixed(1)} ${ys(Number(p.height)||0).toFixed(1)}`).join(' ');
+  const dots=pts.map((p,i)=>`<circle cx="${xs(i).toFixed(1)}" cy="${ys(Number(p.height)||0).toFixed(1)}" r="3.4" fill="#F2BE3C" stroke="#fff" stroke-width="1.6"/>`).join('');
+  return `<svg class="scene" viewBox="0 0 ${W} ${H}" style="height:96px" aria-hidden="true">
+    <rect width="${W}" height="${H}" rx="14" fill="#FFFBF0"/>
+    <path d="${line}" fill="none" stroke="#B6DFA6" stroke-width="3.2" stroke-linecap="round"/>
+    ${dots}
+    <text x="${W-8}" y="16" font-size="9" fill="#B3A28B" text-anchor="end">키 변화</text>
+  </svg>`;
+}
+function openGrowth(k, redraw){
+  k=k||focusKid();
+  modal={type:'growth',args:[k]};
+  const kd=S.kids[k];
+  const g=kd.growth.slice().sort((a,b)=>a.date<b.date?1:-1);
+  const rows=g.length?g.map(r=>`<div class="med-row">
+      <span class="m-name">${r.date.replace(/-/g,'.')}<small>${WEEK[parseD(r.date).getDay()]}요일 기록</small></span>
+      <span class="chip">📏 <b>${r.height}</b>cm</span>
+      <span class="chip">⚖️ <b>${r.weight}</b>kg</span>
+      <button class="ghost" style="padding:4px 8px" onclick="delGrowth('${k}','${r.date}')">✕</button>
+    </div>`).join(''):'<div class="hint">아직 기록이 없어요. 오늘 키와 몸무게를 남겨 보세요!</div>';
+  setModal(shHead('🌱 이만큼 자랐어요',`${esc(kd.name)}의 성장 기록 · 지금 ${kd.height}cm ${kd.weight}kg`,'🌱')+
+    `<div class="sh-body">
+      ${growthChart(kd)}
+      <div class="sec"><h4>새 기록 남기기</h4>
+        <div class="field-row3">
+          <div class="field"><label>날짜</label><input type="date" id="gDate" value="${todayKey()}"></div>
+          <div class="field"><label>키(cm)</label><input type="number" step="0.1" id="gHeight" value="${kd.height}"></div>
+          <div class="field"><label>몸무게(kg)</label><input type="number" step="0.1" id="gWeight" value="${kd.weight}"></div>
+        </div>
+        <button class="big-btn mint" onclick="addGrowth('${k}')">기록 저장하기</button>
+      </div>
+      <div class="sec"><h4>지난 기록</h4><div class="rows">${rows}</div></div>
+    </div>`,'narrow');
+}
+function addGrowth(k){
+  const kd=S.kids[k];
+  const d=(document.getElementById('gDate').value||todayKey());
+  const h=num(document.getElementById('gHeight').value);
+  const w=num(document.getElementById('gWeight').value);
+  if(!h||!w) return toast('키와 몸무게를 숫자로 적어 주세요','warn');
+  kd.growth=kd.growth.filter(r=>r.date!==d);
+  kd.growth.push({date:d,height:h,weight:w});
+  kd.height=h;kd.weight=w;
+  save();render();drawModal();
+  burst('🌱',6);toast('성장 기록을 저장했어요 🌱','ok');
+}
+function delGrowth(k,date){
+  const kd=S.kids[k];
+  kd.growth=kd.growth.filter(r=>r.date!==date);
+  save();render();drawModal();
+}
+
+/* =========================================================
+   우리 가족 일정 (달력)
+   ========================================================= */
+function openCalendar(ds, redraw){
+  if(ds) S.drafts.calDate=ds;
+  const sel=S.drafts.calDate||todayKey();
+  const y=S.cal.y,m=S.cal.m;
+  modal={type:'calendar',args:[null]};
+  const t=todayKey();
+  const dayEvents=eventsOn(sel);
+  const trip=upcomingEvents().find(e=>e.kind==='trip');
+  const tripLine=trip?`<div class="up trip"><span class="up-ico">${trip.emoji}</span>
+      <span class="up-t"><b>${esc(trip.title)}</b><small>${trip.date.replace(/-/g,'.')} ~ ${(trip.end||trip.date).replace(/-/g,'.')}</small></span>
+      <span class="dday">${ddayLabel(trip)}</span></div>`:'';
+  setModal(shHead('📅 우리 가족 일정',`${y}년 ${m+1}월 · 날짜를 눌러 그날 일정을 봐요`,'📅')+
+    `<div class="sh-body">
+      ${tripLine}
+      <div class="sec">
+        <div class="cal-head" style="margin-bottom:8px">
+          <b>${y}년 ${m+1}월</b>
+          <div class="cal-nav"><button onclick="moveMonth(-1)">◀</button><button onclick="moveMonth(1)">▶</button></div>
+        </div>
+        ${monthGridHTML(y,m)}
+      </div>
+      <div class="sec"><h4>${parseD(sel).getMonth()+1}월 ${parseD(sel).getDate()}일 ${WEEK[parseD(sel).getDay()]}요일 일정</h4>
+        <div class="rows">
+          ${dayEvents.length?dayEvents.map(ev=>`<div class="up${ev.kind==='trip'?' trip':''}">
+            <span class="up-ico">${ev.emoji||'📌'}</span>
+            <span class="up-t"><b>${esc(ev.title)}</b><small>${ev.date}${ev.end&&ev.end!==ev.date?' ~ '+ev.end:''}</small></span>
+            <button class="ghost" style="padding:4px 9px" onclick="delEvent('${ev.id}')">삭제</button>
+          </div>`).join(''):'<div class="hint">이 날은 일정이 없어요. 아래에서 추가해 보세요.</div>'}
+        </div>
+      </div>
+      <div class="sec"><h4>일정 추가</h4>
+        <div class="field-row">
+          <div class="field"><label>날짜</label><input type="date" id="evDate" value="${sel}"></div>
+          <div class="field"><label>이모지</label><input id="evEmoji" maxlength="4" value="📌"></div>
+        </div>
+        <div class="field"><label>일정 이름</label><input id="evTitle" placeholder="예: 할머니 댁 방문"></div>
+        <div class="field"><label>마지막 날 (여행처럼 여러 날이면 입력)</label><input type="date" id="evEnd"></div>
+        <button class="big-btn mint" onclick="addEvent()">일정 추가하기</button>
+      </div>
+    </div>`,'narrow');
+}
+function moveMonth(d){
+  let y=S.cal.y,m=S.cal.m+d;
+  if(m<0){m=11;y--;} if(m>11){m=0;y++;}
+  S.cal.y=y;S.cal.m=m;save();drawModal();
+}
+function addEvent(){
+  const date=document.getElementById('evDate').value||todayKey();
+  const end=document.getElementById('evEnd').value||'';
+  const title=(document.getElementById('evTitle').value||'').trim();
+  const emoji=(document.getElementById('evEmoji').value||'📌').trim()||'📌';
+  if(!title) return toast('일정 이름을 적어 주세요','warn');
+  S.events.push({id:'ev'+Date.now(),date:date,end:end&&end>=date?end:'',title:title,emoji:emoji,kind:'family'});
+  S.drafts.calDate=date;
+  save();render();drawModal();
+  burst(emoji,5);toast('일정을 추가했어요 '+emoji,'ok');
+}
+function delEvent(id){
+  S.events=S.events.filter(e=>e.id!==id);
+  save();render();drawModal();
+  toast('일정을 지웠어요');
+}
+
+/* =========================================================
+   약 · 홈스쿨 · 관리자 선물
+   ========================================================= */
+function togglePill(k,medId){
+  const kd=S.kids[k];
+  if(kd.pills.taken[medId]) delete kd.pills.taken[medId];
+  else kd.pills.taken[medId]=true;
+  save();render();
+  const all=kd.meds.every(m=>kd.pills.taken[m.id]);
+  if(all){burst('💊',5);toast(`${S.kids[k].name} 오늘 약 다 챙겼어요 🎉`,'ok');}
+}
+function toggleHome(k,id){
+  const kd=S.kids[k];
+  if(kd.home.done[id]) delete kd.home.done[id];
+  else{kd.home.done[id]=true;burst('🎓',3);}
+  save();render();
+  if(homeDone(k)>=HOMESCHOOL[k].length) toast(`${S.kids[k].name} 홈스쿨 오늘치 완료! 🎓`,'ok');
+}
+function giveStar(k,delta){
+  const kd=S.kids[k];
+  kd.stars=clamp(kd.stars+delta,0,999);
+  save();render();
+  const el=document.getElementById('star-'+k);
+  if(el){el.classList.remove('bump');void el.offsetWidth;el.classList.add('bump');}
+  if(delta>0) burst('⭐',5);
+  toast(`${S.kids[k].name} 별 ${delta>0?'+':''}${delta} · 지금 ${kd.stars}개`,'ok');
+}
+function giveMoney(k,amount){
+  const kd=S.kids[k];
+  kd.money=Math.max(0,kd.money+amount);
+  save();render();
+  burst('🐷',5);toast(`${S.kids[k].name} 저금통에 ${won(amount)}원을 넣었어요`, 'ok');
+}
+function giveSticker(k){
+  const kd=S.kids[k];
+  kd.stickers+=1;
+  save();render();
+  burst('✨',7);toast(`${S.kids[k].name} 칭찬 스티커 +1 ✨`,'ok');
+}
+
+/* =========================================================
+   설정
+   ========================================================= */
+function openSettings(redraw){
+  modal={type:'settings',args:[]};
+  const d=S.device;
+  const devOpts=[
+    {id:'elder',ico:'🐻',label:'큰딸 태블릿',sub:'켜면 큰딸 화면으로 시작해요'},
+    {id:'younger',ico:'🐰',label:'작은딸 태블릿',sub:'켜면 작은딸 화면으로 시작해요'},
+    {id:'family',ico:'🏠',label:'가족 공용 보드',sub:'거실 태블릿 · 가족 모두 함께'}
+  ].map(o=>`<button class="dev-opt ${d.user===o.id?'on':''}" onclick="chooseDevice('${o.id}',true)">
+      <span class="d-ico">${o.ico}</span>
+      <span><b>${o.label}</b><small>${o.sub}</small></span>
+      <span class="chk">${d.user===o.id?'✓':''}</span>
+    </button>`).join('');
+  const kidSec=KIDS.map(k=>{
+    const kd=S.kids[k];
+    return `<div class="kid-col">
+      <div class="kc-head"><span class="kc-av">${avatarSVG(kd)}</span>
+        <span><span class="kc-name">${esc(kd.name)}</span><span class="kc-sub"> · ${ageOf(kd.birth)}살</span></span></div>
+      <div class="field"><label>이름 (화면에 보여요)</label><input value="${esc(kd.name)}" onchange="setKidField('${k}','name',this.value)"></div>
+      <div class="field"><label>애칭</label><input value="${esc(kd.nickname)}" onchange="setKidField('${k}','nickname',this.value)"></div>
+      <div class="field"><label>태어난 달</label><input type="month" value="${kd.birth}" onchange="setKidField('${k}','birth',this.value)"></div>
+      <div class="field"><label>캐릭터</label>
+        <div class="avatar-pick">${AVATARS.map(a=>`<button class="av-opt ${kd.avatar===a?'on':''}" onclick="pickAvatar('${k}','${a}')">${avatarSVG({avatar:a,color:kd.color})}</button>`).join('')}</div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>목표 별 개수</label><input type="number" min="1" value="${kd.goal}" onchange="setKidField('${k}','goal',this.value)"></div>
+        <div class="field"><label>용돈 잔액(원)</label><input type="number" value="${kd.money}" onchange="setKidField('${k}','money',this.value)"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>키(cm)</label><input type="number" step="0.1" value="${kd.height}" onchange="setKidField('${k}','height',this.value)"></div>
+        <div class="field"><label>몸무게(kg)</label><input type="number" step="0.1" value="${kd.weight}" onchange="setKidField('${k}','weight',this.value)"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>아침 약 이름</label><input value="${esc(kd.meds[0].label)}" onchange="setMedName('${k}',0,this.value)"></div>
+        <div class="field"><label>저녁 약 이름</label><input value="${esc(kd.meds[1]?kd.meds[1].label:'')}" onchange="setMedName('${k}',1,this.value)"></div>
+      </div>
+      <label class="switch"><input type="checkbox" ${kd.unlimited?'checked':''} onchange="toggleUnlimited('${k}',this.checked)"> 편지 1시간 제한 풀기</label>
+    </div>`;
+  }).join('');
+  const html=shHead('⚙️ 설정','아이 이름·목표·기기 설정을 여기서 바꿔요','⚙️')+
+    `<div class="sh-body">
+      <div class="sec"><h4>🏠 이 기기 설정</h4>
+        <div class="hint" style="margin-bottom:9px">아이별로 태블릿이 따로 있다면, 이 기기가 누구의 것인지 정해 두세요. 파일을 열 때마다 그 화면으로 시작해요.</div>
+        ${devOpts}
+        <label class="switch"><input type="checkbox" ${d.locked?'checked':''} onchange="toggleDeviceLock(this.checked)"> 이 기기에서는 사용자를 바꾸지 못하게 잠그기</label>
+        <div class="hint">지금 이 기기: <b>${esc(devName())}</b>${d.locked?' · 잠김 🔒':''}</div>
+      </div>
+      <div class="sec"><h4>👧 아이 정보</h4><div class="cols two">${kidSec}</div></div>
+      <div class="sec"><h4>🔒 관리자 비밀번호</h4>
+        <div class="hint" style="margin-bottom:8px">비워 두면 누구나 관리자 모드로 바꿀 수 있어요. 4자리를 넣으면 아이가 관리자 모드로 들어갈 때 물어봐요.</div>
+        <div class="tf"><input id="pinInput" inputmode="numeric" maxlength="4" placeholder="4자리 숫자 (없으면 비움)" value="${esc(S.settings.pin)}">
+          <button class="big-btn sm" style="width:auto;padding:0 15px" onclick="savePin()">저장</button></div>
+      </div>
+      <div class="sec"><h4>☁️ 가족 클라우드 (선택)</h4>
+        <div class="hint" style="margin-bottom:9px">
+          지금은 <b>이 기기 안에만</b> 편지와 기록이 저장돼요. 큰딸 태블릿에서 보낸 편지를 엄마 폰에서 바로 보려면 실시간 동기화가 필요해요.<br>
+          ① supabase.com 에서 무료 프로젝트를 만들고 ② Project Settings → API 의 <b>URL</b> 과 <b>anon public key</b> 를 아래에 넣어 주세요.
+          (연동 코드는 다음 단계에서 이어 붙일 수 있게 자리만 만들어 두었어요)
+        </div>
+        <div class="field"><label>Supabase URL</label><input id="cloudUrl" placeholder="https://xxxx.supabase.co" value="${esc(S.cloud.url)}"></div>
+        <div class="field"><label>anon public key</label><input id="cloudKey" placeholder="eyJhbGciOi..." value="${esc(S.cloud.key)}"></div>
+        <button class="ghost" onclick="saveCloud()">설정 저장</button>
+      </div>
+      <div class="sec"><h4>💾 데이터</h4>
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <button class="ghost" onclick="exportData()">⬇️ 백업 파일로 저장</button>
+          <label class="ghost" style="cursor:pointer">⬆️ 백업 불러오기
+            <input type="file" accept="application/json" style="display:none" onchange="importData(this)"></label>
+          <button class="ghost" style="color:#C0758A" onclick="resetAll()">🧹 처음부터 다시</button>
+        </div>
+        <div class="hint" style="margin-top:8px">${storageOK?'이 브라우저(localStorage)에 자동 저장 중이에요.':'⚠️ 이 화면에서는 저장이 안 돼요. Safari나 홈 화면 앱으로 열어 주세요.'}</div>
+      </div>
+    </div>`;
+  setModal(html);
+}
+function setKidField(k,field,v){
+  const kd=S.kids[k];
+  if(['goal','money','height','weight'].includes(field)){
+    const n=num(v);
+    kd[field]=field==='goal'?Math.max(1,Math.round(n)):n;
+  }else{
+    kd[field]=String(v||'').trim()||(field==='name'?(k==='elder'?'큰딸':'작은딸'):'');
+  }
+  save();render();
+  toast('저장했어요 ✏️','ok');
+}
+function setMedName(k,i,v){
+  const kd=S.kids[k];
+  if(!kd.meds[i]) kd.meds[i]={id:i===0?'morning':'evening',icon:i===0?'🌞':'🌙',label:''};
+  kd.meds[i].label=String(v||'').trim()||(i===0?'비타민':'유산균');
+  save();render();
+}
+function pickAvatar(k,a){
+  S.kids[k].avatar=a;
+  save();render();drawModal();
+}
+function toggleUnlimited(k,on){
+  S.kids[k].unlimited=!!on;
+  save();render();
+  toast(on?`${S.kids[k].name} 편지 제한을 풀었어요 💛`:`${S.kids[k].name} 편지 1시간 3통 제한으로 돌아왔어요`,'ok');
+}
+function toggleDeviceLock(on){
+  S.device.locked=!!on;
+  save();render();
+  toast(on?'이 기기를 잠갔어요 🔒 (설정에서 풀 수 있어요)':'잠금을 풀었어요','ok');
+}
+function savePin(){
+  const el=document.getElementById('pinInput');
+  const v=(el?el.value:'').replace(/[^0-9]/g,'').slice(0,4);
+  S.settings.pin=v;
+  save();
+  toast(v?'관리자 비밀번호를 저장했어요 🔒':'비밀번호를 지웠어요','ok');
+}
+function saveCloud(){
+  S.cloud.url=(document.getElementById('cloudUrl').value||'').trim();
+  S.cloud.key=(document.getElementById('cloudKey').value||'').trim();
+  save();
+  if(S.cloud.url&&S.cloud.key) toast('클라우드 정보를 저장했어요 · 연동 코드는 다음 단계에서 붙여요 ☁️','ok');
+  else toast('클라우드 정보를 저장했어요 (아직 기기 저장 모드)','ok');
+}
+function exportData(){
+  try{
+    const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='우리집_패밀리_보드_백업.json';
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+    toast('백업 파일을 내려받았어요 💾','ok');
+  }catch(e){toast('백업에 실패했어요','warn');}
+}
+function importData(input){
+  const f=input.files&&input.files[0];
+  if(!f) return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const p=JSON.parse(String(reader.result));
+      S=migrate(p);save();closeModal();render();
+      toast('백업을 불러왔어요 ✓','ok');
+    }catch(e){toast('파일을 읽을 수 없어요','warn');}
+  };
+  reader.readAsText(f);
+}
+function resetAll(){
+  if(!confirm('모든 기록(별·편지·일정)을 지우고 처음 상태로 돌아갈까요?')) return;
+  S=defaultState();
+  S.settings.onboarded=true;
+  save();closeModal();render();
+  toast('처음 상태로 돌아갔어요');
+}
+
+/* =========================================================
+   사용자 전환 · 기기 설정 · 비밀번호
+   ========================================================= */
+function openRoleMenu(redraw){
+  modal={type:'rolemenu',args:[]};
+  const opts=Object.values(ROLES).map(r=>{
+    const disabled=S.device.locked&&r.id!==S.currentUser;
+    return `<button class="role-opt ${r.id===S.currentUser?'on':''}" style="${disabled?'opacity:.45':''}" onclick="selectRole('${r.id}')">
+      <span class="ro-av">${roleAvatar(r.id)}</span>
+      <span><b>${esc(r.label)}</b><small>${r.kind==='kid'?esc(S.kids[r.kid].name)+' · 내 화면':r.kind==='admin'?'관리자 · 편지함과 아이 관리':'모두 함께 보는 보드'}</small></span>
+      <span class="em">${r.kind==='admin'?'🔑':'→'}</span>
+    </button>`;
+  }).join('');
+  setModal(shHead('누구세요?','사용자를 바꾸면 그 사람 화면으로 바뀌어요','🏠')+
+    `<div class="sh-body">${opts}
+      ${S.device.locked?'<div class="hint">🔒 이 기기는 잠겨 있어요. 설정에서 풀 수 있어요.</div>':''}
+      <div class="hint">${esc(devName())} · 설정에서 기기 기본 사용자를 바꿀 수 있어요.</div>
+    </div>`,'narrow');
+}
+function selectRole(id){
+  const r=ROLES[id];
+  if(!r) return;
+  if(S.device.locked&&id!==S.currentUser){
+    return toast('이 기기는 '+ROLES[S.currentUser].label+' 전용으로 잠겨 있어요. 설정에서 풀 수 있어요 🔒','warn');
+  }
+  if(r.kind==='admin'&&S.settings.pin){
+    pendingRole=id;return openPin(id);
+  }
+  applyRole(id);
+}
+function applyRole(id){
+  S.currentUser=id;
+  save();closeModal();render();
+  const r=ROLES[id];
+  toast(r.kind==='kid'?`${S.kids[r.kid].name} 화면이에요 💛`:r.label+' 화면이에요','ok');
+  if(r.kind==='kid'){
+    const un=unreadReplies(r.kid);
+    if(un.length) setTimeout(()=>openReplies(),700);
+  }
+}
+let pendingRole=null,pinBuf='';
+function openPin(id){
+  pinBuf='';
+  pendingRole=id;
+  modal={type:'pin',args:[id]};
+  setModal(shHead('🔒 관리자 비밀번호','4자리를 눌러 주세요','🔑')+
+    `<div class="sh-body">
+      <div class="pin-dots" id="pinDots">${'<i></i>'.repeat(4)}</div>
+      <div class="pinpad">
+        ${[1,2,3,4,5,6,7,8,9].map(n=>`<button onclick="pinKey('${n}')">${n}</button>`).join('')}
+        <button onclick="pinDel()" style="font-size:15px">⌫</button>
+        <button onclick="pinKey('0')">0</button>
+        <button onclick="closeModal()" style="font-size:13px">취소</button>
+      </div>
+    </div>`,'narrow');
+}
+function pinKey(n){
+  if(pinBuf.length>=4) return;
+  pinBuf+=n;
+  paintPin();
+  if(pinBuf.length===4) setTimeout(checkPin,160);
+}
+function pinDel(){pinBuf=pinBuf.slice(0,-1);paintPin();}
+function paintPin(){
+  const d=document.getElementById('pinDots');
+  if(d) d.innerHTML=Array.from({length:4},(_,i)=>`<i class="${i<pinBuf.length?'on':''}"></i>`).join('');
+}
+function checkPin(){
+  if(pinBuf===S.settings.pin){
+    const id=pendingRole;
+    pinBuf='';pendingRole=null;
+    applyRole(id);
+  }else{
+    pinBuf='';paintPin();
+    toast('비밀번호가 달라요. 다시 눌러 주세요','warn');
+  }
+}
+function openDeviceSetup(){
+  modal={type:'device'};
+  setModal(shHead('어서 오세요! 👋','이 태블릿은 누구의 것인가요? 나중에 설정에서 바꿀 수 있어요','🏠')+
+    `<div class="sh-body">
+      ${[{id:'elder',ico:'🐻',t:'큰딸 태블릿',s:'켜면 큰딸 화면으로 시작'},
+         {id:'younger',ico:'🐰',t:'작은딸 태블릿',s:'켜면 작은딸 화면으로 시작'},
+         {id:'family',ico:'🏠',t:'가족 공용 보드',s:'거실 태블릿 · 모두 함께 보기'}].map(o=>
+        `<button class="role-opt" onclick="chooseDevice('${o.id}')">
+          <span class="ro-av" style="display:grid;place-items:center;font-size:22px">${o.ico}</span>
+          <span><b>${o.t}</b><small>${o.s}</small></span><span class="em">→</span>
+        </button>`).join('')}
+      <div class="hint">이 선택은 이 기기에만 저장되고, 아이별로 태블릿이 따로 있으면 각 기기에서 한 번씩만 정해 주면 돼요.</div>
+    </div>`,'narrow');
+}
+function chooseDevice(id, inSettings){
+  S.device.user=id;
+  S.settings.onboarded=true;
+  if(!inSettings) S.currentUser=id;
+  save();
+  if(inSettings){render();drawModal();toast('이 기기 기본 사용자를 바꿨어요 📱','ok');}
+  else{closeModal();render();toast('이 기기 설정을 저장했어요 📱','ok');}
+}
+
+/* =========================================================
+   읽어주기 (TTS)
+   ========================================================= */
+let ttsBtn=null;
+function koreanVoice(){
+  try{
+    const vs=window.speechSynthesis.getVoices()||[];
+    return vs.find(v=>/ko[-_]KR/i.test(v.lang))||vs.find(v=>/^ko/i.test(v.lang))||null;
+  }catch(e){return null;}
+}
+function speak(text,el){
+  if(!('speechSynthesis' in window)){
+    toast('이 브라우저는 읽어주기를 지원하지 않아요. 아이패드 Safari에서는 잘 돼요!','warn');
+    return;
+  }
+  try{window.speechSynthesis.cancel();}catch(e){}
+  const clean=String(text||'').replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}\u{2190}-\u{21FF}]/gu,' ').replace(/\s+/g,' ').trim();
+  const u=new SpeechSynthesisUtterance(clean||'편지가 도착했어요');
+  u.lang='ko-KR';u.rate=0.94;u.pitch=1.06;u.volume=1;
+  const v=koreanVoice();if(v)u.voice=v;
+  if(el){
+    if(ttsBtn&&ttsBtn!==el) ttsBtn.classList.remove('on');
+    ttsBtn=el;el.classList.add('on');
+    u.onend=()=>{el.classList.remove('on');};
+    u.onerror=()=>{el.classList.remove('on');};
+  }
+  try{window.speechSynthesis.speak(u);}catch(e){}
+  if(!v) console.info('[board] 한국어 음성 대기 중');
+}
+function speakLetter(id,el){const l=S.letters.find(x=>x.id===id);if(l)speak(l.text,el);}
+function speakReply(id,el){const l=S.letters.find(x=>x.id===id);if(l&&l.reply)speak(l.reply.text,el);}
+
+/* =========================================================
+   시작
+   ========================================================= */
+function boot(){
+  ensureToday();
+  if(!S.settings.onboarded){
+    S.currentUser='family';
+    render();
+    openDeviceSetup();
+  }else{
+    if(S.device.user) S.currentUser=S.device.user;
+    if(!ROLES[S.currentUser]) S.currentUser='family';
+    save();
+    render();
+  }
+  setInterval(drawClock,1000);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+  if(window.speechSynthesis){
+    window.speechSynthesis.onvoiceschanged=()=>{koreanVoice();};
+  }
+  window.addEventListener('beforeunload',save);
+  if(!storageOK) console.warn('[board] localStorage 사용 불가');
+}
+boot();
+</script>
+</body>
+</html>
