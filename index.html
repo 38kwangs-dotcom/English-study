@@ -60,6 +60,20 @@
       .explorer-card.princess .explorer-cta { background: var(--berry); }
       .explorer-card.mom .explorer-cta { background: #3b4d7a; }
 
+      .apps { margin-top: 2.1rem; padding-top: 1.7rem; border-top: 2px dashed var(--line); }
+      .apps-head { display: flex; align-items: baseline; justify-content: space-between; gap: .6rem 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+      .apps-title { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 1.2rem; letter-spacing: -.01em; }
+      .apps-note { margin: 0; color: var(--muted); font-size: .74rem; font-weight: 800; }
+      .app-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+      .app-grid .explorer-name { font-size: 1.1rem; }
+      .app-grid .explorer-theme { line-height: 1.45; }
+      .explorer-card.family { border-color: #ecd08b; }
+      .explorer-card.family .explorer-badge { background: #fff5d6; }
+      .explorer-card.family .explorer-cta { background: #a9781a; }
+      .explorer-card.vocab { border-color: #cbb0ea; }
+      .explorer-card.vocab .explorer-badge { background: #f3ecff; }
+      .explorer-card.vocab .explorer-cta { background: #7a5bbd; }
+
       .wallet-bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem 1.2rem; border: 2px solid var(--line); border-radius: 1.3rem; background: white; box-shadow: var(--shadow); margin-bottom: 1.6rem; flex-wrap: wrap; }
       .wallet-badges { display: flex; gap: 1.1rem; flex-wrap: wrap; }
       .wallet-badge { display: flex; align-items: center; gap: .55rem; font-weight: 900; }
@@ -69,7 +83,7 @@
       .shop-link { display: inline-flex; align-items: center; gap: .4rem; border: 0; border-radius: 999px; padding: .65rem 1.05rem; color: white; font-weight: 900; font-size: .8rem; background: var(--gold-dark, #8b6512); text-decoration: none; }
 
       @media (max-width: 700px) {
-        .explorers { grid-template-columns: 1fr; }
+        .explorers, .app-grid { grid-template-columns: 1fr; }
       }
     </style>
   </head>
@@ -113,6 +127,29 @@
           <span class="explorer-theme">IELTS 7.0 여정</span>
           <span class="explorer-cta"><span aria-hidden="true">▶</span> 시작하기</span>
         </a>
+      </section>
+
+      <section class="apps" aria-label="함께 쓰는 앱">
+        <div class="apps-head">
+          <h2 class="apps-title">🆕 함께 쓰는 앱</h2>
+          <p class="apps-note">가족 모두 같이 쓰는 새 앱이에요</p>
+        </div>
+
+        <div class="app-grid">
+          <a class="explorer-card family" href="./family-board/" aria-label="우리집 패밀리 보드로 이동">
+            <span class="explorer-badge" aria-hidden="true">🏠</span>
+            <span class="explorer-name">우리집 패밀리 보드</span>
+            <span class="explorer-theme">일정 · 루틴 · 우체통 · 성장 기록</span>
+            <span class="explorer-cta"><span aria-hidden="true">▶</span> 들어가기</span>
+          </a>
+
+          <a class="explorer-card vocab" href="./family-board/vocab/" aria-label="초등 필수 영단어 마을로 이동">
+            <span class="explorer-badge" aria-hidden="true">🌟</span>
+            <span class="explorer-name">초등 필수 영단어 마을</span>
+            <span class="explorer-theme">하루 10단어 · 퀴즈 · 마을 꾸미기</span>
+            <span class="explorer-cta"><span aria-hidden="true">▶</span> 들어가기</span>
+          </a>
+        </div>
       </section>
     </main>
 
