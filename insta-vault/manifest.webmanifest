@@ -1,0 +1,31 @@
+{
+  "name": "인스타 정보 저장소",
+  "short_name": "인스타 저장소",
+  "description": "인스타그램에서 본 정보를 분류·저장하는 나만의 아카이브",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FBF8F4",
+  "theme_color": "#FBF8F4",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
