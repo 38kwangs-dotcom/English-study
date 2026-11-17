@@ -51,6 +51,16 @@ a{color:var(--accent)}
 .crumbs{flex:1;min-width:0;font-size:13.5px;font-weight:600;color:var(--ink-soft);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .crumbs b{color:var(--ink);font-weight:700}
+.syncchip{display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 9px;border-radius:999px;flex:none;
+  font-size:11px;font-weight:700;letter-spacing:-.01em;background:#F1ECE6;color:#7A7288}
+.syncchip i{width:6px;height:6px;border-radius:50%;background:#B9B2C4;display:block;flex:none}
+.syncchip.on{background:#E9F6EE;color:#2F7D52}
+.syncchip.on i{background:#3E9E72}
+.syncchip.saving{background:#E9F6EE;color:#2F7D52}
+.syncchip.saving i{background:#3E9E72;animation:pulse 1s ease-in-out infinite}
+.syncchip.bad{background:#FEF1F0;color:#B4463F}
+.syncchip.bad i{background:#D2463F}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 .searchbox{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);
   border-radius:14px;padding:0 12px;height:44px;margin-top:4px;box-shadow:var(--shadow)}
 .searchbox .mag{font-size:15px;opacity:.75}
@@ -189,6 +199,7 @@ h1.dtitle{font-size:21px;line-height:1.34;margin:12px 0 4px;letter-spacing:-.02e
   <div class="brandline">
     <button class="iconbtn" id="btnBack" hidden aria-label="뒤로 가기">‹</button>
     <div class="crumbs" id="crumbs">인스타 저장소</div>
+    <span class="syncchip" id="syncChip"><i></i><span>연결 중</span></span>
     <button class="iconbtn" id="btnSettings" aria-label="설정">⚙︎</button>
   </div>
   <div class="searchbox">
@@ -205,6 +216,7 @@ h1.dtitle{font-size:21px;line-height:1.34;margin:12px 0 4px;letter-spacing:-.02e
 </div>
 <div id="toast" role="status" aria-live="polite"></div>
 <input type="file" id="importFile" accept="application/json,.json" hidden>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (function(){
 'use strict';
@@ -244,34 +256,15 @@ function stamp(){
 }
 
 /* ============ 데이터 ============ */
-function sampleData(){
-  var t = Date.now(), base = new Date(t - 172800000).toISOString();
-  function item(title, url, summary, cmts){
-    return {
-      id: uid(), title: title, url: url, summary: summary, createdAt: base, updatedAt: base,
-      comments: cmts.map(function(c, i){
-        return { id: uid(), text: c, createdAt: new Date(t - 172800000 + i * 3600000).toISOString() };
-      })
-    };
-  }
+/* 서버에도 아무것도 없고 이 기기에도 저장된 게 없을 때만 쓰는 기본 뼈대 (예시 영상 없음) */
+function defaultData(){
   return {
-    version: 1,
+    version: 1, rev: 0,
     categories: [
-      { id: uid(), emoji: '✈️', name: '여행', folders: [
-        { id: uid(), name: '다롄', items: [
-          item('다롄 3대 가족여행 3박4일 동선 정리', 'https://www.instagram.com/',
-            '숙소는 중산광장 근처가 이동에 편하고, 둥강 야시장은 저녁 7시 이후가 가장 붐빈다. 아이 동반이면 201번 노면전차가 계단 없이 탈 수 있어 편하다는 팁.',
-            ['12월 초 낮 기온 영하 2도 → 아이 패딩·핫팩 필수', '호텔 조식에 유아 의자 있는지 예약 전에 확인하기'])
-        ]},
-        { id: uid(), name: '몰타', items: [
-          item('몰타 2년 살기 — 학군·집 구하기 요약', 'https://www.instagram.com/',
-            '슬리에마·스완지 인근 3베드룸 월세 시세와 국제학교 입학 시기 정리. 1월 학기 시작은 9월 접수가 빠르다는 안내.',
-            ['비자 접수 후 8주 정도 걸린다는 후기 확인'])
-        ]}
-      ]},
-      { id: uid(), emoji: '🍽️', name: '맛집·카페', folders: [] },
-      { id: uid(), emoji: '📚', name: '육아·교육', folders: [] },
-      { id: uid(), emoji: '💡', name: '생활꿀팁', folders: [] }
+      { id: 'cat_travel', emoji: '✈️', name: '여행', folders: [] },
+      { id: 'cat_food', emoji: '🍽️', name: '맛집·카페', folders: [] },
+      { id: 'cat_parenting', emoji: '📚', name: '육아·교육', folders: [] },
+      { id: 'cat_life', emoji: '💡', name: '생활꿀팁', folders: [] }
     ]
   };
 }
@@ -304,27 +297,210 @@ function normalize(d){
   });
   return out;
 }
-function load(){
+function loadLocal(){
   try {
     var raw = localStorage.getItem(KEY);
-    if (raw) {
-      var d = JSON.parse(raw);
-      if (d && Array.isArray(d.categories)) return normalize(d);
+    if (!raw) return null;
+    var d = JSON.parse(raw);
+    if (d && Array.isArray(d.categories)) {
+      var n = normalize(d);
+      n.rev = Number(d.rev || 0) || 0;
+      return n;
     }
   } catch (e) { /* 손상된 데이터는 새로 시작 */ }
-  var s = sampleData();
-  try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {}
-  return s;
+  return null;
 }
-var db = load();
+var db = loadLocal() || defaultData();
 var dbBytes = 0;
-function save(){
+function saveLocal(){
   var s = JSON.stringify(db);
   dbBytes = s.length;
   try { localStorage.setItem(KEY, s); }
   catch (e) { toast('저장 공간이 부족해 저장하지 못했어요'); }
 }
+function save(){
+  if (!applyingRemote) db.rev = Date.now();
+  saveLocal();
+  schedulePush();
+}
 function usageKB(){ var s = JSON.stringify(db); return (s.length / 1024).toFixed(1); }
+
+/* ============ ☁️ 서버 저장 (Supabase) ============
+   패밀리 보드와 같은 프로젝트의 fb_sync 테이블을 쓰되, 행 하나를 전용으로 씁니다.
+   id = 'insta_vault_main' → 패밀리 보드의 l:/c:/state:행과 전혀 겹치지 않습니다. */
+var CLOUD_URL = 'https://zzkjwucarircmqmuhpka.supabase.co';
+var CLOUD_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp6a2p3dWNhcmlyY21xbXVocGthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ4NTM1NjQsImV4cCI6MjExMDQyOTU2NH0.QH2-UdpeYZiRi7zUIQ9kvwB5focUA49ZE7B-Qj1KaQQ';
+var SYNC_TABLE = 'fb_sync';
+var ROW_ID = 'insta_vault_main';
+var DOC_KIND = 'insta-vault';
+var LEGACY_KEY = 'instaVault.v1.legacy';
+var sb = null, pushTimer = null, applyingRemote = false, deferredRemote = null, subbed = false;
+var cloud = { state: 'wait', lastSync: 0, error: '', channel: null };
+
+function deviceId(){
+  try {
+    var d = localStorage.getItem('instaVault.device');
+    if (!d){ d = Math.random().toString(36).slice(2, 10); localStorage.setItem('instaVault.device', d); }
+    return d;
+  } catch (e) { return 'device'; }
+}
+function cloudLabel(){
+  if (cloud.state === 'on') return '동기화됨';
+  if (cloud.state === 'saving') return '저장 중';
+  if (cloud.state === 'bad') return '오프라인';
+  return '연결 중';
+}
+function paintCloud(){
+  var el = $('#syncChip');
+  if (!el) return;
+  el.className = 'syncchip ' + (cloud.state === 'bad' ? 'bad' : (cloud.state === 'on' ? 'on' : (cloud.state === 'saving' ? 'saving' : 'wait')));
+  var t = el.querySelector('span');
+  if (t) t.textContent = cloudLabel();
+}
+function docOf(){
+  return { kind: DOC_KIND, version: 2, rev: db.rev || 0, device: deviceId(), data: db };
+}
+function pushCloud(){
+  if (!sb || applyingRemote) return;
+  clearTimeout(pushTimer);
+  cloud.state = 'saving'; paintCloud();
+  var row = { id: ROW_ID, doc: docOf(), updated_at: new Date().toISOString() };
+  sb.from(SYNC_TABLE).upsert(row, { onConflict: 'id' }).then(function(res){
+    if (res && res.error){ cloud.state = 'bad'; cloud.error = res.error.message || ''; paintCloud(); console.warn('[vault] 서버 저장 실패', res.error); return; }
+    cloud.state = 'on'; cloud.lastSync = Date.now(); cloud.error = ''; paintCloud();
+  }, function(err){
+    cloud.state = 'bad'; cloud.error = (err && err.message) || ''; paintCloud();
+    console.warn('[vault] 서버 저장 실패', err);
+  });
+}
+function schedulePush(){
+  if (!sb || applyingRemote) return;
+  clearTimeout(pushTimer);
+  if (cloud.state !== 'bad'){ cloud.state = 'saving'; paintCloud(); }
+  pushTimer = setTimeout(pushCloud, 700);
+}
+function renderAfterRemote(){
+  var top = nav[nav.length - 1];
+  if (top.t === 'detail' && !locate(top.itemId)) nav = [{ t: 'home' }];
+  else if (top.t === 'folder' && !folderById(top.catId, top.folderId)) nav = [{ t: 'home' }];
+  else if (top.t === 'cat' && !catById(top.catId)) nav = [{ t: 'home' }];
+  render();
+}
+function applyRemoteDoc(doc, quiet){
+  if (!doc || typeof doc !== 'object' || doc.kind !== DOC_KIND) return false;
+  var rev = Number(doc.rev || 0) || 0;
+  if (!rev || rev <= (db.rev || 0)) return false;
+  var ae = document.activeElement;
+  var typing = !!(ae && (ae.tagName === 'TEXTAREA' || ae.tagName === 'INPUT'));
+  if (typing){ deferredRemote = doc; return false; }
+  applyingRemote = true;
+  try {
+    db = normalize(doc.data || {});
+    db.rev = rev;
+    saveLocal();
+  } finally { applyingRemote = false; }
+  cloud.state = 'on'; cloud.lastSync = Date.now(); paintCloud();
+  renderAfterRemote();
+  if (!quiet) toast('다른 기기에서 저장한 내용을 불러왔어요');
+  return true;
+}
+function cloudLoad(){
+  cloud.state = 'wait'; paintCloud();
+  return sb.from(SYNC_TABLE).select('doc,updated_at').eq('id', ROW_ID).maybeSingle().then(function(res){
+    if (res && res.error) throw res.error;
+    var row = res ? res.data : null;
+    var doc = row && row.doc ? row.doc : null;
+    var remoteRev = (doc && doc.kind === DOC_KIND) ? (Number(doc.rev || 0) || Date.parse(row.updated_at || '') || 0) : 0;
+    if (remoteRev){
+      if ((db.rev || 0) > remoteRev){
+        pushCloud();
+        toast('이 기기의 최신 내용을 서버에 올렸어요');
+      } else {
+        if (!(db.rev || 0) && totals().items > 0){
+          try { localStorage.setItem(LEGACY_KEY, JSON.stringify(db)); } catch (e) {}
+        }
+        applyingRemote = true;
+        try { db = normalize(doc.data || {}); db.rev = remoteRev; saveLocal(); }
+        finally { applyingRemote = false; }
+        cloud.state = 'on'; cloud.lastSync = Date.now(); cloud.error = ''; paintCloud();
+        renderAfterRemote();
+      }
+    } else {
+      db.rev = db.rev || Date.now();
+      saveLocal();
+      pushCloud();
+    }
+  });
+}
+function subscribeCloud(){
+  if (!sb || subbed || cloud.channel) return;
+  try {
+    var ch = sb.channel('insta-vault-live')
+      .on('postgres_changes', { event: '*', schema: 'public', table: SYNC_TABLE, filter: 'id=eq.' + ROW_ID }, function(p){
+        var doc = p && p.new && p.new.doc;
+        if (doc) applyRemoteDoc(doc);
+      })
+      .subscribe(function(status){
+        if (status === 'SUBSCRIBED'){
+          subbed = true;
+          if (cloud.state !== 'bad'){ cloud.state = 'on'; cloud.lastSync = cloud.lastSync || Date.now(); paintCloud(); }
+          console.info('[vault] 실시간 동기화 연결됨');
+        } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT'){
+          console.warn('[vault] 실시간 연결 끊김', status);
+          cloud.state = 'bad'; paintCloud();
+        }
+      });
+    cloud.channel = ch;
+  } catch (e) { console.warn('[vault] 실시간 연결 실패', e); }
+}
+function initCloud(){
+  if (sb){ cloudLoad().then(function(){ subscribeCloud(); })['catch'](function(){ cloud.state = 'bad'; paintCloud(); }); return; }
+  if (typeof supabase === 'undefined' || !supabase || typeof supabase.createClient !== 'function'){
+    cloud.state = 'bad'; cloud.error = '라이브러리 없음'; paintCloud(); return;
+  }
+  try {
+    sb = supabase.createClient(CLOUD_URL, CLOUD_KEY, { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } });
+  } catch (e) {
+    cloud.state = 'bad'; cloud.error = '연결 실패'; paintCloud(); return;
+  }
+  cloudLoad().then(function(){
+    subscribeCloud();
+    console.info('[vault] 서버 동기화 준비 완료');
+  }, function(err){
+    cloud.state = 'bad'; cloud.error = (err && err.message) || '연결 실패'; paintCloud();
+    console.warn('[vault] 서버 연결 실패', err);
+  });
+}
+function retryCloud(){
+  if (cloud.state !== 'bad') return;
+  if (!sb){ initCloud(); return; }
+  cloudLoad().then(function(){ subscribeCloud(); }, function(){ cloud.state = 'bad'; paintCloud(); });
+}
+function syncNow(){
+  if (!sb){ initCloud(); toast('다시 연결하는 중이에요'); return; }
+  cloud.state = 'wait'; paintCloud();
+  cloudLoad().then(function(){
+    toast(cloud.state === 'on' ? '서버와 맞쳤어요' : '연결을 다시 시도했어요');
+    subscribeCloud();
+  }, function(){ cloud.state = 'bad'; paintCloud(); toast('서버에 연결하지 못했어요'); });
+}
+function hasLegacy(){
+  try { return !!localStorage.getItem(LEGACY_KEY); } catch (e) { return false; }
+}
+function exportLegacy(){
+  try {
+    var raw = localStorage.getItem(LEGACY_KEY);
+    if (!raw){ toast('남아 있는 이전 데이터가 없어요'); return; }
+    var data = JSON.parse(raw);
+    var blob = new Blob([JSON.stringify({ app: 'insta-vault', version: 1, legacy: true, exportedAt: nowISO(), data: data }, null, 2)], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'insta-vault-legacy-' + stamp() + '.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
+    toast('이전 데이터를 내보냈어요');
+  } catch (e) { toast('이전 데이터를 읽을 수 없어요'); }
+}
 
 /* ============ 찾기 ============ */
 function catById(id){ return db.categories.find(function(c){ return c.id === id; }); }
@@ -730,9 +906,17 @@ function confirmSheet(opt){
 }
 function sheetSettings(){
   var t = totals();
+  var when = cloud.lastSync ? fmt(new Date(cloud.lastSync).toISOString()) : '아직 없음';
+  var stateTxt = cloud.state === 'on' ? '연결됨 · 마지막 동기화 ' + when
+    : (cloud.state === 'saving' ? '저장하는 중…'
+    : (cloud.state === 'bad' ? '오프라인 — 이 기기 저장소에만 저장되고 있어요' + (cloud.error ? ' (' + cloud.error + ')' : '')
+    : '연결하는 중…'));
   openSheet('<div class="grab"></div>' +
     '<h3>설정 · 백업</h3>' +
-    '<p class="sub">저장 위치: 이 아이폰의 브라우저 저장소(localStorage)</p>' +
+    '<p class="sub">아이폰·태블릿·PC 어디서 열어도 같은 내용이 보입니다.</p>' +
+    '<div class="settingsrow"><div style="flex:1"><div class="lab">☁️ 서버 동기화</div>' +
+      '<div class="desc">' + esc(stateTxt) + '</div></div>' +
+      '<button class="btn sm" data-act="sync-now">지금 동기화</button></div>' +
     '<div class="settingsrow"><div><div class="lab">저장된 항목</div>' +
       '<div class="desc">대분류 ' + t.cats + ' · 소분류 ' + t.folders + ' · 영상 ' + t.items + '개 · 약 ' + usageKB() + 'KB</div></div></div>' +
     '<div class="settingsrow"><div style="flex:1"><div class="lab">백업 내보내기</div>' +
@@ -741,13 +925,16 @@ function sheetSettings(){
     '<div class="settingsrow"><div style="flex:1"><div class="lab">백업 가져오기</div>' +
       '<div class="desc">내보낸 JSON 파일을 불러옵니다. 지금 데이터는 덮어써집니다.</div></div>' +
       '<button class="btn sm" data-act="import">가져오기</button></div>' +
-    '<div class="settingsrow"><div style="flex:1"><div class="lab">샘플 데이터로 되돌리기</div>' +
-      '<div class="desc">예시 2건이 들어 있는 처음 상태로 돌립니다.</div></div>' +
+    (hasLegacy() ? '<div class="settingsrow"><div style="flex:1"><div class="lab">이전 기기 데이터</div>' +
+      '<div class="desc">서버에 연결하기 전 아이폰에만 있던 내용입니다. 필요하면 파일로 꺼내 두세요.</div></div>' +
+      '<button class="btn sm" data-act="export-legacy">내보내기</button></div>' : '') +
+    '<div class="settingsrow"><div style="flex:1"><div class="lab">기본 분류로 되돌리기</div>' +
+      '<div class="desc">여행·맛집·육아·생활 네 개 빈 분류로 돌립니다. 안에 든 영상은 모두 지워집니다.</div></div>' +
       '<button class="btn sm" data-act="reseed">되돌리기</button></div>' +
     '<div class="settingsrow"><div style="flex:1"><div class="lab">전체 삭제</div>' +
       '<div class="desc">모든 대분류·영상·코멘트를 지웁니다. 되돌릴 수 없습니다.</div></div>' +
       '<button class="btn sm danger" data-act="wipe">삭제</button></div>' +
-    '<div class="note">아이폰 홈 화면에 추가하면 앱처럼 전체 화면으로 열립니다. 사파리의 ‘사이트 데이터 지우기’를 하면 저장 내용이 사라지니, 가끔 백업해 두세요.</div>' +
+    '<div class="note">내용은 바꿀 때마다 서버에 바로 저장되고, 다른 기기에서 보면 몇 초 안에 맞춰집니다. 인터넷이 끊기면 이 기기에 먼저 저장되고, 연결되면 다시 올라갑니다.</div>' +
     '<div class="sheetbtns"><button class="btn" data-act="close-sheet">닫기</button></div>');
 }
 
@@ -974,13 +1161,15 @@ document.addEventListener('click', function(ev){
       break;
     }
     case 'export': exportJSON(); break;
+    case 'export-legacy': exportLegacy(); break;
+    case 'sync-now': closeSheet(); syncNow(); break;
     case 'import': { var inp = $('#importFile'); if (inp){ closeSheet(); inp.click(); } break; }
     case 'reseed': {
       confirmSheet({
-        title: '샘플 데이터로 되돌릴까요?', ok: '되돌리기', danger: false,
-        message: '지금 저장된 대분류·영상·코멘트가 모두 지워지고 예시 2건으로 바뀝니다.',
+        title: '기본 분류로 되돌릴까요?', ok: '되돌리기', danger: false,
+        message: '대분류 네 개(여행·맛집·육아·생활)만 남기고 영상·코멘트를 모두 지웁니다.',
         onOk: function(){
-          db = sampleData(); save(); closeSheet(); nav = [{ t: 'home' }]; render(); toast('샘플 데이터로 되돌렸어요');
+          db = defaultData(); save(); closeSheet(); nav = [{ t: 'home' }]; render(); toast('기본 분류로 되돌렸어요');
         }
       });
       break;
@@ -1047,8 +1236,22 @@ $('#importFile').addEventListener('change', function(e){
 document.addEventListener('keydown', function(e){
   if (e.key === 'Escape' && $('#sheetwrap').classList.contains('open')) closeSheet();
 });
+document.addEventListener('focusout', function(){
+  if (!deferredRemote) return;
+  var d = deferredRemote;
+  deferredRemote = null;
+  setTimeout(function(){ applyRemoteDoc(d, true); }, 60);
+});
+window.addEventListener('online', function(){ retryCloud(); });
+document.addEventListener('visibilitychange', function(){
+  if (document.hidden) return;
+  if (cloud.state === 'bad'){ retryCloud(); return; }
+  if (sb && Date.now() - (cloud.lastSync || 0) > 20000) cloudLoad()['catch'](function(){});
+});
 
 render();
+paintCloud();
+initCloud();
 })();
 </script>
 </body>
