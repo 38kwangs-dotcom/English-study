@@ -2279,6 +2279,7 @@ function onSignal(p){
       playRing('in'); showIncomingUI();
       break;
     case 'accept':
+      if(incoming&&incoming.callId===p.callId) dismissIncoming();
       if(call&&call.callId===p.callId&&call.dir==='out'){
         call.peerDid=p.from.did; call.accepted=true;
         setCallState('연결 중…'); stopRing();
@@ -2597,6 +2598,7 @@ async function acceptIncoming(){
   call={callId:inc.callId,role:inc.from.role,video:!!inc.video,dir:'in',localStream:stream,pc:null,peerDid:inc.from.did,started:0,pendingIce:[]};
   sendSignal({type:'accept',callId:call.callId,to:{did:call.peerDid}});
   showCallUI(callHTMLActive('연결 중…'));
+  call.timeout=setTimeout(()=>{ if(call&&call.callId===inc.callId&&!call.started) endCall('error'); },40000);
   if(!stream) toast('카메라·마이크 없이 연결해 볼게요','warn');
   else if(!stream.__video) toast('카메라를 켤 수 없어 음성으로 연결할게요 📞','warn');
 }
@@ -2616,7 +2618,9 @@ function endCall(reason){
     if(c.localStream) c.localStream.getTracks().forEach(t=>{ try{ t.stop(); }catch(e){} });
   }
   hideCallUI();
-  if(reason==='local'&&c&&c.callId) sendSignal({type:'hangup',callId:c.callId,to:{did:c.peerDid||''}});
+  if((reason==='local'||reason==='noanswer'||reason==='error')&&c&&c.callId){
+    sendSignal({type:'hangup',callId:c.callId,to:{did:c.peerDid||''}});
+  }
   const msgs={
     'local':'통화를 종료했어요',
     'remote':'통화가 끝났어요',
