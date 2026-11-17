@@ -389,6 +389,13 @@ function load() {
         S = b;
         ['words', 'daily', 'mats', 'placed', 'combos'].forEach(function (k2) { S[k2] = S[k2] || {}; });
         S.pets = Array.isArray(S.pets) ? S.pets : [];
+        /* 예전 버전이 남긴 창고 '꺼내기' 카운트(out)는 더 이상 쓰지 않는다.
+           남아 있으면 꺼내다 만 물건이 창고에서 영영 사라지므로 지우고 한 번 저장해 되살린다. */
+        var cleanedOut = false;
+        for (var ci in S.combos) {
+          if (S.combos[ci] && S.combos[ci].out !== undefined) { delete S.combos[ci].out; cleanedOut = true; }
+        }
+        if (cleanedOut) save();
         return true;
       }
     } catch (e) {}
@@ -606,6 +613,27 @@ function placedList() {
   for (var k in S.placed) out.push({ key: k, val: S.placed[k] });
   return out;
 }
+/* 마을에 실제로 놓인 이 물건의 개수 — 창고 수량은 오직 이 값으로만 계산한다 */
+function placedItemCount(id) {
+  return placedList().filter(function (p) { return p.val.type === 'item' && p.val.id === id; }).length;
+}
+/* 받침에 맞춰 목적격 조사를 붙인다 (분수대를 / 나무를) */
+function objJosa(word) {
+  var s = String(word || '');
+  if (!s) return '을(를)';
+  var c = s.charCodeAt(s.length - 1);
+  if (c < 0xac00 || c > 0xd7a3) return '을(를)';
+  return ((c - 0xac00) % 28) ? '을' : '를';
+}
+function pickedName() {
+  if (!pickMode) return '';
+  if (pickMode.type === 'pet') {
+    var pt = S.pets.filter(function (q) { return q.uid === pickMode.uid; })[0];
+    return pt && PET_BY_SP[pt.sp] ? PET_BY_SP[pt.sp].name : '친구';
+  }
+  var it = COMBO_BY_ID[pickMode.id];
+  return it ? it.art + ' ' + it.name : '물건';
+}
 function renderVillage() {
   var sc = $('#scr-village');
   var placed = placedList();
@@ -638,11 +666,11 @@ function renderVillage() {
     '<div class="v-bar">' +
     '<button class="pill y" id="btnBox" ' + (S.boxes < 1 ? 'disabled' : '') + '>🎁 상자 열기 (' + S.boxes + ')</button>' +
     '<button class="pill g" id="btnStorage">🧺 창고 (' + storageCount() + ')</button>' +
-    (pickMode ? '<button class="pill p" id="btnStopPick">집어 넣기 취소</button>' : '') +
+    (pickMode ? '<button class="pill p" id="btnStopPick">놓기 취소</button>' : '') +
     '<button class="pill" id="btnName">' + (S.onboarded ? '✏️ 이름 바꾸기' : '👶 시작하기') + '</button>' +
     '</div></div>' +
     '<div style="text-align:center;margin-top:10px;font-size:12px;font-weight:700;color:var(--ink2)">' +
-    (pickMode ? '마을 빈 곳을 눌러 놓아요 · 물건을 누르면 창고로 들어가요' :
+    (pickMode ? pickedName() + objJosa(pickedName()) + ' 들고 있어요 · 마을 초록 잔디 위 빈 곳을 눌러 놓아요' :
       '물건 ' + inTown.length + '개 · 친구 ' + petsOut.length + '마리가 마을에 살아요') +
     '</div>' +
     '</div>';
@@ -667,14 +695,20 @@ function renderVillage() {
   });
 }
 function storageCount() {
-  var items = {};
-  placedList().forEach(function (p) { if (p.val.type === 'item') items[p.val.id] = 1; });
   var n = 0;
-  for (var id in S.combos) { var made = S.combos[id].made || 0; if (made - (items[id] || 0) > 0) n += made - (items[id] || 0); }
+  for (var id in S.combos) {
+    var made = S.combos[id].made || 0;
+    var left = made - placedItemCount(id);
+    if (left > 0) n += left;
+  }
   return n;
 }
 function onThingTap(key) {
-  if (pickMode) { pickMode = null; renderVillage(); return; }
+  if (pickMode) {
+    /* 들고 있는 물건을 여기서 잃지 않도록 pickMode를 유지하고 안내만 한다 */
+    toast('여기에는 놓을 수 없어요. 초록 잔디 위 빈 곳을 눌러 주세요');
+    return;
+  }
   var p = S.placed[key];
   if (!p) return;
   if (p.type === 'pet') {
@@ -701,16 +735,16 @@ function placePick(x, yBottom) {
   save(); renderVillage(); beep('tap');
 }
 function renderStorage() {
-  var inTown = {};
-  placedList().forEach(function (p) { if (p.val.type === 'item') inTown[p.val.id] = 1; });
   var items = [];
   for (var id in S.combos) {
-    var extra = (S.combos[id].made || 0) - (inTown[id] ? 1 : 0) - (S.combos[id].out || 0);
+    if (!COMBO_BY_ID[id]) continue;
+    var extra = (S.combos[id].made || 0) - placedItemCount(id);
     if (extra > 0) items.push({ id: id, n: extra });
   }
   var petsHome = S.pets.filter(function (p) { return !inPlaced(p.uid); });
   var html = '<h3 style="font-size:18px;font-weight:900">🧺 창고</h3>' +
-    '<p style="margin-top:4px">꺼내서 마을에 놓아요</p>';
+    '<p style="margin-top:4px">꺼내서 초록 잔디 위에 놓아요</p>' +
+    '<p style="margin-top:2px;font-size:12px;font-weight:700;color:var(--ink2)">놓기 전에는 창고에 그대로 남아 있어요</p>';
   if (!items.length && !petsHome.length) html += '<p style="margin:14px 0">창고가 비었어요</p>';
   items.forEach(function (it) {
     html += '<div class="book-item" style="margin-top:10px"><div class="bi" style="font-size:24px">' + COMBO_BY_ID[it.id].art + '</div>' +
@@ -728,12 +762,13 @@ function renderStorage() {
   $$('#modalHost [data-out]').forEach(function (b) {
     b.addEventListener('click', function () {
       var id = b.getAttribute('data-out');
-      var key = 'it' + Date.now();
-      S.combos[id].out = (S.combos[id].out || 0) + 1;
+      var key = 'it' + Date.now() + Math.floor(Math.random() * 10000);
+      /* 꺼내는 순간에는 수량을 줄이지 않는다.
+         실제로 놓였을 때만 placed가 늘어 창고 수량이 줄어들므로,
+         취소하거나 다른 곳을 눌러도 물건이 사라지지 않는다. */
       pickMode = { type: 'item', id: id, key: key };
-      closeModal(); save();
-      toast('마을 빈 곳을 눌러 놓아요');
-      renderVillage();
+      closeModal(); renderVillage();
+      toast('마을 초록 잔디 위 빈 곳을 눌러 놓아요');
     });
   });
   $$('#modalHost [data-petout]').forEach(function (b) {
@@ -742,8 +777,8 @@ function renderStorage() {
       var key = 'pt' + Date.now();
       S.placed[key] = { type: 'pet', uid: uid, x: 50, y: 40 };
       pickMode = { type: 'pet', uid: uid, key: key };
-      closeModal(); save();
-      toast('마을 빈 곳을 눌러 친구를 놓아요');
+      closeModal(); save(); renderVillage();
+      toast('마을에 나왔어요! 초록 잔디 위 빈 곳을 누르면 그리로 옮겨요');
       renderVillage();
     });
   });
