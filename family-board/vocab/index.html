@@ -758,13 +758,14 @@ function askName() {
     '<div class="m-btns"><button class="btn w" id="mSkip">나중에</button><button class="btn y" id="mOk">정했어요!</button></div>');
   var inp = $('#nameIn');
   inp.focus();
-  $('#mSkip').addEventListener('click', function () { S.onboarded = true; save(); closeModal(); updateCoins(); });
+  $('#mSkip').addEventListener('click', function () { S.onboarded = true; save(); closeModal(); updateCoins(); if (curTab === 'village') renderVillage(); });
   $('#mOk').addEventListener('click', function () {
     S.name = inp.value.trim().slice(0, 8);
     if (!S.name) S.name = '친구';
     S.onboarded = true; save(); closeModal(); updateCoins();
     toast(S.name + ' 님의 마을이 되었어요!');
     confetti();
+    if (curTab === 'village') renderVillage();
   });
 }
 
