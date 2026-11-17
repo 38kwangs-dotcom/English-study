@@ -2,9 +2,9 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#FFF6D6">
+<meta name="robots" content="noindex, nofollow">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>우리집 패밀리 보드!</title>
 <style>
@@ -385,6 +385,76 @@ h1,h2,h3,h4,p{margin:0}
   .field-row,.field-row3{grid-template-columns:1fr}
   .qa{grid-template-columns:1fr}
 }
+/* ---------- 가족 통화 & 가족 수다 ---------- */
+.sync-hd{cursor:pointer;font-size:10.5px;padding:5px 9px}
+.sync-chip.ok{color:#4E7A45;border-color:#CFE6C2;background:#F3FBEC}
+.sync-chip.wait{color:#8A6206;border-color:#F0DCA8;background:#FFF8E4}
+.sync-chip.bad{color:#B25F6F;border-color:#F1C9D2;background:#FFF4F6}
+.card.comm{grid-column:1/-1;background:linear-gradient(165deg,#FFF9E9,#FFEFD8 58%,#FFECEF);border:1.5px solid #fff}
+.comm .members{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.mem{background:#fff;border:1.5px solid #F3E4C8;border-radius:18px;padding:10px 8px 9px;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative;transition:transform .12s;min-width:0}
+.mem:active{transform:scale(.97)}
+.mem .m-av{width:48px;height:48px;border-radius:16px;overflow:hidden;background:#FFF8EC;border:1.5px solid #F1E3C8;display:grid;place-items:center;font-size:24px}
+.mem .m-av svg{width:100%;height:100%;display:block}
+.mem .m-nm{font-size:12.5px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;margin-top:2px}
+.mem .m-sub{font-size:10px;font-weight:800;color:var(--ink-mute);white-space:nowrap}
+.mem .m-dot{position:absolute;top:8px;right:9px;width:8px;height:8px;border-radius:99px;background:#D9CDBA}
+.mem .m-dot.on{background:#6FBE7E;box-shadow:0 0 0 3px rgba(111,190,126,.18)}
+.mem .m-btns{display:flex;gap:5px;width:100%;margin-top:4px}
+.mem .m-btns button{flex:1;border-radius:11px;padding:7px 0;font-size:15px;font-weight:900;background:#FFF3D2;border:1px solid #F0DCA8;transition:transform .12s}
+.mem .m-btns button:active{transform:scale(.94)}
+.mem .m-btns button.voice{background:#EAF6E0;border-color:#D3E9C2}
+.mem .m-btns button:disabled{opacity:.4}
+.mem.offline{opacity:.66}
+.card.chat-card{grid-column:span 2}
+.chat-list{display:flex;flex-direction:column;gap:7px;max-height:232px;overflow:auto;-webkit-overflow-scrolling:touch;padding-right:2px}
+.cb{display:flex;gap:7px;align-items:flex-end}
+.cb .c-av{width:26px;height:26px;border-radius:9px;overflow:hidden;background:#FFF8EC;border:1px solid #F0E2C8;flex:0 0 auto}
+.cb .c-av svg{width:100%;height:100%;display:block}
+.cb .c-body{max-width:78%;background:#FFFDF6;border:1.5px solid #F2E6CC;border-radius:14px;padding:6px 10px;display:block}
+.cb .c-nm{display:block;font-size:10px;font-weight:900;color:var(--ink-soft);margin-bottom:2px}
+.cb .c-tx{display:block;font-size:13px;font-weight:700;word-break:break-word;white-space:pre-wrap}
+.cb .c-tm{display:block;font-size:9.5px;color:var(--ink-mute);font-weight:700;margin-top:3px;text-align:right}
+.cb.me{flex-direction:row-reverse}
+.cb.me .c-body{background:#FFF1D6;border-color:#F4DFA6}
+.chat-in{display:flex;gap:6px}
+.chat-in input{flex:1;min-width:0;height:44px;border-radius:13px;border:2px solid #F1E6CE;background:#FFFDF6;padding:0 12px;font-size:14px;font-family:inherit;font-weight:700;color:var(--ink)}
+.chat-in input:focus{outline:none;border-color:#F5C97E;background:#fff}
+.chat-in button{width:48px;border-radius:13px;background:#FFE9A6;border:1.5px solid #F0D083;font-size:17px;font-weight:900}
+
+/* ---------- 통화 화면 ---------- */
+#callRoot{position:fixed;inset:0;z-index:300;display:none}
+#callRoot.on{display:block}
+.call-sheet{position:absolute;inset:0;background:linear-gradient(170deg,#463A2B,#2A231B);display:flex;flex-direction:column;color:#FFF8EA;overflow:hidden}
+.call-top{padding:calc(14px + env(safe-area-inset-top)) 18px 6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.call-top b{font-size:15.5px;font-weight:900}
+.call-top .cstate{font-size:12px;font-weight:700;color:#C9B9A3;margin-left:auto}
+.call-stage{flex:1;position:relative;display:flex;align-items:center;justify-content:center;padding:10px;min-height:0}
+.call-stage>video{width:100%;height:100%;max-height:100%;object-fit:cover;border-radius:22px;background:#14100C}
+.call-avatar{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.call-avatar .big-av{width:132px;height:132px;border-radius:44px;overflow:hidden;background:#FFF8EC;box-shadow:0 12px 40px rgba(0,0,0,.35);display:grid;place-items:center;font-size:62px}
+.call-avatar .big-av svg{width:100%;height:100%;display:block}
+.call-avatar .cn{font-size:21px;font-weight:900}
+.call-avatar .cd{font-size:12.5px;font-weight:700;color:#C9B9A3}
+.pip{position:absolute;right:16px;bottom:16px;width:104px;height:146px;border-radius:16px;overflow:hidden;background:#000;border:2px solid rgba(255,255,255,.28);display:none}
+.pip.on{display:block}
+.pip video{width:100%;height:100%;object-fit:cover;border-radius:14px}
+.call-timer{position:absolute;left:50%;transform:translateX(-50%);top:12px;background:rgba(0,0,0,.45);border-radius:99px;padding:4px 12px;font-size:12px;font-weight:800;display:none}
+.call-timer.on{display:block}
+.call-actions{padding:10px 18px calc(22px + env(safe-area-inset-bottom));display:flex;justify-content:center;gap:16px;align-items:center}
+.cbtn{width:62px;height:62px;border-radius:99px;display:grid;place-items:center;font-size:24px;background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.22);color:#fff;transition:transform .12s}
+.cbtn:active{transform:scale(.93)}
+.cbtn.off{background:#fff;color:#3E3327}
+.cbtn.hang{background:#E2586E;border-color:#E2586E;width:72px;height:72px;font-size:22px}
+.cbtn.ans{background:#5DBE7E;border-color:#5DBE7E;width:72px;height:72px;font-size:26px}
+.call-note{margin:0 18px 6px;background:rgba(255,255,255,.1);border-radius:12px;padding:8px 11px;font-size:11.5px;font-weight:700;color:#EADFCB;text-align:center}
+@media (max-width:820px){ .comm .members{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:640px){
+  .card.comm{grid-column:auto}
+  .card.chat-card{grid-column:auto}
+  .call-avatar .big-av{width:108px;height:108px;border-radius:36px}
+  .pip{width:86px;height:120px}
+}
 @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
 </style>
 </head>
@@ -396,6 +466,8 @@ h1,h2,h3,h4,p{margin:0}
 <div id="modalRoot"></div>
 <div id="toastRoot"></div>
 <div id="burstRoot"></div>
+<div id="callRoot"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* =========================================================
    우리집 패밀리 보드!  (single-file app, localStorage 기반)
@@ -515,8 +587,10 @@ function defaultState(){
   const now=Date.now();
   const s={
     v:3,
-    device:{user:'',locked:false},
+    device:{user:'',locked:false,did:''},
     currentUser:'family',
+    chat:[],
+    syncVer:0,
     settings:{limit:LIMIT,pin:'',onboarded:false},
     cloud:{url:'',key:''},
     drafts:{mailText:'',mailPic:'',mailTo:'parents',sender:'elder',calDate:''},
@@ -551,7 +625,10 @@ function migrate(p){
   const base=defaultState();
   if(!p||typeof p!=='object') return base;
   p.v=3;
-  p.device=Object.assign({user:'',locked:false},p.device||{});
+  p.device=Object.assign({user:'',locked:false,did:''},p.device||{});
+  if(!p.device.did) p.device.did='d'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  p.chat=Array.isArray(p.chat)?p.chat.slice(-300):[];
+  p.syncVer=Number(p.syncVer)||0;
   p.settings=Object.assign({limit:LIMIT,pin:'',onboarded:false},p.settings||{});
   p.cloud=Object.assign({url:'',key:''},p.cloud||{});
   p.drafts=Object.assign({mailText:'',mailPic:'',mailTo:'parents',sender:'elder',calDate:''},p.drafts||{});
@@ -574,8 +651,9 @@ function migrate(p){
 }
 let S=loadState();
 function save(){
-  if(!storageOK){memStore=JSON.stringify(S);return;}
+  if(!storageOK){memStore=JSON.stringify(S);scheduleStatePush();return;}
   try{localStorage.setItem(LS_KEY,JSON.stringify(S));}catch(e){console.warn('[board] 저장 실패',e);}
+  scheduleStatePush();
 }
 function ensureToday(){
   const t=todayKey();
@@ -772,6 +850,8 @@ function render(){
   document.getElementById('hdRoot').innerHTML=headerHTML();
   document.getElementById('app').innerHTML=bannerHTML()+kidsBandHTML()+gridHTML()+footerHTML();
   drawClock();
+  scrollChatBottom();
+  paintPresence();
 }
 function drawClock(){
   const c=document.getElementById('clockTxt');
@@ -790,6 +870,7 @@ function headerHTML(){
       </div>
     </div>
     <div class="hd-right">
+      <button class="sync-chip sync-hd" id="hdSync" onclick="openSettings()" aria-label="가족 클라우드 상태"></button>
       <div class="clock"><span class="clock-ico">🕰️</span>
         <div><b id="clockTxt">${fmtClock(new Date())}</b><small id="clockDate">${fmtDateKR(new Date())}</small></div>
       </div>
@@ -1091,7 +1172,7 @@ function adminCardHTML(){
   </section>`;
 }
 function gridHTML(){
-  const cards=[todoCardHTML(),mailCardHTML(),foodCardHTML(),growthCardHTML(),
+  const cards=[commCardHTML(),chatCardHTML(),todoCardHTML(),mailCardHTML(),foodCardHTML(),growthCardHTML(),
     calendarCardHTML(),upcomingCardHTML(),homeCardHTML(),pillsCardHTML()];
   if(isAdmin()||isFamily()) cards.push(adminCardHTML());
   return `<div class="grid">${cards.join('')}</div>`;
@@ -1335,6 +1416,7 @@ function doSend(text){
   const letter={id:'l'+Date.now()+Math.random().toString(36).slice(2,6),from:k,kid:k,to:S.drafts.mailTo||'parents',
     text:text,ts:Date.now(),read:false,reply:null};
   S.letters.push(letter);
+  pushLetter(letter);
   S.kids[k].sends=sendsLastHour(k).concat(Date.now());
   S.drafts.mailPic='';S.drafts.mailText='';
   save();render();drawModal();
@@ -1350,7 +1432,7 @@ function openInbox(redraw){
   modal={type:'inbox',args:[]};
   const role=S.currentUser;
   const list=inboxFor(role);
-  list.forEach(l=>{l.read=true;});
+  list.forEach(l=>{ if(!l.read){ l.read=true; pushLetter(l); } });
   save();
   const kids=visibleKids();
   const replies=list.filter(l=>l.reply);
@@ -1397,6 +1479,7 @@ function sendReply(id){
   if(!txt) return toast('답장 내용을 적어 주세요','warn');
   l.reply={text:txt,ts:Date.now(),by:ROLES[S.currentUser].label};
   l.replyRead=false;
+  pushLetter(l);
   save();render();drawModal();
   burst('💚',8);
   toast(`${l.kid?S.kids[l.kid].name+'에게':'답장을'} 보냈어요! 아이 화면에 알림이 떠요 💌`,'ok');
@@ -1432,7 +1515,7 @@ function openReplies(redraw){
   },350);
 }
 function markRepliesRead(k){
-  S.letters.filter(l=>l.from===k&&l.reply).forEach(l=>{l.replyRead=true;});
+  S.letters.filter(l=>l.from===k&&l.reply).forEach(l=>{ if(!l.replyRead){ l.replyRead=true; pushLetter(l); } });
   save();closeModal();render();
   burst('💗',6);toast('답장을 모두 읽었어요 💗','ok');
 }
@@ -1692,15 +1775,19 @@ function openSettings(redraw){
         <div class="tf"><input id="pinInput" inputmode="numeric" maxlength="4" placeholder="4자리 숫자 (없으면 비움)" value="${esc(S.settings.pin)}">
           <button class="big-btn sm" style="width:auto;padding:0 15px" onclick="savePin()">저장</button></div>
       </div>
-      <div class="sec"><h4>☁️ 가족 클라우드 (선택)</h4>
+      <div class="sec"><h4>☁️ 가족 클라우드 (실시간 동기화)</h4>
         <div class="hint" style="margin-bottom:9px">
-          지금은 <b>이 기기 안에만</b> 편지와 기록이 저장돼요. 큰딸 태블릿에서 보낸 편지를 엄마 폰에서 바로 보려면 실시간 동기화가 필요해요.<br>
-          ① supabase.com 에서 무료 프로젝트를 만들고 ② Project Settings → API 의 <b>URL</b> 과 <b>anon public key</b> 를 아래에 넣어 주세요.
-          (연동 코드는 다음 단계에서 이어 붙일 수 있게 자리만 만들어 두었어요)
+          이제 폰과 태블릿이 <b>같은 편지함·가족 수다·별 기록</b>을 함께 써요. 새로고침 없이 바로 도착해요.<br>
+          연결 상태: <b>${esc(syncLabel())}</b>${cloud.lastSync?` · 마지막 저장 ${timeHM(cloud.lastSync)}`:''}
         </div>
-        <div class="field"><label>Supabase URL</label><input id="cloudUrl" placeholder="https://xxxx.supabase.co" value="${esc(S.cloud.url)}"></div>
-        <div class="field"><label>anon public key</label><input id="cloudKey" placeholder="eyJhbGciOi..." value="${esc(S.cloud.key)}"></div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px">
+          <button class="ghost" onclick="initCloud();toast('다시 연결해 볼게요 ☁️','ok')">🔄 지금 다시 연결</button>
+          <button class="ghost" onclick="openRoleMenu()">📱 사용자 바꾸기</button>
+        </div>
+        <div class="field"><label>Supabase URL</label><input id="cloudUrl" placeholder="https://xxxx.supabase.co" value="${esc(S.cloud.url||CLOUD_URL)}"></div>
+        <div class="field"><label>anon public key</label><input id="cloudKey" placeholder="eyJhbGciOi..." value="${esc(S.cloud.key||CLOUD_KEY)}"></div>
         <button class="ghost" onclick="saveCloud()">설정 저장</button>
+        <div class="hint" style="margin-top:6px">기본값은 가족 보드 전용으로 이미 연결돼 있어요. 비워 두면 기본 연결을 써요.</div>
       </div>
       <div class="sec"><h4>💾 데이터</h4>
         <div style="display:flex;gap:7px;flex-wrap:wrap">
@@ -1756,8 +1843,11 @@ function saveCloud(){
   S.cloud.url=(document.getElementById('cloudUrl').value||'').trim();
   S.cloud.key=(document.getElementById('cloudKey').value||'').trim();
   save();
-  if(S.cloud.url&&S.cloud.key) toast('클라우드 정보를 저장했어요 · 연동 코드는 다음 단계에서 붙여요 ☁️','ok');
-  else toast('클라우드 정보를 저장했어요 (아직 기기 저장 모드)','ok');
+  if(sb&&sb.removeAllChannels){ try{ sb.removeAllChannels(); }catch(e){} }
+  sb=null; callCh=null;
+  setCloudState('wait','연결 중');
+  initCloud();
+  toast('클라우드 설정을 저장하고 다시 연결해요 ☁️','ok');
 }
 function exportData(){
   try{
@@ -1924,6 +2014,679 @@ function speakLetter(id,el){const l=S.letters.find(x=>x.id===id);if(l)speak(l.te
 function speakReply(id,el){const l=S.letters.find(x=>x.id===id);if(l&&l.reply)speak(l.reply.text,el);}
 
 /* =========================================================
+   ☁️ 가족 클라우드 (Supabase 실시간 동기화)
+   - 편지 · 가족 수다 · 별/일정 같은 공유 상태를 기기끼리 바로 맞춰요.
+   - 테이블 fb_sync 한 개에 doc(jsonb)으로 종류를 구분해 저장해요.
+   ========================================================= */
+const CLOUD_URL='https://zzkjwucarircmqmuhpka.supabase.co';
+const CLOUD_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp6a2p3dWNhcmlyY21xbXVocGthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ4NTM1NjQsImV4cCI6MjExMDQyOTU2NH0.QH2-UdpeYZiRi7zUIQ9kvwB5focUA49ZE7B-Qj1KaQQ';
+const SYNC_TABLE='fb_sync';
+
+let sb=null;
+const cloud={state:'off',msg:'',lastSync:0,presence:{},channel:null};
+let applyingRemote=false, statePushTimer=null, chatDraft='';
+
+function cloudCfg(){ return {url:(S.cloud.url||CLOUD_URL).trim(), key:(S.cloud.key||CLOUD_KEY).trim()}; }
+function cloudReady(){ return cloud.state==='on' && !!sb; }
+function myDid(){
+  try{ const q=new URLSearchParams(location.search).get('dev'); if(q) return q; }catch(e){}
+  return S.device.did;
+}
+function roleName(id){
+  const r=ROLES[id];
+  if(!r) return '가족';
+  if(r.kind==='kid') return (S.kids[r.kid]&&S.kids[r.kid].name)||r.label;
+  return r.label;
+}
+function meInfo(){ return {did:myDid(), role:S.currentUser, name:roleName(S.currentUser)}; }
+function timeHM(ts){ const d=new Date(ts||Date.now()); return pad(d.getHours())+':'+pad(d.getMinutes()); }
+
+function syncClass(){ return cloud.state==='on'?'ok':(cloud.state==='wait'?'wait':'bad'); }
+function syncLabel(){
+  if(cloud.state==='on'){
+    const n=Object.keys(cloud.presence||{}).length;
+    return n>1?`실시간 연결됨 · ${n}대`:'실시간 연결됨';
+  }
+  if(cloud.state==='wait') return '연결 중…';
+  return '오프라인';
+}
+function paintHeaderSync(){
+  const el=document.getElementById('hdSync');
+  if(el){ el.className='sync-chip '+syncClass(); el.innerHTML='<i></i>'+esc(syncLabel()); }
+  paintPresence();
+}
+function setCloudState(st,msg){ cloud.state=st; cloud.msg=msg||''; paintHeaderSync(); }
+
+/* ---------- 문서 형식 ---------- */
+function letterDoc(l){ return Object.assign({kind:'letter'},l); }
+function chatDoc(m){ return Object.assign({kind:'chat'},m); }
+function stateDoc(ver){ return {kind:'state',ver:ver,kids:S.kids,events:S.events,limit:S.settings.limit,device:myDid()}; }
+function rowOf(id,doc){ return {id:id,doc:doc,updated_at:new Date().toISOString()}; }
+
+/* ---------- 보내기 ---------- */
+function pushRow(id,doc){
+  if(!cloudReady()) return;
+  sb.from(SYNC_TABLE).upsert(rowOf(id,doc),{onConflict:'id'}).then(res=>{
+    if(res&&res.error){ console.warn('[board] 클라우드 저장 실패',res.error); setCloudState('bad','저장 실패'); }
+    else { cloud.lastSync=Date.now(); setCloudState('on'); }
+  },err=>{ console.warn('[board] 클라우드 저장 실패',err); setCloudState('bad','저장 실패'); });
+}
+function pushLetter(l){ if(l&&l.id) pushRow('l:'+l.id, letterDoc(l)); }
+function pushChat(m){ if(m&&m.id) pushRow('c:'+m.id, chatDoc(m)); }
+function scheduleStatePush(){
+  if(applyingRemote||!cloudReady()) return;
+  clearTimeout(statePushTimer);
+  statePushTimer=setTimeout(()=>{
+    if(!cloudReady()) return;
+    S.syncVer=Date.now();
+    pushRow('state:family', stateDoc(S.syncVer));
+  },1400);
+}
+
+/* ---------- 받기 ---------- */
+function applyDoc(doc){
+  if(!doc||typeof doc!=='object') return false;
+  if(doc.kind==='letter') return applyLetterDoc(doc);
+  if(doc.kind==='chat') return applyChatDoc(doc);
+  if(doc.kind==='state') return applyStateDoc(doc);
+  return false;
+}
+function applyLetterDoc(doc){
+  let ch=false;
+  const l=S.letters.find(x=>x.id===doc.id);
+  if(!l){
+    const copy=Object.assign({},doc); delete copy.kind;
+    if(!copy.ts) copy.ts=Date.now();
+    S.letters.push(copy);
+    return true;
+  }
+  if(doc.text&&doc.text!==l.text){ l.text=doc.text; ch=true; }
+  if(doc.reply&&(!l.reply||(doc.reply.ts||0)>(l.reply.ts||0))){ l.reply=doc.reply; ch=true; }
+  if(doc.replyRead&&!l.replyRead){ l.replyRead=true; ch=true; }
+  if(doc.read&&!l.read){ l.read=true; ch=true; }
+  if(doc.ts&&!l.ts){ l.ts=doc.ts; ch=true; }
+  return ch;
+}
+function applyChatDoc(doc){
+  if(!doc.id) return false;
+  if((S.chat||[]).some(m=>m.id===doc.id)) return false;
+  const copy=Object.assign({},doc); delete copy.kind;
+  if(!copy.ts) copy.ts=Date.now();
+  S.chat=(S.chat||[]).concat([copy]).sort((a,b)=>(a.ts||0)-(b.ts||0)).slice(-300);
+  return true;
+}
+function applyStateDoc(doc){
+  const ver=Number(doc.ver||0);
+  if(!ver||ver<=(S.syncVer||0)) return false;
+  if(doc.kids&&typeof doc.kids==='object'){
+    KIDS.forEach(k=>{ if(doc.kids[k]) S.kids[k]=Object.assign(defaultKid(k),doc.kids[k]); });
+  }
+  if(Array.isArray(doc.events)&&doc.events.length) S.events=doc.events;
+  S.syncVer=ver;
+  return true;
+}
+function handleRow(row){
+  if(!row||!row.doc) return;
+  const doc=row.doc;
+  applyingRemote=true;
+  let changed=false;
+  try{ changed=applyDoc(doc); }catch(e){ console.warn('[board] 반영 실패',e); }
+  applyingRemote=false;
+  if(!changed) return;
+  try{ if(storageOK) localStorage.setItem(LS_KEY,JSON.stringify(S)); }catch(e){}
+  softRefresh(doc.kind,doc);
+}
+function softRefresh(kind,doc){
+  const ae=document.activeElement;
+  const root=document.getElementById('modalRoot');
+  const typing=!!(ae&&root&&root.contains(ae)&&(ae.tagName==='INPUT'||ae.tagName==='TEXTAREA'));
+  render();
+  if(modal.type){
+    if(typing) toast(kind==='letter'?'새 소식이 도착했어요 — 쓰던 글은 그대로예요':'새 소식이 도착했어요','ok');
+    else drawModal();
+  }else if(kind==='chat'){
+    const l=document.getElementById('chatList'); if(l) l.scrollTop=l.scrollHeight;
+  }else if(kind==='letter'){
+    toast('💌 새 편지가 도착했어요','ok');
+  }
+}
+
+/* ---------- 연결 ---------- */
+async function bootstrapCloud(){
+  const res=await sb.from(SYNC_TABLE).select('id,doc,updated_at').order('updated_at',{ascending:true}).limit(5000);
+  if(res.error) throw res.error;
+  const rows=res.data||[];
+  const have={};
+  rows.forEach(r=>{ have[r.id]=true; });
+  applyingRemote=true;
+  rows.forEach(r=>{ try{ applyDoc(r.doc); }catch(e){} });
+  applyingRemote=false;
+  try{ if(storageOK) localStorage.setItem(LS_KEY,JSON.stringify(S)); }catch(e){}
+  const ups=[];
+  S.letters.forEach(l=>{ if(!have['l:'+l.id]) ups.push(rowOf('l:'+l.id,letterDoc(l))); });
+  (S.chat||[]).forEach(m=>{ if(!have['c:'+m.id]) ups.push(rowOf('c:'+m.id,chatDoc(m))); });
+  if(!have['state:family']) ups.push(rowOf('state:family',stateDoc(Date.now())));
+  if(ups.length){
+    const w=await sb.from(SYNC_TABLE).upsert(ups,{onConflict:'id'});
+    if(w.error) console.warn('[board] 초기 업로드 실패',w.error); else cloud.lastSync=Date.now();
+  }
+}
+function subscribeCloud(){
+  try{
+    const ch=sb.channel('fb-sync-live');
+    ch.on('postgres_changes',{event:'INSERT',schema:'public',table:SYNC_TABLE},p=>handleRow(p.new));
+    ch.on('postgres_changes',{event:'UPDATE',schema:'public',table:SYNC_TABLE},p=>handleRow(p.new));
+    ch.subscribe(status=>{
+      if(status==='SUBSCRIBED') console.info('[board] 실시간 동기화 연결됨');
+      else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT'){ setCloudState('bad','실시간 끊김'); }
+    });
+    cloud.channel=ch;
+  }catch(e){ console.warn('[board] 구독 실패',e); }
+}
+async function initCloud(){
+  if(typeof supabase==='undefined'||!supabase||typeof supabase.createClient!=='function'){
+    setCloudState('off','라이브러리 없음'); return;
+  }
+  const cfg=cloudCfg();
+  if(!cfg.url||!cfg.key){ setCloudState('off','설정 필요'); return; }
+  setCloudState('wait','연결 중');
+  try{
+    sb=supabase.createClient(cfg.url,cfg.key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
+  }catch(e){ console.warn('[board] 클라이언트 생성 실패',e); setCloudState('off','연결 실패'); return; }
+  try{
+    await bootstrapCloud();
+    cloud.state='on'; cloud.lastSync=cloud.lastSync||Date.now();
+    subscribeCloud();
+    callChannel();
+    paintHeaderSync(); render();
+    console.info('[board] 가족 클라우드 연결 완료');
+  }catch(e){
+    console.warn('[board] 클라우드 연결 실패',e);
+    setCloudState('off','연결 실패');
+  }
+}
+
+/* =========================================================
+   📹 가족 영상·음성 통화 (WebRTC + Supabase Realtime 시그널링)
+   ========================================================= */
+const ICE_CFG={iceServers:[{urls:['stun:stun.l.google.com:19302','stun:stun1.l.google.com:19302']}]};
+let call=null, incoming=null, callCh=null, ringTimer=null, callTick=null, actx=null;
+
+function callTargets(){
+  return ['elder','younger','parents','grandparents','family'].filter(id=>id!==S.currentUser&&ROLES[id]);
+}
+function isOnline(role){ return role===S.currentUser || !!(cloud.presence&&cloud.presence[role]); }
+function memberAvatar(id){
+  const r=ROLES[id];
+  if(!r) return '<span>🏠</span>';
+  if(r.kind==='kid'&&S.kids[r.kid]) return avatarSVG(S.kids[r.kid]);
+  return roleAvatar(id);
+}
+function paintPresence(){
+  document.querySelectorAll('[data-memrole]').forEach(el=>{
+    const role=el.getAttribute('data-memrole');
+    const on=isOnline(role);
+    el.classList.toggle('offline',!on);
+    const dot=el.querySelector('.m-dot'); if(dot) dot.classList.toggle('on',on);
+    const sub=el.querySelector('.m-sub'); if(sub) sub.textContent=on?'켜져 있어요':'꺼져 있음';
+  });
+  const chip=document.getElementById('commOnline');
+  if(chip){ chip.className='sync-chip '+syncClass(); chip.innerHTML='<i></i>'+esc(syncLabel()); }
+}
+
+/* ---------- 시그널링 ---------- */
+function callChannel(){
+  if(callCh||!sb) return callCh;
+  try{
+    callCh=sb.channel('fb-call',{config:{broadcast:{self:false},presence:{key:myDid()}}});
+    callCh.on('broadcast',{event:'signal'},m=>{ if(m&&m.payload) onSignal(m.payload); });
+    callCh.on('presence',{event:'sync'},()=>refreshPresence());
+    callCh.on('presence',{event:'join'},()=>refreshPresence());
+    callCh.on('presence',{event:'leave'},()=>refreshPresence());
+    callCh.subscribe(status=>{
+      if(status==='SUBSCRIBED'){
+        callCh.track({did:myDid(),role:S.currentUser,name:roleName(S.currentUser),ts:Date.now()}).catch(()=>{});
+      }
+    });
+  }catch(e){ console.warn('[call] 채널 준비 실패',e); }
+  return callCh;
+}
+function refreshPresence(){
+  const st=(callCh&&callCh.presenceState&&callCh.presenceState())||{};
+  const next={};
+  Object.keys(st).forEach(k=>{ (st[k]||[]).forEach(p=>{ if(p&&p.role) next[p.role]=true; }); });
+  cloud.presence=next;
+  paintPresence();
+}
+function sendSignal(payload){
+  const ch=callChannel();
+  if(!ch) return;
+  if(!payload.from) payload.from=meInfo();
+  try{ ch.send({type:'broadcast',event:'signal',payload:payload}).catch(e=>console.warn('[call] 신호 전송 실패',e)); }catch(e){}
+}
+function onSignal(p){
+  if(!p||!p.callId) return;
+  if(p.from&&p.from.did===myDid()) return;
+  if(p.to&&p.to.did&&p.to.did!==myDid()) return;
+  if(p.to&&p.to.role&&p.to.role!==S.currentUser&&!(ROLES[S.currentUser]&&ROLES[S.currentUser].id===p.to.role)) return;
+  switch(p.type){
+    case 'ring':
+      if(call){ sendSignal({type:'busy',callId:p.callId,to:{did:p.from.did}}); return; }
+      if(incoming) return;
+      incoming={callId:p.callId,from:p.from,video:!!p.video};
+      playRing('in'); showIncomingUI();
+      break;
+    case 'accept':
+      if(call&&call.callId===p.callId&&call.dir==='out'){
+        call.peerDid=p.from.did; call.accepted=true;
+        setCallState('연결 중…'); stopRing();
+        callerOffer();
+      }
+      break;
+    case 'decline':
+      if(call&&call.callId===p.callId) endCall('decline');
+      else if(incoming&&incoming.callId===p.callId) dismissIncoming();
+      break;
+    case 'busy':
+      if(call&&call.callId===p.callId) endCall('busy');
+      break;
+    case 'offer':
+      if(call&&call.callId===p.callId&&call.dir==='in') onOffer(p);
+      break;
+    case 'answer':
+      if(call&&call.callId===p.callId&&call.dir==='out') onAnswer(p);
+      break;
+    case 'ice':
+      if(call&&call.callId===p.callId) addIce(p.candidate);
+      break;
+    case 'hangup':
+      if(call&&call.callId===p.callId) endCall('remote');
+      else if(incoming&&incoming.callId===p.callId) dismissIncoming();
+      break;
+    default: break;
+  }
+}
+
+/* ---------- 미디어 ---------- */
+async function getMedia(video){
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia) throw {name:'Unsupported'};
+  const ac={echoCancellation:true,noiseSuppression:true};
+  if(video){
+    try{
+      const s=await navigator.mediaDevices.getUserMedia({audio:ac,video:{facingMode:'user',width:{ideal:1280},height:{ideal:720}}});
+      s.__video=true; return s;
+    }catch(e){ console.info('[call] 카메라 사용 불가 → 음성으로 시도',e&&e.name); }
+  }
+  const s=await navigator.mediaDevices.getUserMedia({audio:ac,video:false});
+  s.__video=false;
+  return s;
+}
+function mediaErrorText(e){
+  const n=(e&&e.name)||'';
+  if(n==='NotAllowedError'||n==='SecurityError') return '카메라·마이크 사용이 막혀 있어요. 아이폰은 설정 → Safari(또는 홈 화면 앱) → 카메라·마이크를 허용해 주세요.';
+  if(n==='NotFoundError'||n==='OverconstrainedError') return '카메라나 마이크를 찾을 수 없어요. 기기에 연결돼 있는지 확인해 주세요.';
+  if(n==='NotReadableError'||n==='AbortError') return '카메라·마이크를 다른 앱이 쓰고 있어요. 통화 중인 앱을 끄고 다시 해 주세요.';
+  if(n==='Unsupported') return '이 브라우저는 통화 기능을 지원하지 않아요. Safari나 Chrome으로 열어 주세요.';
+  return '카메라·마이크를 켜지 못했어요. 잠시 뒤 다시 해 주세요.';
+}
+function showMediaHelp(e){
+  const msg=mediaErrorText(e);
+  console.warn('[call] 미디어 오류',e&&e.name,e&&e.message);
+  setModal(shHead('📵 통화를 시작할 수 없어요',msg,'🎥')+
+    `<div class="sh-body">
+      <div class="sec"><h4>이렇게 해 보세요</h4>
+        <div class="hint">· 처음 통화할 때 화면에 뜨는 <b>허용</b>을 눌러 주세요.<br>
+        · 아이폰: 설정 → Safari → 카메라 / 마이크 → <b>확인</b><br>
+        · 홈 화면 앱으로 열었다면 설정에서 그 앱의 카메라·마이크를 켜 주세요.<br>
+        · 다른 앱이 카메라를 쓰고 있으면 끄고 다시 시도해 주세요.</div>
+      </div>
+      <button class="big-btn" onclick="closeModal()">알겠어요</button>
+    </div>`,'narrow');
+}
+
+/* ---------- 벨소리 ---------- */
+function audioCtx(){
+  try{
+    if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)();
+    if(actx.state==='suspended') actx.resume();
+    return actx;
+  }catch(e){ return null; }
+}
+function playRing(kind){
+  stopRing();
+  const ac=audioCtx(); if(!ac) return;
+  const beep=(f,dur,delay,vol)=>{
+    try{
+      const o=ac.createOscillator(), g=ac.createGain();
+      o.type='sine'; o.frequency.value=f; o.connect(g); g.connect(ac.destination);
+      const t=ac.currentTime+delay;
+      g.gain.setValueAtTime(0,t);
+      g.gain.linearRampToValueAtTime(vol||.18,t+.03);
+      g.gain.setValueAtTime(vol||.18,Math.max(t+.04,t+dur-.04));
+      g.gain.linearRampToValueAtTime(0,t+dur);
+      o.start(t); o.stop(t+dur+.03);
+    }catch(e){}
+  };
+  const pattern=()=>{ if(kind==='in'){ beep(880,.2,0,.2); beep(660,.2,.26,.2); } else { beep(440,.85,0,.09); } };
+  pattern();
+  ringTimer=setInterval(pattern, kind==='in'?1500:2400);
+  if(kind==='in'&&navigator.vibrate){ try{ navigator.vibrate([280,180,280]); }catch(e){} }
+}
+function stopRing(){
+  if(ringTimer){ clearInterval(ringTimer); ringTimer=null; }
+  if(navigator.vibrate){ try{ navigator.vibrate(0); }catch(e){} }
+}
+
+/* ---------- 통화 화면 ---------- */
+function callRootEl(){ return document.getElementById('callRoot'); }
+function showCallUI(html){
+  const r=callRootEl(); if(!r) return;
+  r.innerHTML='<div class="call-sheet">'+html+'</div>';
+  r.classList.add('on');
+  document.body.classList.add('modal-open');
+  attachLocalPreview();
+}
+function hideCallUI(){
+  const r=callRootEl(); if(!r) return;
+  r.innerHTML=''; r.classList.remove('on');
+  const mr=document.getElementById('modalRoot');
+  if(!mr||!mr.innerHTML.trim()) document.body.classList.remove('modal-open');
+}
+function showIncomingUI(){ if(incoming) showCallUI(callHTMLIncoming()); }
+function dismissIncoming(){ incoming=null; stopRing(); hideCallUI(); }
+
+function callHTMLIncoming(){
+  const inc=incoming; if(!inc) return '';
+  const nm=roleName(inc.from.role);
+  return `<div class="call-top"><b>${inc.video?'📹 영상통화':'📞 음성통화'}</b><span class="cstate">전화가 왔어요</span></div>
+  <div class="call-stage">
+    <div class="call-avatar">
+      <div class="big-av">${memberAvatar(inc.from.role)}</div>
+      <div class="cn">${esc(nm)}</div>
+      <div class="cd">${esc(nm)}에게서 ${inc.video?'영상':'음성'}통화가 왔어요!</div>
+    </div>
+  </div>
+  <div class="call-actions">
+    <button class="cbtn hang" onclick="declineIncoming()" aria-label="거절">✕</button>
+    <button class="cbtn ans" onclick="acceptIncoming()" aria-label="받기">📞</button>
+  </div>
+  <div class="call-note">받기를 누르면 카메라·마이크 허용을 물어봐요</div>`;
+}
+function callHTMLActive(stateText){
+  const c=call; if(!c) return '';
+  const nm=roleName(c.role);
+  return `<div class="call-top"><b>${c.video?'📹 영상통화':'📞 음성통화'} · ${esc(nm)}</b><span class="cstate" id="callState">${esc(stateText||'연결 중…')}</span></div>
+  <div class="call-stage">
+    ${c.video?'<video id="rVideo" playsinline autoplay></video>':'<audio id="rAudio" playsinline autoplay></audio>'}
+    <div class="call-avatar" id="callAvatar">
+      <div class="big-av">${memberAvatar(c.role)}</div>
+      <div class="cn">${esc(nm)}</div>
+      <div class="cd" id="callAvatarNote">${c.video?'영상이 오면 화면이 켜져요':'음성으로 연결하고 있어요'}</div>
+    </div>
+    <div class="call-timer" id="callTimer">00:00</div>
+    <div class="pip ${c.video?'on':''}" id="callPip"><video id="lVideo" playsinline autoplay muted></video></div>
+  </div>
+  <div class="call-note" id="callNote" style="display:none"></div>
+  <div class="call-actions">
+    <button class="cbtn" id="muteBtn" onclick="toggleMute()" aria-label="마이크 끄기/켜기">🎤</button>
+    ${c.video?'<button class="cbtn" id="camBtn" onclick="toggleCam()" aria-label="카메라 끄기/켜기">📷</button>':''}
+    <button class="cbtn hang" onclick="endCall('local')" aria-label="통화 종료">📵</button>
+  </div>`;
+}
+function attachLocalPreview(){
+  const v=document.getElementById('lVideo');
+  if(v&&call&&call.localStream){ try{ v.srcObject=call.localStream; v.play().catch(()=>{}); }catch(e){} }
+}
+function setCallState(txt){
+  const el=document.getElementById('callState'); if(el) el.textContent=txt;
+}
+function showAudioHint(){
+  const n=document.getElementById('callNote');
+  if(n){ n.style.display='block'; n.textContent='소리가 안 들리면 화면을 한 번 눌러 주세요(아이폰 소리 허용)'; }
+}
+function markConnected(){
+  if(!call||call.started) return;
+  call.started=Date.now();
+  stopRing();
+  setCallState('통화 중');
+  const tb=document.getElementById('callTimer'); if(tb) tb.classList.add('on');
+  const note=document.getElementById('callAvatarNote'); if(note) note.textContent='연결됐어요';
+  if(callTick) clearInterval(callTick);
+  const paint=()=>{
+    const el=document.getElementById('callTimer'); if(!el||!call||!call.started) return;
+    const s=Math.floor((Date.now()-call.started)/1000);
+    el.textContent=pad(Math.floor(s/60))+':'+pad(s%60);
+  };
+  paint(); callTick=setInterval(paint,1000);
+}
+
+/* ---------- WebRTC ---------- */
+function newPC(){
+  const pc=new RTCPeerConnection(ICE_CFG);
+  pc.onicecandidate=e=>{
+    if(!e.candidate||!call) return;
+    const cand=e.candidate.toJSON?e.candidate.toJSON():{candidate:e.candidate.candidate,sdpMid:e.candidate.sdpMid,sdpMLineIndex:e.candidate.sdpMLineIndex};
+    sendSignal({type:'ice',callId:call.callId,candidate:cand,to:{did:call.peerDid||''}});
+  };
+  pc.ontrack=e=>{
+    const stream=(e.streams&&e.streams[0])?e.streams[0]:new MediaStream([e.track]);
+    attachRemote(stream);
+  };
+  pc.onconnectionstatechange=()=>{
+    if(!call||call.pc!==pc) return;
+    if(pc.connectionState==='connected') markConnected();
+    else if(pc.connectionState==='failed'){ setCallState('연결이 끊겼어요'); endCall('error'); }
+  };
+  return pc;
+}
+function putLocalTracks(pc){
+  if(!call||!call.localStream) return;
+  call.localStream.getTracks().forEach(t=>{ try{ pc.addTrack(t,call.localStream); }catch(e){} });
+}
+async function callerOffer(){
+  if(!call) return;
+  try{
+    const pc=newPC(); call.pc=pc;
+    putLocalTracks(pc);
+    const off=await pc.createOffer({offerToReceiveAudio:true,offerToReceiveVideo:!!call.video});
+    await pc.setLocalDescription(off);
+    sendSignal({type:'offer',callId:call.callId,sdp:pc.localDescription,to:{did:call.peerDid}});
+  }catch(e){ console.warn('[call] offer 실패',e); endCall('error'); }
+}
+async function onOffer(p){
+  if(!call) return;
+  try{
+    const pc=newPC(); call.pc=pc;
+    putLocalTracks(pc);
+    await pc.setRemoteDescription(new RTCSessionDescription(p.sdp));
+    await flushIce();
+    const ans=await pc.createAnswer();
+    await pc.setLocalDescription(ans);
+    sendSignal({type:'answer',callId:call.callId,sdp:pc.localDescription,to:{did:call.peerDid}});
+  }catch(e){ console.warn('[call] answer 실패',e); endCall('error'); }
+}
+async function onAnswer(p){
+  if(!call||!call.pc) return;
+  try{ await call.pc.setRemoteDescription(new RTCSessionDescription(p.sdp)); await flushIce(); }
+  catch(e){ console.warn('[call] answer 적용 실패',e); }
+}
+async function addIce(cand){
+  if(!cand||!call) return;
+  if(!call.pc||!call.pc.remoteDescription){ (call.pendingIce=call.pendingIce||[]).push(cand); return; }
+  try{ await call.pc.addIceCandidate(new RTCIceCandidate(cand)); }catch(e){ console.info('[call] ICE 무시',e&&e.message); }
+}
+async function flushIce(){
+  if(!call||!call.pc) return;
+  const q=call.pendingIce||[]; call.pendingIce=[];
+  for(const c of q){
+    try{ await call.pc.addIceCandidate(new RTCIceCandidate(c)); }catch(e){}
+  }
+}
+function attachRemote(stream){
+  if(!call) return;
+  if(call.video){
+    const v=document.getElementById('rVideo');
+    if(v){ try{ v.srcObject=stream; v.play().catch(()=>showAudioHint()); }catch(e){} }
+    const av=document.getElementById('callAvatar'); if(av) av.style.display='none';
+  }else{
+    const a=document.getElementById('rAudio');
+    if(a){ try{ a.srcObject=stream; a.play().catch(()=>showAudioHint()); }catch(e){} }
+  }
+  markConnected();
+}
+
+/* ---------- 통화 시작/받기/끝 ---------- */
+async function startCall(roleId, video){
+  if(!cloudReady()){ toast('가족 클라우드 연결이 필요해요. 설정에서 연결을 확인해 주세요','warn'); return; }
+  if(call||incoming){ toast('이미 통화 중이에요','warn'); return; }
+  if(!ROLES[roleId]||roleId===S.currentUser){ toast('다른 가족을 골라 주세요','warn'); return; }
+  let stream=null;
+  try{ stream=await getMedia(!!video); }
+  catch(e){ showMediaHelp(e); return; }
+  const callId='c'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  call={callId:callId,role:roleId,video:!!video,dir:'out',localStream:stream,pc:null,peerDid:null,started:0,pendingIce:[]};
+  showCallUI(callHTMLActive('거는 중…'));
+  playRing('out');
+  if(!stream.__video){ toast('카메라를 켤 수 없어 음성으로 연결할게요 📞','warn'); }
+  if(!isOnline(roleId)) toast('상대 화면이 꺼져 있으면 받을 수 없어요','warn');
+  sendSignal({type:'ring',callId:callId,to:{role:roleId},video:!!video});
+  call.timeout=setTimeout(()=>{ if(call&&call.callId===callId&&!call.started) endCall('noanswer'); },50000);
+}
+async function acceptIncoming(){
+  const inc=incoming; if(!inc||call) return;
+  let stream=null;
+  try{ stream=await getMedia(!!inc.video); }
+  catch(e){
+    sendSignal({type:'decline',callId:inc.callId,to:{did:inc.from.did}});
+    dismissIncoming();
+    showMediaHelp(e);
+    return;
+  }
+  dismissIncoming();
+  call={callId:inc.callId,role:inc.from.role,video:!!inc.video,dir:'in',localStream:stream,pc:null,peerDid:inc.from.did,started:0,pendingIce:[]};
+  sendSignal({type:'accept',callId:call.callId,to:{did:call.peerDid}});
+  showCallUI(callHTMLActive('연결 중…'));
+  if(!stream.__video) toast('카메라를 켤 수 없어 음성으로 연결할게요 📞','warn');
+}
+function declineIncoming(){
+  const inc=incoming;
+  if(inc) sendSignal({type:'decline',callId:inc.callId,to:{did:inc.from.did}});
+  dismissIncoming();
+}
+function endCall(reason){
+  const c=call;
+  call=null;
+  stopRing();
+  if(callTick){ clearInterval(callTick); callTick=null; }
+  if(c&&c.timeout) clearTimeout(c.timeout);
+  if(c){
+    if(c.pc){ try{ c.pc.close(); }catch(e){} }
+    if(c.localStream) c.localStream.getTracks().forEach(t=>{ try{ t.stop(); }catch(e){} });
+  }
+  hideCallUI();
+  if(reason==='local'&&c&&c.callId) sendSignal({type:'hangup',callId:c.callId,to:{did:c.peerDid||''}});
+  const msgs={
+    'local':'통화를 종료했어요',
+    'remote':'통화가 끝났어요',
+    'decline':'상대가 통화를 받지 않았어요',
+    'busy':'지금 다른 통화 중이에요',
+    'noanswer':'연결되지 않았어요. 상대 화면이 켜져 있는지 확인해 주세요',
+    'error':'통화 중 연결이 끊겼어요',
+    'media':'카메라·마이크를 켜지 못했어요'
+  };
+  if(msgs[reason]) toast(msgs[reason], reason==='local'?'ok':'warn');
+}
+function toggleMute(){
+  if(!call||!call.localStream) return;
+  const t=call.localStream.getAudioTracks()[0];
+  if(!t) return;
+  t.enabled=!t.enabled;
+  const b=document.getElementById('muteBtn');
+  if(b){ b.textContent=t.enabled?'🎤':'🔇'; b.classList.toggle('off',!t.enabled); }
+}
+function toggleCam(){
+  if(!call||!call.localStream) return;
+  const t=call.localStream.getVideoTracks()[0];
+  if(!t){ toast('카메라가 없어 음성으로만 연결돼요','warn'); return; }
+  t.enabled=!t.enabled;
+  const b=document.getElementById('camBtn');
+  if(b){ b.textContent=t.enabled?'📷':'🚫'; b.classList.toggle('off',!t.enabled); }
+  const pip=document.getElementById('callPip'); if(pip) pip.style.opacity=t.enabled?'1':'.35';
+}
+
+/* =========================================================
+   📞 가족 통화 카드 · 💬 가족 수다 카드
+   ========================================================= */
+function commCardHTML(){
+  const members=callTargets();
+  const tiles=members.map(id=>{
+    const on=isOnline(id);
+    return `<div class="mem ${on?'':'offline'}" data-memrole="${id}">
+      <span class="m-dot ${on?'on':''}"></span>
+      <span class="m-av">${memberAvatar(id)}</span>
+      <span class="m-nm">${esc(roleName(id))}</span>
+      <span class="m-sub">${on?'켜져 있어요':'꺼져 있음'}</span>
+      <span class="m-btns">
+        <button class="video" ${cloudReady()?'':'disabled'} onclick="startCall('${id}',true)" aria-label="${esc(roleName(id))} 영상통화">📹</button>
+        <button class="voice" ${cloudReady()?'':'disabled'} onclick="startCall('${id}',false)" aria-label="${esc(roleName(id))} 음성통화">📞</button>
+      </span>
+    </div>`;
+  }).join('');
+  return `<section class="card comm">
+    <div class="card-head">
+      <span class="ico" style="--ic:#FFE3EA">📹</span>
+      <div><h3>가족 통화</h3><p>누구에게 걸까요? 화면이 켜져 있으면 바로 울려요</p></div>
+      <span class="sync-chip ${syncClass()}" id="commOnline"><i></i>${esc(syncLabel())}</span>
+    </div>
+    <div class="members">${tiles}</div>
+    <div class="hint">처음 한 번만 카메라·마이크 <b>허용</b>을 눌러 주세요. 받는 사람은 화면 가운데 📞 버튼을 눌러 받아요.</div>
+  </section>`;
+}
+function chatCardHTML(){
+  const list=(S.chat||[]).slice(-40);
+  const bubbles=list.length?list.map(m=>{
+    const mine=m.from===S.currentUser;
+    return `<div class="cb ${mine?'me':''}">
+      ${mine?'':`<span class="c-av">${memberAvatar(m.from)}</span>`}
+      <span class="c-body">
+        ${mine?'':`<span class="c-nm">${esc(m.name||roleName(m.from))}</span>`}
+        <span class="c-tx">${esc(m.text)}</span>
+        <span class="c-tm">${timeHM(m.ts)}</span>
+      </span>
+    </div>`;
+  }).join(''):'<div class="hint">아직 수다가 없어요. 첫 인사를 남겨 보세요 💬</div>';
+  return `<section class="card chat-card">
+    <div class="card-head"><span class="ico" style="--ic:#E4DCF8">💬</span>
+      <div><h3>가족 수다</h3><p>폰·태블릿에 바로 보여요</p></div>
+      <span class="sync-chip ${syncClass()}"><i></i>${cloudReady()?'실시간':'연결 전'}</span>
+    </div>
+    <div class="chat-list" id="chatList">${bubbles}</div>
+    <div class="chat-in">
+      <input id="chatInput" placeholder="하고 싶은 말을 적어 보세요" value="${esc(chatDraft)}"
+        oninput="chatDraft=this.value" onkeydown="if(event.key==='Enter'){event.preventDefault();sendChat();}">
+      <button onclick="sendChat()" aria-label="보내기">➤</button>
+    </div>
+  </section>`;
+}
+function scrollChatBottom(){
+  const l=document.getElementById('chatList');
+  if(l) l.scrollTop=l.scrollHeight;
+}
+function sendChat(){
+  const el=document.getElementById('chatInput');
+  const t=((el?el.value:chatDraft)||'').trim();
+  if(!t) return;
+  const m={id:Date.now().toString(36)+Math.random().toString(36).slice(2,5),from:S.currentUser,
+    name:roleName(S.currentUser),text:t.slice(0,500),ts:Date.now(),did:myDid()};
+  S.chat=(S.chat||[]).concat([m]).sort((a,b)=>(a.ts||0)-(b.ts||0)).slice(-300);
+  chatDraft='';
+  save();
+  pushChat(m);
+  render();
+  setTimeout(scrollChatBottom,30);
+}
+
+/* =========================================================
    시작
    ========================================================= */
 function boot(){
@@ -1939,6 +2702,7 @@ function boot(){
     render();
   }
   setInterval(drawClock,1000);
+  initCloud();
   document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
   if(window.speechSynthesis){
     window.speechSynthesis.onvoiceschanged=()=>{koreanVoice();};
