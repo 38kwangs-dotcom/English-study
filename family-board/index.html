@@ -2498,6 +2498,16 @@ function newPC(){
   };
   return pc;
 }
+function waitIceGathering(pc,ms){
+  return new Promise(resolve=>{
+    if(!pc||pc.iceGatheringState==='complete') return resolve();
+    let done=false;
+    const finish=()=>{ if(done) return; done=true; try{ pc.removeEventListener('icegatheringstatechange',onch); }catch(e){} resolve(); };
+    const onch=()=>{ if(pc.iceGatheringState==='complete') finish(); };
+    try{ pc.addEventListener('icegatheringstatechange',onch); }catch(e){}
+    setTimeout(finish,ms||2500);
+  });
+}
 function putLocalTracks(pc){
   if(!call||!call.localStream) return;
   call.localStream.getTracks().forEach(t=>{ try{ pc.addTrack(t,call.localStream); }catch(e){} });
@@ -2509,6 +2519,7 @@ async function callerOffer(){
     putLocalTracks(pc);
     const off=await pc.createOffer({offerToReceiveAudio:true,offerToReceiveVideo:!!call.video});
     await pc.setLocalDescription(off);
+    await waitIceGathering(pc,2500);
     sendSignal({type:'offer',callId:call.callId,sdp:pc.localDescription,to:{did:call.peerDid}});
   }catch(e){ console.warn('[call] offer 실패',e); endCall('error'); }
 }
@@ -2521,6 +2532,7 @@ async function onOffer(p){
     await flushIce();
     const ans=await pc.createAnswer();
     await pc.setLocalDescription(ans);
+    await waitIceGathering(pc,2500);
     sendSignal({type:'answer',callId:call.callId,sdp:pc.localDescription,to:{did:call.peerDid}});
   }catch(e){ console.warn('[call] answer 실패',e); endCall('error'); }
 }
