@@ -472,6 +472,9 @@ h1,h2,h3,h4,p{margin:0}
 /* =========================================================
    우리집 패밀리 보드!  (single-file app, localStorage 기반)
    ========================================================= */
+window.__fbErr=[];
+window.addEventListener('error',e=>{ try{ window.__fbErr.push(String(e.message)+' @'+e.lineno); }catch(_){} });
+window.addEventListener('unhandledrejection',e=>{ try{ window.__fbErr.push('rejection: '+String((e.reason&&e.reason.message)||e.reason)); }catch(_){} });
 const LS_KEY='familyBoard.v3';
 const KIDS=['elder','younger'];
 const WEEK=['일','월','화','수','목','금','토'];
@@ -2185,6 +2188,17 @@ function subscribeCloud(){
     cloud.channel=ch;
   }catch(e){ console.warn('[board] 구독 실패',e); }
 }
+let lastWake=0;
+function wakeCloud(){
+  const now=Date.now();
+  if(now-lastWake<8000) return;
+  lastWake=now;
+  if(!cloudReady()){ initCloud(); return; }
+  try{
+    if(callCh&&callCh.state!=='joined') callCh.subscribe();
+    if(!callCh) callChannel();
+  }catch(e){}
+}
 async function initCloud(){
   if(typeof supabase==='undefined'||!supabase||typeof supabase.createClient!=='function'){
     setCloudState('off','라이브러리 없음'); return;
@@ -2756,6 +2770,8 @@ function boot(){
     window.speechSynthesis.onvoiceschanged=()=>{koreanVoice();};
   }
   window.addEventListener('beforeunload',save);
+  document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') wakeCloud(); });
+  setInterval(()=>{ if(document.visibilityState==='visible') wakeCloud(); },60000);
   if(!storageOK) console.warn('[board] localStorage 사용 불가');
 }
 boot();
