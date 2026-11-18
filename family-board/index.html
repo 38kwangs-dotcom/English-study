@@ -497,11 +497,25 @@ const WEEK=['일','월','화','수','목','금','토'];
 const ROLES={
   elder:{id:'elder',label:'큰딸',kind:'kid',kid:'elder',emoji:'🐻'},
   younger:{id:'younger',label:'작은딸',kind:'kid',kid:'younger',emoji:'🐰'},
-  parents:{id:'parents',label:'엄마·아빠',kind:'admin',inbox:'parents',emoji:'💗'},
-  grandparents:{id:'grandparents',label:'할머니·할아버지',kind:'admin',inbox:'grandparents',emoji:'🌷'},
-  family:{id:'family',label:'가족 공용 보드',kind:'family',emoji:'🏠'}
+  mom:{id:'mom',label:'엄마',kind:'admin',inbox:'mom',emoji:'👩'},
+  dad:{id:'dad',label:'아빠',kind:'admin',inbox:'dad',emoji:'👨'},
+  grandparents:{id:'grandparents',label:'할머니·할아버지',kind:'admin',inbox:'grandparents',emoji:'👵'}
 };
-const RECIPIENTS={parents:{label:'엄마·아빠',emoji:'💗'},grandparents:{label:'할머니·할아버지',emoji:'🌷'}};
+/* 예전 버전에서 저장된 '엄마·아빠' 통합 / '가족 공용 보드' 기록을 그대로 읽어 주기 위한 이름표 */
+const LEGACY_ROLES={parents:{label:'엄마·아빠',emoji:'💗'},family:{label:'가족 공용 보드',emoji:'🏠'}};
+const RECIPIENTS={mom:{label:'엄마',emoji:'💗'},dad:{label:'아빠',emoji:'💙'},grandparents:{label:'할머니·할아버지',emoji:'🌷'}};
+const ROLE_IDS=['elder','younger','mom','dad','grandparents'];
+function recipientLabel(to){const r=RECIPIENTS[to]||LEGACY_ROLES[to];return r?r.label:'가족';}
+function roleLabel(id){const r=ROLES[id];if(r) return r.label;const l=LEGACY_ROLES[id];return l?l.label:'가족';}
+function deviceOptions(){
+  return [
+    {id:'elder',ico:'🐻',label:'큰딸 태블릿',sub:'켜면 큰딸 화면으로 시작해요',onb:'켜면 큰딸 화면으로 시작'},
+    {id:'younger',ico:'🐰',label:'작은딸 태블릿',sub:'켜면 작은딸 화면으로 시작해요',onb:'켜면 작은딸 화면으로 시작'},
+    {id:'mom',ico:'👩',label:'엄마 기기',sub:'켜면 엄마 화면으로 시작해요',onb:'켜면 엄마 화면으로 시작'},
+    {id:'dad',ico:'👨',label:'아빠 기기',sub:'켜면 아빠 화면으로 시작해요',onb:'켜면 아빠 화면으로 시작'},
+    {id:'grandparents',ico:'👵',label:'할머니·할아버지 기기',sub:'켜면 할머니·할아버지 화면으로 시작해요',onb:'켜면 할머니·할아버지 화면으로 시작'}
+  ];
+}
 const ROUTINE=[
   {id:'toys',icon:'🧸',label:'장난감 정리'},
   {id:'homework',icon:'✏️',label:'숙제 확인'},
@@ -607,19 +621,19 @@ function defaultState(){
   const s={
     v:3,
     device:{user:'',locked:false,did:''},
-    currentUser:'family',
+    currentUser:'mom',
     chat:[],
     syncVer:0,
-    settings:{limit:LIMIT,pin:'',onboarded:false},
+    settings:{limit:LIMIT,pin:'',onboarded:false,deviceAsked:false},
     cloud:{url:'',key:''},
-    drafts:{mailText:'',mailPic:'',mailTo:'parents',sender:'elder',calDate:''},
+    drafts:{mailText:'',mailPic:'',mailTo:'mom',sender:'elder',calDate:''},
     kids:{elder:defaultKid('elder'),younger:defaultKid('younger')},
     letters:[
-      {id:'seed-1',from:'parents',to:'elder',kid:'elder',text:'우리 큰딸, 오늘 하루도 잘 보냈구나! 엄마·아빠가 많이 사랑해 💛',ts:now-1000*60*24*1,read:false,reply:null},
-      {id:'seed-2',from:'elder',kid:'elder',to:'parents',text:'보고 싶어요 💛',ts:now-1000*60*95,read:true,
-        reply:{text:'우리 딸, 엄마도 많이 보고 싶어! 오늘 재밌게 놀고 있지? 이따 안아줄게 💗',ts:now-1000*60*40,by:'엄마·아빠'},replyRead:false},
-      {id:'seed-3',from:'younger',kid:'younger',to:'parents',text:'사랑해요 ❤️',ts:now-1000*60*60*30,read:true,reply:null},
-      {id:'seed-4',from:'parents',to:'grandparents',text:'어머니, 이번 주 일요일에 아이들 데리고 들를게요 :)',ts:now-1000*60*60*50,read:false,reply:null}
+      {id:'seed-1',from:'mom',to:'elder',kid:'elder',text:'우리 큰딸, 오늘 하루도 잘 보냈구나! 엄마가 많이 사랑해 💛',ts:now-1000*60*24*1,read:false,reply:null},
+      {id:'seed-2',from:'elder',kid:'elder',to:'mom',text:'보고 싶어요 💛',ts:now-1000*60*95,read:true,
+        reply:{text:'우리 딸, 엄마도 많이 보고 싶어! 오늘 재밌게 놀고 있지? 이따 안아줄게 💗',ts:now-1000*60*40,by:'엄마'},replyRead:false},
+      {id:'seed-3',from:'younger',kid:'younger',to:'dad',text:'사랑해요 ❤️',ts:now-1000*60*60*30,read:true,reply:null},
+      {id:'seed-4',from:'dad',to:'grandparents',text:'어머니, 이번 주 일요일에 아이들 데리고 들를게요 :)',ts:now-1000*60*60*50,read:false,reply:null}
     ],
     events:[
       {id:'ev-trip',date:'2026-12-03',end:'2026-12-06',title:'다롄 가족 여행',emoji:'✈️',kind:'trip'},
@@ -648,9 +662,13 @@ function migrate(p){
   if(!p.device.did) p.device.did='d'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
   p.chat=Array.isArray(p.chat)?p.chat.slice(-300):[];
   p.syncVer=Number(p.syncVer)||0;
-  p.settings=Object.assign({limit:LIMIT,pin:'',onboarded:false},p.settings||{});
+  p.settings=Object.assign({limit:LIMIT,pin:'',onboarded:false,deviceAsked:false},p.settings||{});
   p.cloud=Object.assign({url:'',key:''},p.cloud||{});
-  p.drafts=Object.assign({mailText:'',mailPic:'',mailTo:'parents',sender:'elder',calDate:''},p.drafts||{});
+  p.drafts=Object.assign({mailText:'',mailPic:'',mailTo:'mom',sender:'elder',calDate:''},p.drafts||{});
+  /* 예전 '엄마·아빠' 통합 / '가족 공용 보드' 값을 새 구성으로 옮겨요 (옛 편지·수다 기록은 그대로 두고 이름표만 살려요) */
+  if(!ROLES[p.currentUser]) p.currentUser='mom';
+  if(p.device.user&&!ROLES[p.device.user]) p.device.user='';
+  if(!RECIPIENTS[p.drafts.mailTo]) p.drafts.mailTo='mom';
   p.letters=Array.isArray(p.letters)?p.letters:[];
   p.events=Array.isArray(p.events)?p.events:base.events;
   p.cal=Object.assign({y:new Date().getFullYear(),m:new Date().getMonth()},p.cal||{});
@@ -755,8 +773,8 @@ function kidAvatar(k,extraStyle){
 function roleAvatar(roleId){
   const r=ROLES[roleId];
   if(r.kind==='kid') return avatarSVG(S.kids[r.kid]);
-  const emoji=r.kind==='admin'?'👩‍👦':'🏠';
-  const bg=r.kind==='admin'?'#FFF0D8':'#EAF7E0';
+  const emoji=r.emoji||'👩';
+  const bg=r.id==='dad'?'#E4EFFB':r.id==='grandparents'?'#F1EDFF':'#FFE9F0';
   return `<svg viewBox="0 0 100 100"><rect width="100" height="100" rx="24" fill="${bg}"/><text x="50" y="66" font-size="46" text-anchor="middle">${emoji}</text></svg>`;
 }
 
@@ -764,7 +782,6 @@ function roleAvatar(roleId){
    현재 사용자 / 공통 계산
    ========================================================= */
 function isAdmin(){const r=ROLES[S.currentUser];return !!r&&r.kind==='admin';}
-function isFamily(){const r=ROLES[S.currentUser];return !!r&&r.kind==='family';}
 function isKid(){const r=ROLES[S.currentUser];return !!r&&r.kind==='kid';}
 function myKid(){const r=ROLES[S.currentUser];return r&&r.kid||null;}
 function visibleKids(){ if(isKid()) return [myKid()]; return KIDS.slice(); }
@@ -802,7 +819,9 @@ function unreadReplies(kid){
 function inboxFor(roleId){
   const r=ROLES[roleId];
   if(!r||r.kind!=='admin') return [];
-  return S.letters.filter(l=>l.to===r.inbox).sort((a,b)=>b.ts-a.ts);
+  /* 예전에 '엄마·아빠' 한 곳으로 보낸 편지는 엄마·아빠 편지함 둘 다에서 볼 수 있어요 */
+  const legacy=(r.inbox==='mom'||r.inbox==='dad');
+  return S.letters.filter(l=>l.to===r.inbox||(legacy&&l.to==='parents')).sort((a,b)=>b.ts-a.ts);
 }
 function unreadInbox(roleId){
   return inboxFor(roleId).filter(l=>!l.read).length;
@@ -831,7 +850,7 @@ function devName(){
   if(!S.device.user) return '이 기기 설정 전';
   const r=ROLES[S.device.user];
   if(!r) return '이 기기 설정 전';
-  return S.device.user==='family'?'가족 공용 보드':(r.kind==='kid'?S.kids[r.kid].name+' 태블릿':r.label+' 모드');
+  return r.kind==='kid'?S.kids[r.kid].name+' 태블릿':r.label+' 모드';
 }
 
 /* =========================================================
@@ -879,7 +898,7 @@ function drawClock(){
   if(d){d.textContent=fmtDateKR(new Date());}
 }
 function headerHTML(){
-  const u=S.currentUser,r=ROLES[u]||ROLES.family;
+  const u=S.currentUser,r=ROLES[u]||ROLES.mom;
   return `<div class="hd-in">
     <div class="hd-left">
       <div class="logo">🏠</div>
@@ -1002,7 +1021,7 @@ function mailCardHTML(){
         <button class="more" onclick="openInbox()">열기</button></div>
       <div class="mail-stat"><span class="pill-badge">${unread}통 새 편지</span><span class="dot-sep"></span>전체 ${list.length}통</div>
       ${last?`<div class="letter${!last.read?' new':''}" style="gap:5px">
-        <div class="l-top"><span class="l-who">${esc(last.kid?S.kids[last.kid].name:ROLES[last.from]?.label||'가족')}
+        <div class="l-top"><span class="l-who">${esc(last.kid?S.kids[last.kid].name:roleLabel(last.from))}
           <small>${relTime(last.ts)}</small></span></div>
         <div class="l-text" style="font-size:13.5px">${esc(last.text)}</div></div>`
       :`<div class="hint">아직 받은 편지가 없어요. 아이가 편지를 보내면 여기에 쏙 들어와요.</div>`}
@@ -1193,7 +1212,7 @@ function adminCardHTML(){
 function gridHTML(){
   const cards=[commCardHTML(),chatCardHTML(),villageCardHTML(),todoCardHTML(),mailCardHTML(),foodCardHTML(),growthCardHTML(),
     calendarCardHTML(),upcomingCardHTML(),homeCardHTML(),pillsCardHTML()];
-  if(isAdmin()||isFamily()) cards.push(adminCardHTML());
+  if(isAdmin()) cards.push(adminCardHTML());
   return `<div class="grid">${cards.join('')}</div>`;
 }
 
@@ -1356,7 +1375,7 @@ function openMail(pic, redraw){
   const lim=limitOf(k);
   const blocked=!lim.unlimited&&lim.left<=0;
   const sel=S.drafts.mailPic||'';
-  const to=RECIPIENTS[S.drafts.mailTo]?S.drafts.mailTo:'parents';
+  const to=RECIPIENTS[S.drafts.mailTo]?S.drafts.mailTo:'mom';
   const counter=lim.unlimited
     ? `💛 오늘은 제한 없이 마음을 보낼 수 있어요`
     : (blocked
@@ -1364,12 +1383,10 @@ function openMail(pic, redraw){
       : `⏳ 1시간에 ${LIMIT}통까지 · 지금 ${lim.left}통 더 보낼 수 있어요`);
   const html=shHead('💌 마음 편지 보내기',`${esc(S.kids[k].name)} → ${RECIPIENTS[to].label}`,'💌')+
     `<div class="sh-body">
-      ${isFamily()?`<div class="sec"><h4>누가 보내나요?</h4><div class="to-chips">
-        ${KIDS.map(kk=>`<button class="to-chip ${kk===k?'on':''}" onclick="setSender('${kk}')">${esc(S.kids[kk].name)}</button>`).join('')}
-      </div></div>`:''}
       <div class="sec"><h4>누구에게 보낼까요?</h4>
         <div class="to-chips">
-          <button class="to-chip ${to==='parents'?'on':''}" onclick="setTo('parents')">💗 엄마·아빠</button>
+          <button class="to-chip ${to==='mom'?'on':''}" onclick="setTo('mom')">💗 엄마</button>
+          <button class="to-chip ${to==='dad'?'on':''}" onclick="setTo('dad')">💙 아빠</button>
           <button class="to-chip ${to==='grandparents'?'on':''}" onclick="setTo('grandparents')">🌷 할머니·할아버지</button>
         </div>
       </div>
@@ -1398,7 +1415,7 @@ function myLettersHTML(k){
   const list=lettersFor(k).slice(0,6);
   if(!list.length) return '<div class="hint">아직 보낸 편지가 없어요. 첫 마음을 보내 볼까요? 💛</div>';
   return `<div style="display:flex;flex-direction:column;gap:9px">${list.map(l=>{
-    const r=RECIPIENTS[l.to]||{label:'가족'};
+    const r={label:recipientLabel(l.to)};
     return `<div class="letter${l.reply&&!l.replyRead?' new':''}">
       <div class="l-top"><span class="l-who">${r.label}에게<small>${relTime(l.ts)}</small></span>
         <button class="speak-btn" onclick="speakLetter('${l.id}',this)">🔊 읽기</button></div>
@@ -1432,7 +1449,7 @@ function doSend(text){
   if(!lim.unlimited&&lim.left<=0){
     return toast(`1시간에 ${LIMIT}통까지 보낼 수 있어요. 약 ${lim.minLeft}분 뒤에 다시 보내요 ⏳`,'warn');
   }
-  const letter={id:'l'+Date.now()+Math.random().toString(36).slice(2,6),from:k,kid:k,to:S.drafts.mailTo||'parents',
+  const letter={id:'l'+Date.now()+Math.random().toString(36).slice(2,6),from:k,kid:k,to:RECIPIENTS[S.drafts.mailTo]?S.drafts.mailTo:'mom',
     text:text,ts:Date.now(),read:false,reply:null};
   S.letters.push(letter);
   pushLetter(letter);
@@ -1440,7 +1457,7 @@ function doSend(text){
   S.drafts.mailPic='';S.drafts.mailText='';
   save();render();drawModal();
   burst('💌',8);
-  toast(`${RECIPIENTS[letter.to].label}에게 마음을 보냈어요 💌`,'ok');
+  toast(`${recipientLabel(letter.to)}에게 마음을 보냈어요 💌`,'ok');
 }
 
 /* =========================================================
@@ -1456,11 +1473,11 @@ function openInbox(redraw){
   const kids=visibleKids();
   const replies=list.filter(l=>l.reply);
   const body=list.length?list.map(l=>{
-    const fromName=l.kid?S.kids[l.kid].name:(ROLES[l.from]?ROLES[l.from].label:'가족');
+    const fromName=l.kid?S.kids[l.kid].name:roleLabel(l.from);
     return `<div class="letter${l.reply?'':' new'}">
       <div class="l-top">
         <span class="l-av">${l.kid?avatarSVG(S.kids[l.kid]):'💗'}</span>
-        <span class="l-who">${esc(fromName)}<small>${RECIPIENTS[l.to]?RECIPIENTS[l.to].label:''}에게 · ${relTime(l.ts)}</small></span>
+        <span class="l-who">${esc(fromName)}<small>${recipientLabel(l.to)}에게 · ${relTime(l.ts)}</small></span>
         <button class="speak-btn" onclick="speakLetter('${l.id}',this)">🔊 읽어보기</button>
       </div>
       <div class="l-text">${esc(l.text)}</div>
@@ -1515,7 +1532,7 @@ function openReplies(redraw){
   const html=shHead('💌 답장이 도착했어요!',`${esc(S.kids[k].name)}에게 온 마음 · 눌러서 들어 보세요`,'💌')+
     `<div class="sh-body">
       ${list.map(l=>`<div class="letter new">
-        <div class="l-top"><span class="l-av">${l.reply.by.indexOf('할머니')>=0?'🌷':'💗'}</span>
+        <div class="l-top"><span class="l-av">${l.reply.by.indexOf('할머니')>=0?'🌷':(l.reply.by.indexOf('아빠')>=0?'💙':'💗')}</span>
           <span class="l-who">${esc(l.reply.by)}<small>${relTime(l.reply.ts)} · 내가 보낸 「${esc(l.text)}」</small></span>
         </div>
         <div class="l-text">${esc(l.reply.text)}</div>
@@ -1745,11 +1762,7 @@ function giveSticker(k){
 function openSettings(redraw){
   modal={type:'settings',args:[]};
   const d=S.device;
-  const devOpts=[
-    {id:'elder',ico:'🐻',label:'큰딸 태블릿',sub:'켜면 큰딸 화면으로 시작해요'},
-    {id:'younger',ico:'🐰',label:'작은딸 태블릿',sub:'켜면 작은딸 화면으로 시작해요'},
-    {id:'family',ico:'🏠',label:'가족 공용 보드',sub:'거실 태블릿 · 가족 모두 함께'}
-  ].map(o=>`<button class="dev-opt ${d.user===o.id?'on':''}" onclick="chooseDevice('${o.id}',true)">
+  const devOpts=deviceOptions().map(o=>`<button class="dev-opt ${d.user===o.id?'on':''}" onclick="chooseDevice('${o.id}',true)">
       <span class="d-ico">${o.ico}</span>
       <span><b>${o.label}</b><small>${o.sub}</small></span>
       <span class="chk">${d.user===o.id?'✓':''}</span>
@@ -1783,7 +1796,7 @@ function openSettings(redraw){
   const html=shHead('⚙️ 설정','아이 이름·목표·기기 설정을 여기서 바꿔요','⚙️')+
     `<div class="sh-body">
       <div class="sec"><h4>🏠 이 기기 설정</h4>
-        <div class="hint" style="margin-bottom:9px">아이별로 태블릿이 따로 있다면, 이 기기가 누구의 것인지 정해 두세요. 파일을 열 때마다 그 화면으로 시작해요.</div>
+        <div class="hint" style="margin-bottom:9px">기기마다 쓰는 사람을 하나씩 정해 두세요. 파일을 열 때마다 그 사람 화면으로 시작해요.</div>
         ${devOpts}
         <label class="switch"><input type="checkbox" ${d.locked?'checked':''} onchange="toggleDeviceLock(this.checked)"> 이 기기에서는 사용자를 바꾸지 못하게 잠그기</label>
         <div class="hint">지금 이 기기: <b>${esc(devName())}</b>${d.locked?' · 잠김 🔒':''}</div>
@@ -1909,7 +1922,7 @@ function openRoleMenu(redraw){
     const disabled=S.device.locked&&r.id!==S.currentUser;
     return `<button class="role-opt ${r.id===S.currentUser?'on':''}" style="${disabled?'opacity:.45':''}" onclick="selectRole('${r.id}')">
       <span class="ro-av">${roleAvatar(r.id)}</span>
-      <span><b>${esc(r.label)}</b><small>${r.kind==='kid'?esc(S.kids[r.kid].name)+' · 내 화면':r.kind==='admin'?'관리자 · 편지함과 아이 관리':'모두 함께 보는 보드'}</small></span>
+      <span><b>${esc(r.label)}</b><small>${r.kind==='kid'?esc(S.kids[r.kid].name)+' · 내 화면':'관리자 · 편지함과 아이 관리'}</small></span>
       <span class="em">${r.kind==='admin'?'🔑':'→'}</span>
     </button>`;
   }).join('');
@@ -1980,16 +1993,14 @@ function checkPin(){
 }
 function openDeviceSetup(){
   modal={type:'device'};
-  setModal(shHead('어서 오세요! 👋','이 태블릿은 누구의 것인가요? 나중에 설정에서 바꿀 수 있어요','🏠')+
+  setModal(shHead('어서 오세요! 👋','이 기기는 누구의 것인가요? 나중에 설정에서 바뀔 수 있어요','🏠')+
     `<div class="sh-body">
-      ${[{id:'elder',ico:'🐻',t:'큰딸 태블릿',s:'켜면 큰딸 화면으로 시작'},
-         {id:'younger',ico:'🐰',t:'작은딸 태블릿',s:'켜면 작은딸 화면으로 시작'},
-         {id:'family',ico:'🏠',t:'가족 공용 보드',s:'거실 태블릿 · 모두 함께 보기'}].map(o=>
+      ${deviceOptions().map(o=>
         `<button class="role-opt" onclick="chooseDevice('${o.id}')">
           <span class="ro-av" style="display:grid;place-items:center;font-size:22px">${o.ico}</span>
-          <span><b>${o.t}</b><small>${o.s}</small></span><span class="em">→</span>
+          <span><b>${o.label}</b><small>${o.onb}</small></span><span class="em">→</span>
         </button>`).join('')}
-      <div class="hint">이 선택은 이 기기에만 저장되고, 아이별로 태블릿이 따로 있으면 각 기기에서 한 번씩만 정해 주면 돼요.</div>
+      <div class="hint">이 선택은 이 기기에만 저장되고, 기기마다 한 번씩만 정해 주면 돼요.</div>
     </div>`,'narrow');
 }
 function chooseDevice(id, inSettings){
@@ -2055,7 +2066,7 @@ function myDid(){
 }
 function roleName(id){
   const r=ROLES[id];
-  if(!r) return '가족';
+  if(!r) return roleLabel(id);
   if(r.kind==='kid') return (S.kids[r.kid]&&S.kids[r.kid].name)||r.label;
   return r.label;
 }
@@ -2245,12 +2256,12 @@ const ICE_CFG={iceServers:[{urls:['stun:stun.l.google.com:19302','stun:stun1.l.g
 let call=null, incoming=null, callCh=null, ringTimer=null, callTick=null, actx=null;
 
 function callTargets(){
-  return ['elder','younger','parents','grandparents','family'].filter(id=>id!==S.currentUser&&ROLES[id]);
+  return ROLE_IDS.filter(id=>id!==S.currentUser&&ROLES[id]);
 }
 function isOnline(role){ return role===S.currentUser || !!(cloud.presence&&cloud.presence[role]); }
 function memberAvatar(id){
   const r=ROLES[id];
-  if(!r) return '<span>🏠</span>';
+  if(!r){ const l=LEGACY_ROLES[id]; return `<span style="font-size:22px">${l?l.emoji:'🏠'}</span>`; }
   if(r.kind==='kid'&&S.kids[r.kid]) return avatarSVG(S.kids[r.kid]);
   return roleAvatar(id);
 }
@@ -2791,14 +2802,15 @@ function sendChat(){
 function boot(){
   ensureToday();
   if(!S.settings.onboarded){
-    S.currentUser='family';
+    S.currentUser='mom';
     render();
     openDeviceSetup();
   }else{
     if(S.device.user) S.currentUser=S.device.user;
-    if(!ROLES[S.currentUser]) S.currentUser='family';
+    if(!ROLES[S.currentUser]) S.currentUser='mom';
     save();
     render();
+    if(!S.device.user&&!S.settings.deviceAsked){ S.settings.deviceAsked=true; save(); openDeviceSetup(); }
   }
   setInterval(drawClock,1000);
   initCloud();
