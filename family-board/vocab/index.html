@@ -590,6 +590,15 @@ function load() {
         S.social = S.social || { claimed: [], sent: {}, seen: 0 };
         S.social.claimed = Array.isArray(S.social.claimed) ? S.social.claimed : [];
         S.social.sent = S.social.sent || {};
+        /* 예전 버전은 별을 받은 시각을 남기지 않았다.
+           이미 공부한 단어는 '마지막으로 공부한 때'를 별 수령 시각으로 옮겨 두어,
+           업데이트 직후 같은 단어로 또 별을 몰아서 모으지 못하게 한다. */
+        var stamped = false;
+        for (var sen in S.words) {
+          var sr = S.words[sen];
+          if (sr && sr.seen && !sr.starAt) { sr.starAt = sr.last || Date.now(); stamped = true; }
+        }
+        if (stamped) save();
         /* 예전 버전이 남긴 창고 '꺼내기' 카운트(out)는 더 이상 쓰지 않는다.
            남아 있으면 꺼내다 만 물건이 창고에서 영영 사라지므로 지우고 한 번 저장해 되살린다. */
         var cleanedOut = false;
