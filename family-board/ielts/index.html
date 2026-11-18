@@ -938,7 +938,7 @@ function renderLearn() {
     '<div class="day-title">' + esc(dayTitle(learnSel.day)) + '</div>' +
     '<div class="card wcard">' +
     '<span class="pos">' + esc(w.pos) + '</span>' +
-    '<div class="w-en en"><span>' + esc(w.en) + '</span>' +
+    '<div class="w-en en" style="' + (w.en.length > 13 ? 'font-size:30px' : w.en.length > 10 ? 'font-size:34px' : '') + '"><span>' + esc(w.en) + '</span>' +
     '<button class="spk" data-spk="' + esc(w.en) + '" aria-label="발음 듣기"><svg viewBox="0 0 24 24" fill="none" stroke="#3D312A" stroke-width="2.2"><path d="M4 9v6h4l5 4V5L8 9z" fill="#3D312A"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></button></div>' +
     '<div class="w-ko">' + esc(w.ko) + '</div>' +
     (CFG.showSyn && w.syn ? '<div class="syn-row"><b>비슷한 말</b> ' + esc(w.syn.split('/').join(', ')) + '</div>' : '') +
@@ -954,7 +954,7 @@ function renderLearn() {
     '<button class="btn p" id="againIt">다시 볼래 ↻</button></div>' +
     '<button class="btn y" id="startQuiz" style="width:100%;margin-top:10px">이 단어들로 퀴즈 시작 →</button>' +
     '</div>' +
-    '<p style="text-align:center;font-size:12px;font-weight:700;color:var(--ink2);margin-top:10px">이 Day에서 본 단어 ' + dayDoneN + '개 · 10개면 하루 분량이에요</p>' +
+    '<p style="text-align:center;font-size:12px;font-weight:700;color:var(--ink2);margin-top:10px">이 Day에서 본 단어 ' + dayDoneN + '개 · ' + list.length + '개면 하루 분량이에요</p>' +
     '</div>';
   if (!r.seen) { r.seen = true; r.last = Date.now(); todayObj().newWords++; save(); }
   $$('#scr-learn [data-lvl]').forEach(function (b) {
