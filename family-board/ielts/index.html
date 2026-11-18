@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<!-- 발음 오디오(TTS) 요청에 Referer 가 붙으면 구글 TTS 가 404 를 준다 → 페이지 전체 Referer 생략 -->
+<meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#FFF9E6">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -730,7 +732,12 @@ function lvlProgress(id) {
   return { total: list.length, seen: seen, mastered: mastered, pct: Math.round((seen / list.length) * 100) };
 }
 /* ---- 발음 듣기 (TTS) ----
-   iOS Safari·안드로이드 크롬에서 소리가 안 나던 문제 대응:
+   아이폰 사파리·홈화면에 추가한 앱(standalone)에서는 기기가 무음 모드일 때
+   speechSynthesis 가 오류도 없이 조용히 실패한다(소리 없음).
+   <audio> 로 재생하면 미디어 음량 채널을 써서 무음 모드에서도 들린다.
+   그래서 ① 검증된 TTS 오디오 주소를 <audio> 로 재생하고
+        ② 오프라인·응답 없음으로 실패하면 speechSynthesis 로 넘어간다.
+   speechSynthesis 쪽은 예전 그대로:
    · 재생 중이 아닐 때 cancel() 을 부르면 뒤이은 speak() 가 조용히 버려진다 → 필요할 때만 취소
    · 취소 직후에는 곧바로 speak 하지 않고 한 박자(50ms) 뒤에 말한다
    · Safari 가 멈춰 둔 큐는 resume() 으로 깨운다
@@ -748,7 +755,54 @@ function enVoice() {
   enVoiceCache = local.length ? local[0] : pool[0];
   return enVoiceCache;
 }
+/* TTS 오디오 주소 — 두 주소 모두 실제 응답으로 확인함(200 audio/mpeg)
+   · translate.googleapis.com: 단어·문장 모두 됨 → 첫 후보
+   · dict.youdao.com: 단어·짧은 구만 되고 문장은 500 → 단어일 때만 대비책으로 */
+function ttsUrls(text) {
+  var q = encodeURIComponent(text);
+  var g = 'https://translate.googleapis.com/translate_tts?ie=UTF-8&client=gtx&tl=en-US&q=' + q;
+  var short = !/[.!?,;:\u2014]/.test(text) && text.split(/\s+/).length <= 5;
+  return short
+    ? [g, 'https://dict.youdao.com/dictvoice?audio=' + q + '&type=2']
+    : [g];
+}
+/* 재사용 <audio> 한 개 — 다음 단어를 누르면 이전 소리를 끊고 바로 새로 재생 */
+var TTS = { el: null, seq: 0 };
+function ttsAudio() {
+  if (TTS.el) return TTS.el;
+  var el = document.createElement('audio');
+  el.preload = 'auto';
+  el.setAttribute('playsinline', '');
+  el.setAttribute('webkit-playsinline', '');
+  TTS.el = el;
+  window.__ttsAudio = el;
+  return el;
+}
 function speak(en, gesture) {
+  var text = String(en == null ? '' : en).trim();
+  if (!text) return;
+  var urls = ttsUrls(text), el = ttsAudio(), my = ++TTS.seq, i = 0, attempt = 0, done = false;
+  try { el.pause(); el.currentTime = 0; } catch (e) {}
+  function useSynth() {
+    if (done) return;                          /* onerror 와 play().catch 가 겹쳐도 한 번만 */
+    done = true;
+    if (my === TTS.seq) speakSynth(text, gesture);
+  }
+  function next() {
+    if (done || my !== TTS.seq) return;         /* 이미 끝났거나 더 새 요청이 들어옴 */
+    if (i >= urls.length) { useSynth(); return; } /* 오디오가 모두 실패 → 기기 음성으로 */
+    var at = ++attempt, src = urls[i++];
+    el.onerror = function () { if (my === TTS.seq && at === attempt) next(); };
+    try { el.src = src; } catch (e) { next(); return; }
+    var p = el.play();
+    if (p && typeof p.catch === 'function') {
+      p.catch(function () { if (my === TTS.seq && at === attempt) next(); });
+    }
+  }
+  next();
+}
+/* 기기 내장 음성(speechSynthesis) — 오디오가 실패했을 때의 대비책 */
+function speakSynth(en, gesture) {
   var text = String(en == null ? '' : en).trim();
   if (!text) return;
   if (!window.speechSynthesis || typeof SpeechSynthesisUtterance === 'undefined') {
