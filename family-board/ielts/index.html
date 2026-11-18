@@ -111,6 +111,7 @@ h1,h2,h3,h4,p{margin:0}
 /* ============ learn ============ */
 .lvl-tabs{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 6px;scrollbar-width:none}
 .lvl-tabs::-webkit-scrollbar{display:none}
+.lvl-tabs.wrap{flex-wrap:wrap;overflow:visible}
 .day-scroll{display:flex;gap:6px;overflow-x:auto;padding:6px 2px;scrollbar-width:none}
 .day-scroll::-webkit-scrollbar{display:none}
 .day-chip{flex:none;min-width:56px;padding:7px 10px;border-radius:16px;border:2px solid var(--ink);
@@ -926,7 +927,7 @@ function renderLearn() {
   var dayDoneN = list.filter(function (x) { var rr = S.words[x.en]; return rr && rr.seen; }).length;
   sc.innerHTML =
     '<div class="wrap">' +
-    '<div class="lvl-tabs">' + LEVELS.map(function (l2) {
+    '<div class="lvl-tabs wrap">' + LEVELS.map(function (l2) {
       return '<button class="pill sm ' + (learnSel.lvl === l2.id ? 'y' : '') + '" data-lvl="' + l2.id + '">' + l2.name + ' ' + l2.sub + '</button>';
     }).join('') + '</div>' +
     '<div class="day-scroll">' + days.map(function (d2) {
@@ -1006,13 +1007,13 @@ function renderQuizHome() {
   /* 퀴즈 설정 */
   html += '<div class="sec-head" style="margin-top:18px"><span class="sec-num" style="background:var(--yellow)">02</span><span class="sec-title">새 퀴즈</span></div>';
   html += '<div class="card">';
-  html += '<div style="font-weight:900;font-size:13px;margin-bottom:6px">범위</div><div class="lvl-tabs">';
+  html += '<div style="font-weight:900;font-size:13px;margin-bottom:6px">범위</div><div class="lvl-tabs wrap">';
   LEVELS.forEach(function (l) {
     html += '<button class="pill sm ' + (quizSel.scope === 'lvl' && quizSel.lvl === l.id ? 'y' : '') + '" data-scope="lvl" data-lvl="' + l.id + '">' + l.name + '</button>';
   });
   html += '<button class="pill sm ' + (quizSel.scope === 'day' ? 'y' : '') + '" data-scope="day">Day ' + quizSel.day + '만</button>';
   html += '<button class="pill sm ' + (quizSel.scope === 'all' ? 'y' : '') + '" data-scope="all">전체</button></div>';
-  html += '<div style="font-weight:900;font-size:13px;margin:10px 0 6px">문제 유형</div><div class="lvl-tabs">' +
+  html += '<div style="font-weight:900;font-size:13px;margin:10px 0 6px">문제 유형</div><div class="lvl-tabs wrap">' +
     [['mix', '섞기 🎲'], ['choose', '단어 고르기'], ['spell', '스펠링 쓰기'], ['blank', '빈칸 채우기']].map(function (t) {
       return '<button class="pill sm ' + (quizSel.type === t[0] ? 'g' : '') + '" data-type="' + t[0] + '">' + t[1] + '</button>';
     }).join('') + '</div>';
