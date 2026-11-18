@@ -729,16 +729,61 @@ function lvlProgress(id) {
   });
   return { total: list.length, seen: seen, mastered: mastered, pct: Math.round((seen / list.length) * 100) };
 }
-function speak(en) {
+/* ---- 발음 듣기 (TTS) ----
+   iOS Safari·안드로이드 크롬에서 소리가 안 나던 문제 대응:
+   · 재생 중이 아닐 때 cancel() 을 부르면 뒤이은 speak() 가 조용히 버려진다 → 필요할 때만 취소
+   · 취소 직후에는 곧바로 speak 하지 않고 한 박자(50ms) 뒤에 말한다
+   · Safari 가 멈춰 둔 큐는 resume() 으로 깨운다
+   · 긴 예문이 중간에 끊기지 않도록 재생 중인 Utterance 를 window.__lastUtt 에 붙잡아 둔다 */
+var enVoiceCache = null, voiceHook = false;
+function enVoice() {
+  if (enVoiceCache) return enVoiceCache;
+  var vs = [];
+  try { vs = speechSynthesis.getVoices() || []; } catch (e) { return null; }
+  if (!vs.length) return null;
+  var us = vs.filter(function (v) { return /en[-_]US/i.test(v.lang || '') || /en[-_]US/i.test(v.name || ''); });
+  var pool = us.length ? us : vs.filter(function (v) { return /^en/i.test(v.lang || ''); });
+  if (!pool.length) return null;
+  var local = pool.filter(function (v) { return v.localService; });
+  enVoiceCache = local.length ? local[0] : pool[0];
+  return enVoiceCache;
+}
+function speak(en, gesture) {
+  var text = String(en == null ? '' : en).trim();
+  if (!text) return;
+  if (!window.speechSynthesis || typeof SpeechSynthesisUtterance === 'undefined') {
+    toast('이 기기에서는 발음 듣기가 지원되지 않아요'); return;
+  }
   try {
-    if (!window.speechSynthesis) { toast('이 기기에서는 발음 듣기가 지원되지 않아요'); return; }
-    speechSynthesis.cancel();
-    var u = new SpeechSynthesisUtterance(en);
-    u.lang = 'en-US'; u.rate = 0.82;
-    var vs = speechSynthesis.getVoices();
-    for (var i = 0; i < vs.length; i++) if (/en[-_]US/i.test(vs[i].lang)) { u.voice = vs[i]; break; }
-    speechSynthesis.speak(u);
-  } catch (e) {}
+    if (!voiceHook && speechSynthesis.addEventListener) {
+      voiceHook = true;
+      speechSynthesis.addEventListener('voiceschanged', function () { enVoiceCache = null; });
+    }
+    var u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US';
+    u.rate = text.indexOf(' ') >= 0 ? 0.86 : 0.82;
+    var v = enVoice();
+    if (v) u.voice = v;
+    u.onerror = function (ev) {
+      var why = (ev && ev.error) || '';
+      /* 사용자가 끊었거나(canceled·interrupted) 아직 손짓이 없는 자동 재생(not-allowed)은 조용히 넘긴다 */
+      if (why === 'canceled' || why === 'interrupted') return;
+      if (why === 'not-allowed' && !gesture) return;
+      toast('발음을 재생할 수 없어요 · 기기 무음/음량을 확인해 주세요');
+    };
+    window.__lastUtt = u; /* GC 로 예문 재생이 중간에 끊기는 것 방지 */
+    if (speechSynthesis.speaking || speechSynthesis.pending) {
+      speechSynthesis.cancel();
+      setTimeout(function () {
+        try { speechSynthesis.resume(); speechSynthesis.speak(u); } catch (e2) {}
+      }, 50);
+    } else {
+      try { speechSynthesis.resume(); } catch (e3) {}
+      speechSynthesis.speak(u);
+    }
+  } catch (e) {
+    toast('발음을 재생할 수 없어요 · 기기 무음/음량을 확인해 주세요');
+  }
 }
 /* 효과음 (WebAudio) */
 var AC = null;
@@ -2029,7 +2074,8 @@ function renderLearn() {
     (r.known ? '<div class="known-badge">이미 “알아요”로 표시한 단어예요 · 별은 처음 한 번만</div>' : '') +
     '<div class="exbox"><div class="ex-en en">' + esc(w.ex).replace(new RegExp('\\b(' + w.en.replace(/[^a-z]/gi, '') + ')', 'i'), '<b>$1</b>') + '</div>' +
     '<div class="ex-ko">' + esc(w.exKo) + '</div>' +
-    '<div class="speak-row"><button class="btn g sm" id="speakRead">🎤 예문 따라 읽기</button>' + speakNoteHtml(w, r) + '</div>' +
+    '<div class="speak-row"><button class="btn y sm" data-spk="' + esc(w.ex) + '">🔊 예문 듣기</button>' +
+    '<button class="btn g sm" id="speakRead">🎤 예문 따라 읽기</button>' + speakNoteHtml(w, r) + '</div>' +
     '</div>' +
     '<div class="card-nav">' +
     '<button class="pill" id="prevW">← 이전</button>' +
@@ -2050,7 +2096,7 @@ function renderLearn() {
   $$('#scr-learn [data-day]').forEach(function (b) {
     b.addEventListener('click', function () { learnSel.day = +b.getAttribute('data-day'); learnSel.idx = 0; renderLearn(); });
   });
-  $$('#scr-learn [data-spk]').forEach(function (b) { b.addEventListener('click', function () { speak(b.getAttribute('data-spk')); beep('tap'); }); });
+  $$('#scr-learn [data-spk]').forEach(function (b) { b.addEventListener('click', function () { speak(b.getAttribute('data-spk'), true); }); });
   $('#prevW').addEventListener('click', function () { learnSel.idx = (learnSel.idx - 1 + list.length) % list.length; renderLearn(); });
   $('#nextW').addEventListener('click', function () { learnSel.idx = (learnSel.idx + 1) % list.length; renderLearn(); });
   $('#knowIt').addEventListener('click', function () {
@@ -2071,7 +2117,7 @@ function renderLearn() {
     learnSel.idx = (learnSel.idx + 1) % list.length; renderLearn();
   });
   if ($('#speakRead')) $('#speakRead').addEventListener('click', function () { startSpeakRead(w, r, $('#speakRead')); });
-  $('#againIt').addEventListener('click', function () { renderLearn(); speak(w.en); });
+  $('#againIt').addEventListener('click', function () { renderLearn(); speak(w.en, true); });
   $('#startQuiz').addEventListener('click', function () {
     quizSel.scope = 'day'; quizSel.day = learnSel.day; quizSel.lvl = learnSel.lvl;
     startSession();
@@ -2290,7 +2336,7 @@ function renderQuestion() {
       }
     }
     $('#spellClear').addEventListener('click', function () { picked = []; drawTiles(); });
-    $('#qSpeak').addEventListener('click', function () { speak(q.w.en); beep('tap'); });
+    $('#qSpeak').addEventListener('click', function () { speak(q.w.en, true); });
     speak(q.w.en);
     drawTiles();
   }
