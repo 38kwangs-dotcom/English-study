@@ -1993,7 +1993,7 @@ function checkPin(){
 }
 function openDeviceSetup(){
   modal={type:'device'};
-  setModal(shHead('어서 오세요! 👋','이 기기는 누구의 것인가요? 나중에 설정에서 바뀔 수 있어요','🏠')+
+  setModal(shHead('어서 오세요! 👋','이 기기는 누구의 것인가요? 나중에 설정에서 바꿀 수 있어요','🏠')+
     `<div class="sh-body">
       ${deviceOptions().map(o=>
         `<button class="role-opt" onclick="chooseDevice('${o.id}')">
