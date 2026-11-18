@@ -1138,7 +1138,8 @@ function onAnswer(ok, msg) {
   var w = session.q.w, r = rec(w.en);
   if (ok) {
     r.right++; session.correct++; beep('ok');
-    gainStars(2);
+    /* 오답 복습 퀴즈는 보상 없음(별은 새 퀴즈에서만) */
+    if (session.kind !== 'wrong') gainStars(2);
   } else {
     r.wrong++; session.wrongNow.push(w.en); beep('no');
     toast('오답노트로 이동: ' + msg || '');
@@ -1155,8 +1156,10 @@ function sessionDone() {
   var doneKind = session.kind;
   var n = session.words.length, c = session.correct;
   var perfect = c === n;
-  var bonusStars = perfect ? 6 : c >= n * 0.7 ? 3 : 1;
-  var boxGain = session.kind === 'wrong' ? 2 : perfect ? 2 : 1;
+  var isWrongSession = session.kind === 'wrong';
+  /* 오답 복습 퀴즈는 보상 없음: 오답을 일부러 내고 별·상자를 모으는 것을 막는다 */
+  var bonusStars = isWrongSession ? 0 : perfect ? 6 : c >= n * 0.7 ? 3 : 1;
+  var boxGain = isWrongSession ? 0 : perfect ? 2 : 1;
   S.stars += bonusStars; S.boxes += boxGain;
   var t = todayObj();
   t.q += n; t.c += c;
@@ -1173,7 +1176,9 @@ function sessionDone() {
     '<div style="font-size:40px">' + (perfect ? '🏆' : c >= n * 0.7 ? '🎉' : '💪') + '</div>' +
     '<h3 style="font-size:21px;font-weight:900;margin-top:6px">' + c + ' / ' + n + ' 정답!</h3>' +
     '<div class="res-stars">' + (perfect ? '⭐⭐⭐' : c >= n * 0.7 ? '⭐⭐' : '⭐') + '</div>' +
-    '<p style="font-weight:800;font-size:14px">별 +' + bonusStars + ' · 상자 +' + boxGain + '</p>' +
+    (isWrongSession
+      ? '<p style="font-weight:800;font-size:14px;color:var(--green2)">오답 복습 완료! 별과 상자는 새 퀴즈에서만 쌓여요</p>'
+      : '<p style="font-weight:800;font-size:14px">별 +' + bonusStars + ' · 상자 +' + boxGain + '</p>') +
     (session.wrongNow.length ? '<div class="exbox" style="text-align:left;margin-top:10px"><div class="ex-en" style="font-size:14px">다시 볼 단어</div><div class="ex-ko" style="font-size:13px;margin-top:2px">' +
       esc(session.wrongNow.map(function (e2) { var w2 = BY_EN[e2]; return e2 + ' = ' + w2.ko; }).join(' · ')) + '</div></div>' :
       '<p style="margin-top:8px;color:var(--green2);font-weight:900">전부 맞혔어요! 대단해요 🎊</p>') +
