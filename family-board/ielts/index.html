@@ -1632,7 +1632,7 @@ function villageScene(theme) {
 var WORLD_SCALE = 2;
 var WALK = { x0: 4.5, x1: 95.5, y0: 20, y1: 93 };   /* 캐릭터가 걸을 수 있는 땅 */
 /* 개울(WATER)은 나무다리 위로만 건넌다 — 물 위를 걸어다니지 않는다 */
-var WATER = { y0: 64, y1: 78, bridges: [18.75, 50, 82.5], half: 6.5 };
+var WATER = { y0: 64, y1: 78, bridges: [18.75, 50, 82.5], half: 5.0 };
 function waterBlocked(x, y) {
   if (y < WATER.y0 || y > WATER.y1) return false;
   for (var i = 0; i < WATER.bridges.length; i++) {
