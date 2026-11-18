@@ -568,7 +568,7 @@ function blankState() {
     boxes: 2, mats: { wood: 3, stone: 2, seed: 3, water: 2 },
     pets: [], placed: {}, combos: {}, createdAt: Date.now(),
     upg: {}, sky: 'day', t2Party: 0, dayReward: {},
-    rev: 0, social: { claimed: [], sent: {}, seen: 0 }
+    rev: 0, starsResetAt: 0, social: { claimed: [], sent: {}, seen: 0 }
   };
 }
 var S = blankState();
@@ -2948,7 +2948,9 @@ function myDoc() {
     data: {
       name: S.name, onboarded: S.onboarded, stars: S.stars, boxes: S.boxes, mats: S.mats,
       words: S.words, daily: S.daily, pets: S.pets, placed: S.placed, combos: S.combos, upg: S.upg,
-      sky: S.sky, dayReward: S.dayReward, createdAt: S.createdAt
+      sky: S.sky, dayReward: S.dayReward, createdAt: S.createdAt,
+      /* 별 초기화 시각 — 이 시각보다 기기 값이 오래됐으면 기기의 옛 별을 되살리지 않는다 */
+      starsResetAt: S.starsResetAt || 0
     }
   };
 }
@@ -2970,7 +2972,7 @@ function cloudPush(force) {
 function adoptDoc(doc) {
   var d = doc.data || {};
   applyingRemote = true;
-  ['stars', 'boxes', 'mats', 'words', 'daily', 'pets', 'placed', 'combos', 'upg', 'dayReward', 'name', 'onboarded', 'createdAt', 'sky'].forEach(function (k) {
+  ['stars', 'starsResetAt', 'boxes', 'mats', 'words', 'daily', 'pets', 'placed', 'combos', 'upg', 'dayReward', 'name', 'onboarded', 'createdAt', 'sky'].forEach(function (k) {
     if (d[k] !== undefined && d[k] !== null) S[k] = d[k];
   });
   ['words', 'daily', 'mats', 'placed', 'combos', 'upg', 'dayReward'].forEach(function (k) { S[k] = S[k] || {}; });
@@ -2986,7 +2988,13 @@ function adoptDoc(doc) {
 function mergeDoc(doc) {
   var d = doc.data || {};
   applyingRemote = true;
-  S.stars = Math.max(S.stars || 0, d.stars || 0);
+  /* 서버에서 별을 초기화했으면(starsResetAt 이 더 최신) 기기에 남은 옛 별을 되살리지 않고 그대로 따른다 */
+  if ((d.starsResetAt || 0) > (S.starsResetAt || 0)) {
+    S.stars = d.stars || 0;
+    S.starsResetAt = d.starsResetAt;
+  } else {
+    S.stars = Math.max(S.stars || 0, d.stars || 0);
+  }
   S.boxes = Math.max(S.boxes || 0, d.boxes || 0);
   if (!S.name && d.name) S.name = d.name;
   if (d.onboarded) S.onboarded = true;
