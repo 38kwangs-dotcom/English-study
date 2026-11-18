@@ -139,6 +139,33 @@ h1,h2,h3,h4,p{margin:0}
   border:2.5px solid rgba(255,253,246,.95);background:rgba(255,217,77,.5);pointer-events:none;
   animation:tapRing .6s ease-out forwards}
 @keyframes tapRing{from{transform:scale(.4);opacity:.95}to{transform:scale(2.2);opacity:0}}
+/* 친구 마을로 넘어가는 연결 문(포털) */
+.v-portal{position:absolute;transform:translate(-50%,-100%);width:96px;height:108px;z-index:29;
+  cursor:pointer;touch-action:none;-webkit-user-select:none;user-select:none;
+  -webkit-tap-highlight-color:transparent}
+.v-portal .vp-arch{position:absolute;inset:0;animation:vpBob 3.2s ease-in-out infinite}
+.v-portal .vp-arch svg{width:100%;height:100%;display:block;overflow:visible;
+  filter:drop-shadow(0 3px 3px rgba(61,49,42,.22))}
+@keyframes vpBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2.5px)}}
+.v-portal .vp-glow{position:absolute;left:50%;top:50%;width:168px;height:168px;margin:-84px 0 0 -84px;
+  border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,242,175,.9) 0%,rgba(255,214,120,.42) 46%,rgba(255,214,120,0) 70%);
+  animation:vpPulse 2.4s ease-in-out infinite}
+@keyframes vpPulse{0%,100%{transform:scale(.86);opacity:.5}50%{transform:scale(1.08);opacity:1}}
+.v-portal .vp-spark{position:absolute;font-size:12px;color:#FFF3B0;pointer-events:none;
+  text-shadow:0 0 6px rgba(255,214,120,.95),0 0 2px #FFFDF6;
+  animation:vpTwinkle 1.9s ease-in-out infinite}
+@keyframes vpTwinkle{0%,100%{opacity:.25;transform:scale(.8)}50%{opacity:1;transform:scale(1.15)}}
+.v-portal .vp-lab{position:absolute;left:50%;top:-18px;transform:translateX(-50%);white-space:nowrap;
+  font-size:11px;font-weight:900;line-height:1;padding:5px 9px;border-radius:999px;
+  border:2px solid var(--ink);background:rgba(255,253,246,.96);color:var(--ink);
+  box-shadow:0 2px 0 rgba(61,49,42,.72)}
+.v-portal.ret .vp-lab{background:rgba(255,242,214,.97)}
+.v-portal:active .vp-arch{transform:translateY(1px) scale(.98)}
+/* 포털로 넘어갈 때의 빛 전환 */
+.warp-fx{position:fixed;inset:0;z-index:96;pointer-events:none;opacity:0;transition:opacity .3s ease;
+  background:radial-gradient(circle at 50% 44%,#FFFDF6 0%,#FFF3B8 34%,#FFD98A 70%,#FFC46E 100%)}
+.warp-fx.on{opacity:1}
 .village-sky .sun{position:absolute;top:14px;right:16px;width:44px;height:44px;border-radius:50%;
   background:var(--yellow);border:var(--bd);box-shadow:var(--shadow-sm)}
 .village-sky .cloud{position:absolute;opacity:.9}
@@ -1671,6 +1698,7 @@ var VW = {
   jx: 0, jy: 0, joyHold: false,
   drag: null, dragEdge: null, ptr: null, pan: null,
   raf: 0, lastT: 0,
+  cool: 0, inside: false,
   mem: { own: null, visit: null }
 };
 
@@ -1722,10 +1750,67 @@ function avatarSVG(kind) {
   return s;
 }
 
+/* ---------- 친구 마을로 넘어가는 연결 문(포털) ----------
+   윗언덕 오솔길이 마을 길과 만나는 자리에 문을 세운다.
+   캐릭터가 문 안으로 걸어 들어가면 다른 마을로 넘어가고,
+   넘어간 마을에서는 같은 자리에서 '우리 마을로' 돌아오는 문이 된다. */
+var PORTAL = {
+  x: 42, y: 19.6,          /* 문이 서 있는 자리 (월드 %) — 문 아래쪽 끝 */
+  half: 5.2,               /* 문 폭 절반 (가로 %) — 이 안으로 들어오면 넘어간다 */
+  top: 22.8,               /* 이 높이보다 위(작은 y)로 올라오면 문 안 */
+  spawn: { x: 42, y: 25 }, /* 넘어간 마을에 서게 될 자리 — 문에서 두어 걸음 아래 */
+  cool: 1500               /* 넘어온 직후 되돌아가지 않도록 쉬는 시간(ms) */
+};
+function portalArt(kind) {
+  var K = '#3D312A';
+  /* 같은 화면에 두 마을(내 마을·친구 마을)이 함께 있어도 그라디언트가 섞이지 않게 이름을 나눈다 */
+  var uid = 'vp' + (kind === 'visit' ? 'V' : 'O');
+  var s = '<svg viewBox="0 0 96 108" preserveAspectRatio="xMidYMax meet" aria-hidden="true">' +
+    '<defs>' +
+    '<linearGradient id="' + uid + 'In" x1="0" y1="0" x2="0" y2="1">' +
+    '<stop offset="0" stop-color="#FFE79B"/><stop offset=".42" stop-color="#FFC0DA"/><stop offset="1" stop-color="#9FD2FF"/></linearGradient>' +
+    '<linearGradient id="' + uid + 'Stone" x1="0" y1="0" x2="0" y2="1">' +
+    '<stop offset="0" stop-color="#FFFDF6"/><stop offset="1" stop-color="#E6DBC2"/></linearGradient>' +
+    '</defs>' +
+    '<ellipse cx="48" cy="103.4" rx="33" ry="5.4" fill="#3D312A" opacity=".16"/>' +
+    /* 문틀 (바깥 돌) */
+    '<path d="M4 102V50C4 24 23 8 48 8s44 16 44 42v52z" fill="url(#' + uid + 'Stone)" stroke="' + K + '" stroke-width="2.6" stroke-linejoin="round"/>' +
+    /* 문 안쪽 빛 */
+    '<path d="M22 102V52c0-13 11.6-23 26-23s26 10 26 23v50z" fill="url(#' + uid + 'In)" stroke="' + K + '" stroke-width="2.4" stroke-linejoin="round"/>' +
+    /* 소용돌이 */
+    '<path d="M48 40c-8.2 0-14.4 6-14.4 13.6 0 7.4 6 12.6 13.2 12.6 6.6 0 11.6-4.6 11.6-10.4 0-5.2-3.8-8.8-8.6-8.8-4.2 0-7.4 3-7.4 6.6 0 3.2 2.4 5.4 5.2 5.4" fill="none" stroke="#FFFDF6" stroke-width="3.4" stroke-linecap="round" opacity=".95"/>' +
+    '<path d="M30 74c4-3 9-4 13-2M56 82c-4 2-9 2-12 0" fill="none" stroke="#FFFDF6" stroke-width="2.4" stroke-linecap="round" opacity=".7"/>' +
+    '<circle cx="34" cy="56" r="1.7" fill="#FFFDF6" opacity=".9"/><circle cx="60" cy="62" r="1.4" fill="#FFFDF6" opacity=".8"/>' +
+    '<circle cx="52" cy="92" r="1.2" fill="#FFFDF6" opacity=".7"/>' +
+    /* 돌 이음매 */
+    '<path d="M12 66h16M68 66h16M10 84h18M68 84h18" fill="none" stroke="' + K + '" stroke-width="1.8" opacity=".35" stroke-linecap="round"/>' +
+    /* 윗돌 장식 */
+    '<circle cx="48" cy="15" r="6.4" fill="#FFDE6A" stroke="' + K + '" stroke-width="2.2"/>' +
+    '<path d="M48 11.4l1.5 2.3 2.6.4-1.9 1.8.5 2.6-2.7-1.4-2.7 1.4.5-2.6-1.9-1.8 2.6-.4z" fill="#FFFDF6"/>' +
+    '</svg>';
+  return s;
+}
+function portalHtml(kind, label) {
+  if (!label) return '';
+  return '<div class="v-portal' + (kind === 'visit' ? ' ret' : '') + '" id="vPortal" data-portal="' + (kind || 'own') + '"' +
+    ' style="left:' + PORTAL.x + '%;top:' + PORTAL.y + '%" title="' + esc(label) + '">' +
+    '<div class="vp-glow"></div>' +
+    '<div class="vp-arch">' + portalArt(kind) + '</div>' +
+    '<span class="vp-spark" style="left:6px;top:26px">✦</span>' +
+    '<span class="vp-spark" style="right:10px;top:44px;animation-delay:.7s">✦</span>' +
+    '<span class="vp-lab">' + esc(label) + '</span></div>';
+}
+/* 문 안(넘어가는 자리)에 들어왔는가 */
+function portalHit(x, y) {
+  return Math.abs(x - PORTAL.x) <= PORTAL.half && y <= PORTAL.top;
+}
+
 /* ---------- 월드 HTML (내 마을 · 놀러가기 공용) ---------- */
 function worldHtml(things, theme, opts) {
   opts = opts || {};
-  return '<div class="v-world" id="vWorld">' + villageScene(theme) + (things || '') +
+  return '<div class="v-world" id="vWorld">' + villageScene(theme) +
+    (opts.portal ? portalHtml(opts.portal.kind, opts.portal.label) : '') +
+    (things || '') +
     '<div class="ply" id="vPly">' +
     (opts.name ? '<div class="ply-tag">' + esc(opts.name) + '</div>' : '') +
     '<div class="ply-art" id="vPlyArt">' + avatarSVG(opts.avatar) + '</div>' +
@@ -1801,8 +1886,32 @@ function worldMount(root, mode, opts) {
   worldBindJoy();
   if (VW.followOn) worldSnapCam(); else worldDraw();
   worldFollowUI();
+  /* 막 넘어온 마을에서는 잠깐 문이 잠겨 있어 바로 되돌아가지 않는다 */
+  VW.cool = Date.now() + PORTAL.cool;
+  VW.inside = portalHit(VW.px, VW.py);
   VW.lastT = 0;
   VW.raf = requestAnimationFrame(worldTick);
+}
+/* 포털로 넘어올 때 서게 될 자리를 기억시킨다 */
+function worldSetSpawn(mode, x, y) {
+  VW.mem[mode] = { px: x, py: y, face: 1, follow: true, camX: null, camY: null };
+  if (VW.has && VW.mode === mode) {
+    VW.px = x; VW.py = y; VW.target = null; VW.followOn = true;
+    VW.cool = Date.now() + PORTAL.cool; VW.inside = portalHit(x, y);
+    worldFollowUI(); worldSnapCam();
+  }
+}
+/* 문으로 넘어가는 짧은 빛 전환 */
+function warpFx(cb) {
+  var d = document.createElement('div');
+  d.className = 'warp-fx';
+  document.body.appendChild(d);
+  requestAnimationFrame(function () { d.classList.add('on'); });
+  setTimeout(function () {
+    try { if (cb) cb(); } catch (e) { console.warn('[village] 포털 이동 실패', e); }
+    setTimeout(function () { d.classList.remove('on'); }, 80);
+    setTimeout(function () { if (d.parentNode) d.parentNode.removeChild(d); }, 900);
+  }, 300);
 }
 function worldAlive() {
   return !!(VW.has && VW.root && VW.root.isConnected && VW.world && VW.world.isConnected);
@@ -1879,6 +1988,22 @@ function worldStep(dt) {
         Math.abs(VW.target.x - VW.px) > 0.8) VW.target = null;
   } else {
     VW.moving = false;
+  }
+  /* ---------- 문으로 걸어 들어갔는가 ----------
+     문 안으로 새로 들어온 순간에만 넘어간다. 넘어온 직후 잠시(1.3초)는 문이 잠겨 있고,
+     그 사이 문 안에 서 있던 경우에도 밖으로 나갔다 다시 들어와야 넘어간다 (핑퐁 방지). */
+  if (VW.opts.portal && VW.opts.portal.onEnter) {
+    var inz = portalHit(VW.px, VW.py);
+    if (inz && !VW.inside && Date.now() >= (VW.cool || 0)) {
+      VW.inside = true;
+      VW.target = null; VW.jx = 0; VW.jy = 0; VW.joyHold = false; VW.moving = false;
+      if (VW.joy) VW.joy.classList.remove('on');
+      if (VW.knob) VW.knob.style.transform = '';
+      VW.cool = Date.now() + PORTAL.cool;
+      VW.opts.portal.onEnter();
+    } else {
+      VW.inside = inz;
+    }
   }
   /* 끌어 옮기는 동안 화면 가장자리에서 카메라가 따라 흐른다 */
   if (VW.dragEdge && VW.drag) {
@@ -1968,6 +2093,13 @@ function worldDown(e) {
   VW.drag = null;
   VW.pan = null;
   VW.dragEdge = null;
+  /* 문을 톡 누르면 그 앞까지 걸어가 바로 들어간다 (물건을 들고 있을 때는 땅에 놓기 우선) */
+  var portalEl = t.closest ? t.closest('.v-portal') : null;
+  if (portalEl && !pickMode) {
+    VW.pan = { sx: e.clientX, sy: e.clientY, camX: VW.camX, camY: VW.camY, moved: false, portal: true };
+    try { VW.root.setPointerCapture(e.pointerId); } catch (err) {}
+    return;
+  }
   var slot = t.closest ? t.closest('.slot') : null;
   if (slot && VW.mode === 'own' && !pickMode) {
     var key = slot.getAttribute('data-key');
@@ -2031,6 +2163,7 @@ function worldUp(e) {
     var pn = VW.pan;
     VW.pan = null;
     if (!pn.moved && worldAlive()) {
+      if (pn.portal) { worldWalkTo(PORTAL.x, PORTAL.top - 1.6); return; }
       var r = VW.root.getBoundingClientRect();
       var wx = (e.clientX - r.left + VW.camX) / VW.ww * 100;
       var wy = (e.clientY - r.top + VW.camY) / VW.wh * 100;
@@ -2130,6 +2263,31 @@ function go(tab) {
   if (tab === 'report') renderReport();
   renderNav();
   window.scrollTo(0, 0);
+}
+/* ================= 걸어서 넘어가는 포털 =================
+   내 마을 윗언덕 문 → 놀러가기(친구 마을), 친구 마을 문 → 내 마을.
+   넘어간 쪽은 문에서 두어 걸음 내려온 자리에 서고, 잠깐 문이 잠겨 서로 되돌아가지 않는다. */
+var portalBusy = false;
+function portalLabel(kind) {
+  return kind === 'visit' ? '🏠 우리 마을로' : '🚪 ' + (CFG.friendName || '친구') + ' 마을로';
+}
+function portalOpts(kind) {
+  return { kind: kind, label: portalLabel(kind), onEnter: function () { portalTravel(kind); } };
+}
+function portalTravel(kind) {
+  if (portalBusy) return;
+  portalBusy = true;
+  var to = kind === 'own' ? 'visit' : 'village';
+  var mode = kind === 'own' ? 'visit' : 'own';
+  var nm = CFG.friendName || '친구';
+  beep('tap');
+  warpFx(function () {
+    if (to === 'visit') visitTab = 'village';
+    worldSetSpawn(mode, PORTAL.spawn.x, PORTAL.spawn.y);
+    go(to);
+    toast(kind === 'own' ? nm + ' 마을에 놀러 왔어요! 🚪' : '우리 마을로 돌아왔어요! 🏠');
+    setTimeout(function () { portalBusy = false; }, 700);
+  });
 }
 function updateCoins() {
   $('#coinStars').textContent = S.stars;
@@ -2266,7 +2424,7 @@ function renderVillage() {
     (S.name ? '<span class="pill sm p">' + esc(S.name) + '</span>' : '') + '</div>' +
     '<div class="card village-card">' +
     '<div class="village-sky theme-' + (S.sky || 'day') + '" id="vMap">' +
-    worldHtml(things, S.sky || 'day', { avatar: AVATAR_KIND, name: S.name || '' }) +
+    worldHtml(things, S.sky || 'day', { avatar: AVATAR_KIND, name: S.name || '', portal: portalOpts('own') }) +
     (things ? '' : '<div class="v-empty">퀴즈를 풀고 상자를 열면<br>마을에 물건과 친구가 생겨요!<br>🎉</div>') +
     skyBtnHtml() +
     '</div>' +
@@ -2274,7 +2432,7 @@ function renderVillage() {
     prog +
     '<div class="v-help">' +
     (pickMode ? '<b>' + pickedName() + '</b>' + objJosa(pickedName()) + ' 들고 있어요 · 마을 빈 곳을 눌러 놓아요' :
-      '조이스틱·빈 땅 톡으로 걸어요 · 화면을 끌면 구경 · 물건은 위아래 어디든 놓을 수 있어요 · 물건 ' + inTown.length + '개 · 친구 ' + petsOut.length + '마리') +
+      '조이스틱·빈 땅 톡으로 걸어요 · 화면을 끌면 구경 · 물건은 위아래 어디든 놓을 수 있어요 · 위쪽 언덕 🚪 문으로 ' + esc(CFG.friendName || '친구') + ' 마을에 가요 · 물건 ' + inTown.length + '개 · 친구 ' + petsOut.length + '마리') +
     '</div></div></div>';
   $('#btnBox').addEventListener('click', openBox);
   $('#btnStorage').addEventListener('click', renderStorage);
@@ -2299,6 +2457,7 @@ function bindMap(sky) {
   worldMount(sky, 'own', {
     avatar: AVATAR_KIND,
     name: S.name || '',
+    portal: portalOpts('own'),
     onDropItem: function (key, x, y) {
       var p = S.placed[key];
       if (p) { p.x = x; p.y = y; save(); beep('tap'); }
@@ -3903,7 +4062,7 @@ function renderVisitMap(doc) {
   var theme = v.sky === 'sunset' || v.sky === 'night' ? v.sky : 'day';
   var things = mapLayer(friendThings(v, v.upg));
   return '<div class="village-sky ro theme-' + theme + '" id="vVisitMap">' +
-    worldHtml(things, theme, { avatar: AVATAR_KIND, name: S.name || '' }) +
+    worldHtml(things, theme, { avatar: AVATAR_KIND, name: S.name || '', portal: portalOpts('visit') }) +
     (things ? '' : '<div class="v-empty">아직 마을에 놓인 물건이 없어요<br>상자를 열고 조합하면 생겨요 🎁</div>') +
     '<div class="ro-note">구경만 할 수 있어요 · 물건은 옮길 수 없어요</div></div>';
 }
@@ -4042,7 +4201,7 @@ function renderVisit() {
   var rf2 = $('#vRefresh'); if (rf2) rf2.addEventListener('click', function () { loadVisit(true); });
   var vmap = $('#vVisitMap');
   if (vmap && visitTab === 'village') {
-    worldMount(vmap, 'visit', { avatar: AVATAR_KIND, name: S.name || '' });
+    worldMount(vmap, 'visit', { avatar: AVATAR_KIND, name: S.name || '', portal: portalOpts('visit') });
   }
   $$('#scr-visit [data-vt]').forEach(function (b) {
     b.addEventListener('click', function () { visitTab = b.getAttribute('data-vt'); renderVisit(); });
