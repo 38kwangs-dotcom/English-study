@@ -1959,7 +1959,7 @@ function renderVisit() {
     '<textarea id="gMsg" maxlength="80" placeholder="' + esc(FRIEND.name) + '에게 한마디 (80자까지)"></textarea>' +
     '<div class="heart-line"><input type="checkbox" id="gHeart" checked><label for="gHeart">❤️ 하트도 함께 보내기</label></div>' +
     '<button class="btn y" id="gSend" style="width:100%;margin-top:10px">방명록 보내기</button>' +
-    '<p class="hint">' + esc(FRIEND.name) + '이(가) 앱을 열면 알림으로 확인해요.</p></div>';
+    '<p class="hint">' + esc(FRIEND.name) + subJosa(FRIEND.name) + ' 앱을 열면 알림으로 확인해요.</p></div>';
 
   html += '<div class="card" style="margin-top:12px"><div style="font-weight:900;font-size:14px">🎁 오늘의 선물 (하루 1번)</div>' +
     '<div class="gift-row">' +
@@ -2069,7 +2069,7 @@ function notifySocial() {
   var html = '<div class="m-art" style="font-size:46px">📬</div>' +
     '<h3>' + esc(who) + subJosa(who) + ' 다녀갔어요!</h3>' +
     '<p>' + (msgs.length ? '새 방명록 ' + msgs.length + '개' : '') + (msgs.length && gifts.length ? ' · ' : '') +
-    (gifts.length ? '선물 ' + gifts.length + '개' : '') + '이 도착했어요.</p>' +
+    (gifts.length ? '선물 ' + gifts.length + '개' : '') + '가 도착했어요.</p>' +
     '<div class="m-btns"><button class="btn w" id="nLater">나중에</button><button class="btn y" id="nNow">받기</button></div>';
   modal(html);
   $('#nLater').addEventListener('click', function () { closeModal(); });
