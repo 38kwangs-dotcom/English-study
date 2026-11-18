@@ -1631,6 +1631,15 @@ function villageScene(theme) {
    ============================================================ */
 var WORLD_SCALE = 2;
 var WALK = { x0: 4.5, x1: 95.5, y0: 20, y1: 93 };   /* 캐릭터가 걸을 수 있는 땅 */
+/* 개울(WATER)은 나무다리 위로만 건넌다 — 물 위를 걸어다니지 않는다 */
+var WATER = { y0: 64, y1: 78, bridges: [18.75, 50, 82.5], half: 6.5 };
+function waterBlocked(x, y) {
+  if (y < WATER.y0 || y > WATER.y1) return false;
+  for (var i = 0; i < WATER.bridges.length; i++) {
+    if (Math.abs(x - WATER.bridges[i]) < WATER.half) return false;
+  }
+  return true;
+}
 var ITEM_Y = { y0: 15, y1: 93 };                     /* 물건을 놓을 수 있는 세로 범위 */
 /* 예전 1화면 마을의 y(50~97: 잔디 위 ~ 맨 앞) → 새 4배 월드의 중앙 띠(39~67) */
 var LEGACY_Y = { y0: 46, y1: 99, n0: 39, n1: 67 };
@@ -1846,11 +1855,26 @@ function worldStep(dt) {
   var mm = Math.sqrt(mx * mx + my * my);
   if (mm > 1) { mx /= mm; my /= mm; mm = 1; }
   if (mm > 0) {
-    VW.px = wClamp(VW.px + mx * WSPEED * dt, WALK.x0, WALK.x1);
-    VW.py = wClamp(VW.py + my * WSPEED * 0.82 * dt, WALK.y0, WALK.y1);
+    var nx = wClamp(VW.px + mx * WSPEED * dt, WALK.x0, WALK.x1);
+    var ny = wClamp(VW.py + my * WSPEED * 0.82 * dt, WALK.y0, WALK.y1);
+    var blocked = false;
+    if (waterBlocked(nx, ny) && !waterBlocked(VW.px, VW.py)) {
+      /* 지금은 땅인데 앞이 개울이면 물에 들어가지 않고 걸음을 멈춘다 */
+      ny = VW.py;
+      blocked = true;
+      nx = wClamp(VW.px + mx * WSPEED * dt, WALK.x0, WALK.x1);
+      if (waterBlocked(nx, VW.py)) nx = VW.px;
+    }
+    VW.px = nx;
+    VW.py = ny;
     if (mx > 0.05) VW.face = 1; else if (mx < -0.05) VW.face = -1;
-    VW.moving = true;
+    VW.moving = !(blocked && Math.abs(my) >= Math.abs(mx));
     if (!VW.followOn) { VW.followOn = true; worldFollowUI(); }
+    /* 물가에 막혀 목표에 닿지 못하면 잠시 뒤 목표를 풀어 준다 */
+    if (blocked && my !== 0) {
+      VW.stuck = (VW.stuck || 0) + dt;
+      if (VW.stuck > 0.9) { VW.target = null; VW.stuck = 0; VW.moving = false; }
+    } else VW.stuck = 0;
     if (VW.target && (VW.px <= WALK.x0 + 0.01 || VW.px >= WALK.x1 - 0.01) &&
         Math.abs(VW.target.x - VW.px) > 0.8) VW.target = null;
   } else {
