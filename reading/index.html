@@ -1022,7 +1022,7 @@ function viewBook(b) {
         '<div class="chips"><span class="chip">' + t.total + '문장</span><span class="chip gray">완료 ' + t.done + '</span></div></div>' +
       '</div>' +
       '<button class="resume" data-read="' + esc(r.c.id) + '" data-i="' + r.i + '">▶ ' + resumeLabel + '</button>' +
-      '<div class="sec-head"><h2>장 고르기</h2><span class="link" style="pointer-events:none">' + rList.length + '문장</span></div>' +
+      '<div class="sec-head"><h2>장 고르기</h2><span class="link" style="pointer-events:none">' + t.total + '문장</span></div>' +
       chapters +
       (b.custom ? '<button class="add-card" data-add-chapter>＋ 이 책에 장 추가</button>' : '') +
       '<p class="foot">' + esc(b.blurb || '') + '</p>' +
@@ -1518,7 +1518,7 @@ function bindAdd(bid) {
       b.chapters.push({ id: 'c' + Date.now(), title: chapTitle, ko: '', paras: paras });
       save();
       toast(nSents + '문장을 추가했어요');
-      go({ view: 'book', bid: b.id });
+      go({ view: 'book', bid: b.id }, true);
       return;
     }
     const title = (titleEl && titleEl.value.trim()) || '내 원서';
@@ -1526,7 +1526,7 @@ function bindAdd(bid) {
     const nb = { id: id, custom: true, emoji: '📝', title: title, en: '', author: '내가 추가한 원서', level: '내 원서', blurb: '', chapters: [{ id: id + '-1', title: chapTitle, ko: '', paras: paras }] };
     ST.books.unshift(nb); save();
     toast(nSents + '문장을 서재에 담았어요');
-    go({ view: 'book', bid: id });
+    go({ view: 'book', bid: id }, true);
   });
 }
 
