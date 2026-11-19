@@ -161,7 +161,7 @@
   .para-view p{margin:0 0 1rem;font-size:1.06rem;line-height:1.8;color:#3b312b}
   .para-view p:last-child{margin-bottom:0}
   .para-view .s{border-radius:6px;cursor:pointer}
-  .para-view .s.cur{background:var(--accent-soft);box-shadow:0 0 0 3px var(--accent-soft)}
+  .para-view .s.cur{background:linear-gradient(transparent 64%,#f2d3ba 64%);border-radius:3px}
   .para-view .s.done{color:var(--ink-soft)}
   .para-view .s.done::after{content:" ✓";font-size:.72em;color:var(--ok);font-weight:700}
   .moral{margin-top:.9rem;padding-top:.75rem;border-top:1px dashed var(--line);font-size:.88rem;font-weight:750;color:var(--accent-dark);line-height:1.55}
@@ -1101,7 +1101,8 @@ function readerHTML() {
       :
         '<div class="mini-row" style="justify-content:flex-end">' +
           '<button class="mini-link" id="btnAll2">▶︎ 처음부터 전체 듣기</button>' +
-        '</div>'
+        '</div>' +
+        '<p class="hint" style="margin-top:.7rem">문장을 톡 누르면 그 문장부터 한 문장씩 따라 읽을 수 있어요. ✓는 완료한 문장이에요.</p>'
       ) +
       '<div class="story-nav">' +
         '<button data-nav="-1"' + (RT.i <= 0 ? ' disabled' : '') + '>‹ 이전</button>' +
@@ -1163,6 +1164,7 @@ function bindReader() {
     renderReader(true);
   });
   const stopBtn = $('[data-stop-all]');
+  if (!stopBtn) { /* paragraph view hint is static */ }
   if (stopBtn) stopBtn.addEventListener('click', stopAllPlay);
 }
 function renderReader(keepScroll) {
