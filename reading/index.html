@@ -173,6 +173,8 @@
   .feedback.bad{background:var(--bad-soft);color:#8f2f26}
   .feedback.warn{background:#fdf1d8;color:#7d5b16}
   .feedback .pct{font-weight:900;font-size:.95rem}
+  .feedback .next-btn{display:inline-flex;align-items:center;gap:.25rem;margin-top:.6rem;padding:.44rem .85rem;border-radius:999px;background:rgba(255,255,255,.78);border:1px solid rgba(0,0,0,.06);font-weight:900;font-size:.78rem;color:#2c4a3a}
+  .feedback .next-btn:active{transform:scale(.97)}
   .feedback .heard{display:block;margin-top:.25rem;font-weight:650;color:inherit;opacity:.85;font-size:.76rem;word-break:break-word}
 
   .controls{margin-top:.9rem;display:grid;grid-template-columns:1fr 1fr;gap:.55rem}
@@ -219,6 +221,7 @@
   @keyframes up{from{transform:translateY(18px)}to{transform:translateY(0)}}
   .sheet .grab{width:2.6rem;height:.28rem;border-radius:999px;background:#ddcdb8;margin:.15rem auto .9rem}
   .sheet h3{margin:0 0 .2rem;font-size:1.02rem;font-weight:850;letter-spacing:-.01em}
+  .sheet h3.serif{font-size:1.5rem;letter-spacing:.005em;margin-bottom:.3rem}
   .sheet .sub{margin:0 0 .9rem;font-size:.74rem;font-weight:700;color:var(--muted);line-height:1.5}
   .sheet-row{display:flex;gap:.5rem;margin-bottom:.55rem}
   .sheet-row .btn{flex:1;font-size:.84rem;padding:.78rem .4rem;border-radius:14px}
@@ -1142,6 +1145,8 @@ function bindReader() {
   on('#btnAll', 'click', toggleAll);
   on('#btnAll2', 'click', () => { RT.i = 0; renderReader(true); toggleAll(); });
   on('#btnManual', 'click', manualDone);
+  const fbEl = $('.feedback');
+  if (fbEl) fbEl.addEventListener('click', e => { if (e.target.closest('[data-next]')) move(1); });
   const sEl = $('#sentEl');
   if (sEl) sEl.addEventListener('click', e => {
     const w = e.target.closest('.w');
@@ -1180,9 +1185,13 @@ function move(d) {
 function manualDone() {
   const b = curBook(), c = curChap(); if (!b || !c) return;
   markDone(b, c, RT.i, 1);
-  setFb('ok', '<b>✅ 완료로 표시했어요.</b> 마이크 없이도 진도는 그대로 쌓여요.');
+  setFb('ok', '<b>✅ 완료로 표시했어요.</b> 마이크 없이도 진도는 그대로 쌓여요.' + nextBtnHTML());
   renderReader(true);
   maybeAutoNext();
+}
+function nextBtnHTML() {
+  if (RT.i >= curSents().length - 1) return '';
+  return '<button class="next-btn" data-next>다음 문장 →</button>';
 }
 function maybeAutoNext() {
   if (!ST.settings.autoNext) return;
@@ -1279,7 +1288,7 @@ function startRec() {
     if (sc.acc >= 0.75) {
       markDone(b, c, RT.i, sc.acc);
       setFb('ok', '<span class="pct">' + pct + '%</span> 정확해요! ' + sc.matched + '/' + sc.total + ' 단어를 알아들었어요. ✅ 이 문장 완료!' +
-        (heard ? '<span class="heard">들린 문장: “' + esc(heard) + '”</span>' : ''));
+        (heard ? '<span class="heard">들린 문장: “' + esc(heard) + '”</span>' : '') + nextBtnHTML());
       try { rec.stop(); } catch (e) {}
       renderReader(true);
       maybeAutoNext();
