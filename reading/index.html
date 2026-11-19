@@ -1,0 +1,1541 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="referrer" content="no-referrer" />
+<meta name="description" content="원서 문장을 원어민 발음으로 한 번 듣고, 내가 따라 읽으며 발음을 확인하는 따라 읽기 앱" />
+<meta name="theme-color" content="#fbf6ee" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="원서 따라 읽기" />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="apple-touch-icon" href="icon-180.png" />
+<link rel="icon" href="icon-192.png" />
+<title>📖 원서 따라 읽기</title>
+<style>
+  :root{
+    --paper:#fbf6ee;
+    --paper2:#f4ece0;
+    --card:#ffffff;
+    --ink:#3a302a;
+    --ink-soft:#5c4c42;
+    --muted:#8b786a;
+    --line:#eadfd0;
+    --line-soft:#f1e7da;
+    --accent:#b1643f;
+    --accent-dark:#8f4c2c;
+    --accent-soft:#f7e5d7;
+    --teal:#2f6b60;
+    --teal-dark:#245249;
+    --teal-soft:#e2f0eb;
+    --ok:#1f6b43;
+    --ok-soft:#d8f0df;
+    --bad:#b23c31;
+    --bad-soft:#fbdcd7;
+    --gold:#c99a3f;
+    --shadow:0 10px 26px rgba(120,90,60,.10);
+    --shadow-lift:0 16px 40px rgba(120,90,60,.16);
+    --r:20px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{background:var(--paper)}
+  body{
+    margin:0;min-width:320px;color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR",system-ui,sans-serif;
+    background:
+      radial-gradient(circle at 8% 0%, rgba(247,225,207,.55), transparent 22rem),
+      radial-gradient(circle at 96% 4%, rgba(226,240,235,.6), transparent 20rem),
+      var(--paper);
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;padding:0}
+  input,textarea{font:inherit;color:inherit}
+  .serif{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif}
+
+  .shell{width:min(100% - 2rem,740px);margin:0 auto}
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    position:sticky;top:0;z-index:30;
+    padding:calc(env(safe-area-inset-top) + .55rem) 1rem .55rem;
+    background:rgba(251,246,238,.86);
+    -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line-soft);
+    display:flex;align-items:center;gap:.55rem;
+  }
+  .topbar .tb-nav{display:grid;place-items:center;width:2.4rem;height:2.4rem;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:1.1rem;color:var(--ink-soft);flex:0 0 auto}
+  .topbar .tb-nav:active{background:var(--paper2)}
+  .tb-body{min-width:0;flex:1}
+  .tb-title{display:block;font-weight:800;font-size:.95rem;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tb-sub{display:block;margin-top:.1rem;font-size:.68rem;font-weight:700;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tb-act{display:grid;place-items:center;width:2.4rem;height:2.4rem;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:1rem;flex:0 0 auto}
+
+  /* ---------- library ---------- */
+  .screen{padding:1.1rem 0 2.5rem}
+  .hero{padding:.5rem .1rem 1.1rem}
+  .eyebrow{display:inline-flex;align-items:center;gap:.4rem;margin:0 0 .7rem;padding:.32rem .7rem;border-radius:999px;background:#fff;border:1px solid var(--line);color:var(--accent-dark);font-size:.66rem;font-weight:900;letter-spacing:.05em}
+  .hero h1{margin:0 0 .45rem;font-size:1.9rem;line-height:1.18;letter-spacing:-.03em;font-weight:850}
+  .hero h1 em{font-style:normal;color:var(--accent)}
+  .hero p{margin:0;color:var(--ink-soft);font-size:.92rem;line-height:1.6;font-weight:650}
+  .stat-row{display:flex;gap:.5rem;margin:1.05rem 0 .2rem}
+  .stat{flex:1;padding:.72rem .6rem;border-radius:16px;background:#fff;border:1px solid var(--line);text-align:center;box-shadow:0 4px 12px rgba(120,90,60,.05)}
+  .stat b{display:block;font-size:1.1rem;line-height:1.2}
+  .stat span{display:block;margin-top:.12rem;font-size:.62rem;font-weight:800;color:var(--muted);letter-spacing:.02em}
+
+  .sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:.6rem;margin:1.5rem 0 .7rem;padding:0 .1rem}
+  .sec-head h2{margin:0;font-size:.98rem;font-weight:850;letter-spacing:-.01em}
+  .sec-head .link{font-size:.74rem;font-weight:800;color:var(--accent-dark);background:#fff;border:1px solid var(--line);border-radius:999px;padding:.3rem .62rem}
+
+  .book{
+    display:flex;align-items:center;gap:.85rem;width:100%;text-align:left;
+    padding:.85rem;margin-bottom:.6rem;border-radius:var(--r);
+    background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);
+    transition:transform .12s ease;
+  }
+  .book:active{transform:scale(.985)}
+  .cover{display:grid;place-items:center;width:3.6rem;height:4.8rem;border-radius:12px;font-size:1.75rem;flex:0 0 auto;position:relative;overflow:hidden;box-shadow:inset 0 -14px 20px rgba(0,0,0,.05)}
+  .cover::after{content:"";position:absolute;left:.35rem;top:0;bottom:0;width:2px;background:rgba(255,255,255,.55)}
+  .cover.a{background:linear-gradient(160deg,#ffe6c9,#f7cfa5)}
+  .cover.v{background:linear-gradient(160deg,#fbe0e6,#f3c3ce)}
+  .cover.l{background:linear-gradient(160deg,#dcecf7,#bcd8ea)}
+  .cover.c{background:linear-gradient(160deg,#e9e3f6,#cdc3ea)}
+  .book-body{min-width:0;flex:1}
+  .book-title{display:block;font-weight:850;font-size:1rem;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .book-en{display:block;margin-top:.08rem;font-size:.72rem;font-weight:700;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .chips{display:flex;flex-wrap:wrap;gap:.28rem;margin-top:.42rem}
+  .chip{font-size:.6rem;font-weight:850;color:var(--accent-dark);background:var(--accent-soft);border-radius:999px;padding:.16rem .45rem;letter-spacing:.02em}
+  .chip.gray{color:var(--muted);background:var(--paper2)}
+  .bar{height:5px;margin-top:.5rem;border-radius:999px;background:var(--paper2);overflow:hidden}
+  .bar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent),#d08a5f);transition:width .3s ease}
+  .bar-row{display:flex;align-items:center;gap:.5rem;margin-top:.5rem}
+  .bar-row .bar{flex:1;margin-top:0}
+  .bar-row .num{font-size:.64rem;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums}
+
+  .add-card{display:flex;align-items:center;justify-content:center;gap:.5rem;width:100%;padding:1rem;border-radius:var(--r);border:1.6px dashed #d9c8b1;background:rgba(255,255,255,.55);color:var(--accent-dark);font-weight:850;font-size:.9rem}
+  .add-card:active{background:#fff}
+
+  .foot{margin:1.8rem 0 0;padding:0 .2rem;color:var(--muted);font-size:.66rem;line-height:1.7;font-weight:600}
+
+  /* ---------- chapter list ---------- */
+  .book-head{display:flex;gap:.9rem;align-items:center;padding:.4rem .1rem 1rem}
+  .book-head .cover{width:4.2rem;height:5.6rem;font-size:2rem;border-radius:14px}
+  .book-head h1{margin:0;font-size:1.25rem;line-height:1.25;letter-spacing:-.02em}
+  .book-head .en{display:block;margin-top:.15rem;font-size:.76rem;font-weight:700;color:var(--muted)}
+  .book-head .au{display:block;margin-top:.3rem;font-size:.7rem;font-weight:700;color:var(--ink-soft)}
+  .resume{display:flex;align-items:center;justify-content:center;gap:.4rem;width:100%;margin:.2rem 0 .9rem;padding:.85rem;border-radius:16px;background:linear-gradient(180deg,#b96c46,#a45733);color:#fff;font-weight:900;font-size:.92rem;box-shadow:0 10px 22px rgba(160,90,50,.28)}
+  .resume:active{transform:scale(.985)}
+  .chap{display:flex;align-items:center;gap:.75rem;width:100%;text-align:left;padding:.78rem .85rem;margin-bottom:.5rem;border-radius:16px;background:#fff;border:1px solid var(--line);box-shadow:0 4px 12px rgba(120,90,60,.05)}
+  .chap:active{background:var(--paper2)}
+  .chap .n{display:grid;place-items:center;width:2rem;height:2rem;border-radius:999px;background:var(--paper2);font-size:.76rem;font-weight:900;color:var(--ink-soft);flex:0 0 auto}
+  .chap.done .n{background:var(--ok-soft);color:var(--ok)}
+  .chap-body{min-width:0;flex:1}
+  .chap-title{display:block;font-weight:800;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .chap-ko{display:block;margin-top:.1rem;font-size:.68rem;font-weight:700;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .chap-pct{font-size:.68rem;font-weight:900;color:var(--accent-dark);flex:0 0 auto;font-variant-numeric:tabular-nums}
+  .chap-pct.full{color:var(--ok)}
+  .danger-link{display:block;margin:1.2rem auto 0;padding:.5rem .9rem;border-radius:999px;color:#a8453a;font-size:.75rem;font-weight:800;background:#fff;border:1px solid #f0d6d1}
+
+  /* ---------- reader ---------- */
+  .progline{display:flex;align-items:center;gap:.6rem;margin:.3rem 0 .7rem}
+  .progline .bar{flex:1;margin:0;height:6px}
+  .progline .num{font-size:.7rem;font-weight:850;color:var(--muted);font-variant-numeric:tabular-nums}
+  .segmented{display:flex;gap:.25rem;padding:.22rem;border-radius:999px;background:#efe5d7;border:1px solid #e6d9c7;margin-bottom:.85rem}
+  .segmented button{flex:1;padding:.42rem 0;border-radius:999px;font-size:.76rem;font-weight:850;color:var(--muted)}
+  .segmented button.on{background:#fff;color:var(--ink);box-shadow:0 2px 6px rgba(120,90,60,.12)}
+
+  .sentence-card{position:relative;padding:1.25rem 1.15rem 1.1rem;border-radius:var(--r);background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow)}
+  .sentence-card.playing{box-shadow:0 0 0 3px rgba(177,100,63,.16),var(--shadow)}
+  .sent-meta{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.55rem}
+  .sent-meta .lbl{font-size:.64rem;font-weight:900;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+  .sent-meta .st{font-size:.66rem;font-weight:850;color:var(--muted)}
+  .sent-meta .st.ok{color:var(--ok)}
+  .sentence{margin:0;font-size:1.28rem;line-height:1.75;letter-spacing:.002em;color:#332a24}
+  .sentence .w{border-radius:5px;padding:.02em 0;transition:background .12s}
+  .sentence .w:active{background:var(--accent-soft)}
+  .sentence .w.ok{color:var(--ok);background:linear-gradient(transparent 58%,var(--ok-soft) 58%)}
+  .sentence .w.miss{color:var(--bad);background:linear-gradient(transparent 58%,var(--bad-soft) 58%)}
+  .para-view p{margin:0 0 1rem;font-size:1.06rem;line-height:1.8;color:#3b312b}
+  .para-view p:last-child{margin-bottom:0}
+  .para-view .s{border-radius:6px;cursor:pointer}
+  .para-view .s.cur{background:var(--accent-soft);box-shadow:0 0 0 3px var(--accent-soft)}
+  .para-view .s.done{color:var(--ink-soft)}
+  .para-view .s.done::after{content:" ✓";font-size:.72em;color:var(--ok);font-weight:700}
+  .moral{margin-top:.9rem;padding-top:.75rem;border-top:1px dashed var(--line);font-size:.88rem;font-weight:750;color:var(--accent-dark);line-height:1.55}
+  .moral b{font-size:.62rem;letter-spacing:.08em;color:var(--muted);display:block;margin-bottom:.2rem}
+
+  .feedback{margin-top:.9rem;border-radius:14px;padding:.7rem .8rem;font-size:.8rem;font-weight:750;line-height:1.5;display:none}
+  .feedback.show{display:block}
+  .feedback.ok{background:var(--ok-soft);color:#1b5738}
+  .feedback.bad{background:var(--bad-soft);color:#8f2f26}
+  .feedback.warn{background:#fdf1d8;color:#7d5b16}
+  .feedback .pct{font-weight:900;font-size:.95rem}
+  .feedback .heard{display:block;margin-top:.25rem;font-weight:650;color:inherit;opacity:.85;font-size:.76rem;word-break:break-word}
+
+  .controls{margin-top:.9rem;display:grid;grid-template-columns:1fr 1fr;gap:.55rem}
+  .btn{display:flex;align-items:center;justify-content:center;gap:.42rem;padding:.92rem .5rem;border-radius:16px;font-weight:900;font-size:.92rem;letter-spacing:-.01em;transition:transform .1s ease}
+  .btn:active{transform:scale(.97)}
+  .btn-primary{background:linear-gradient(180deg,#bc6f49,#a45833);color:#fff;box-shadow:0 10px 22px rgba(160,90,50,.26)}
+  .btn-mic{background:linear-gradient(180deg,#357a6d,#286054);color:#fff;box-shadow:0 10px 22px rgba(40,96,84,.24)}
+  .btn-mic.rec{background:linear-gradient(180deg,#c04a3f,#a53a30);box-shadow:0 0 0 4px rgba(192,74,63,.18),0 10px 22px rgba(160,60,50,.26);animation:pulse 1.1s infinite}
+  .btn[disabled]{opacity:.72}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.015)}}
+  .btn-ghost{background:#fff;border:1px solid var(--line);color:var(--ink-soft);font-weight:850;font-size:.8rem;padding:.62rem .5rem;border-radius:14px;grid-column:1/-1}
+  .btn-ghost.stop{color:#a8453a;border-color:#f0d6d1;background:#fff7f5}
+
+  .mini-row{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-top:.6rem}
+  .speed{display:flex;gap:.22rem;padding:.2rem;border-radius:999px;background:#efe5d7;border:1px solid #e6d9c7}
+  .speed button{padding:.3rem .62rem;border-radius:999px;font-size:.72rem;font-weight:900;color:var(--muted);font-variant-numeric:tabular-nums}
+  .speed button.on{background:#fff;color:var(--accent-dark);box-shadow:0 2px 6px rgba(120,90,60,.12)}
+  .mini-link{font-size:.72rem;font-weight:850;color:var(--muted);padding:.34rem .6rem;border-radius:999px;background:rgba(255,255,255,.7);border:1px solid var(--line-soft)}
+
+  .story-nav{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-top:1rem;padding:.5rem;border-radius:999px;background:#fff;border:1px solid var(--line)}
+  .story-nav button{display:flex;align-items:center;gap:.25rem;padding:.55rem .9rem;border-radius:999px;font-size:.8rem;font-weight:850;color:var(--ink-soft)}
+  .story-nav button[disabled]{opacity:.35}
+  .story-nav .count{font-size:.76rem;font-weight:900;color:var(--muted);font-variant-numeric:tabular-nums}
+
+  .hint{margin-top:1.1rem;padding:.85rem .95rem;border-radius:14px;background:rgba(255,255,255,.62);border:1px solid var(--line-soft);font-size:.74rem;line-height:1.65;color:var(--muted);font-weight:650}
+  .hint b{color:var(--ink-soft)}
+
+  /* ---------- forms ---------- */
+  .field{margin-bottom:.85rem}
+  .field label{display:block;margin-bottom:.35rem;font-size:.74rem;font-weight:850;color:var(--ink-soft)}
+  .field input,.field textarea{width:100%;padding:.78rem .85rem;border-radius:14px;border:1px solid var(--line);background:#fff;font-size:.92rem;outline:none}
+  .field input:focus,.field textarea:focus{border-color:#d8b795;box-shadow:0 0 0 3px rgba(177,100,63,.1)}
+  .field textarea{min-height:190px;resize:vertical;line-height:1.6}
+  .field .help{margin-top:.3rem;font-size:.68rem;font-weight:650;color:var(--muted);line-height:1.5}
+  .primary-wide{display:flex;align-items:center;justify-content:center;width:100%;margin-top:.4rem;padding:.95rem;border-radius:16px;background:linear-gradient(180deg,#bc6f49,#a45833);color:#fff;font-weight:900;font-size:.95rem;box-shadow:0 10px 22px rgba(160,90,50,.24)}
+  .primary-wide:active{transform:scale(.985)}
+
+  /* ---------- sheet ---------- */
+  .sheet-wrap{position:fixed;inset:0;z-index:60;display:none}
+  .sheet-wrap.show{display:block}
+  .backdrop{position:absolute;inset:0;background:rgba(52,40,32,.42);animation:fade .16s ease}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .sheet{position:absolute;left:0;right:0;bottom:0;max-height:86vh;overflow:auto;background:var(--paper);border-radius:24px 24px 0 0;padding:.7rem 1.1rem calc(1.3rem + env(safe-area-inset-bottom));box-shadow:0 -12px 40px rgba(60,40,25,.22);animation:up .2s ease}
+  @keyframes up{from{transform:translateY(18px)}to{transform:translateY(0)}}
+  .sheet .grab{width:2.6rem;height:.28rem;border-radius:999px;background:#ddcdb8;margin:.15rem auto .9rem}
+  .sheet h3{margin:0 0 .2rem;font-size:1.02rem;font-weight:850;letter-spacing:-.01em}
+  .sheet .sub{margin:0 0 .9rem;font-size:.74rem;font-weight:700;color:var(--muted);line-height:1.5}
+  .sheet-row{display:flex;gap:.5rem;margin-bottom:.55rem}
+  .sheet-row .btn{flex:1;font-size:.84rem;padding:.78rem .4rem;border-radius:14px}
+  .sheet-row a.btn{text-decoration:none}
+  .btn-line{background:#fff;border:1px solid var(--line);color:var(--ink-soft);font-weight:850}
+  .btn-star{background:var(--accent-soft);color:var(--accent-dark);font-weight:900}
+  .btn-star.on{background:#e8f4e9;color:var(--ok)}
+  .sheet-note{font-size:.66rem;font-weight:650;color:var(--muted);line-height:1.6;margin:.7rem 0 0}
+  .word-ko{font-size:.8rem;font-weight:750;color:var(--ink-soft);margin:0 0 .8rem;word-break:break-word}
+  .word-ko .ph{font-family:var(--serif,serif);color:var(--muted);font-size:.78rem;font-weight:600}
+
+  .wlist-item{display:flex;align-items:center;gap:.6rem;padding:.66rem .8rem;margin-bottom:.45rem;border-radius:14px;background:#fff;border:1px solid var(--line)}
+  .wlist-item .w{flex:1;min-width:0;font-size:.95rem;font-weight:750;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .wlist-item .w small{display:block;font-size:.62rem;font-weight:700;color:var(--muted);margin-top:.1rem}
+  .wlist-item button{width:2.2rem;height:2.2rem;display:grid;place-items:center;border-radius:999px;background:var(--paper2);font-size:.95rem}
+  .empty{padding:2rem 1rem;text-align:center;color:var(--muted);font-size:.82rem;font-weight:700;line-height:1.7}
+
+  .toast{position:fixed;left:50%;bottom:calc(1.4rem + env(safe-area-inset-bottom));transform:translate(-50%,12px);z-index:80;max-width:min(88vw,420px);padding:.7rem 1rem;border-radius:999px;background:rgba(48,36,28,.94);color:#fff;font-size:.78rem;font-weight:750;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+
+  .float-stop{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(1.2rem + env(safe-area-inset-bottom));z-index:70;display:none;align-items:center;gap:.5rem;padding:.62rem .95rem;border-radius:999px;background:rgba(48,36,28,.94);color:#fff;font-size:.78rem;font-weight:850;box-shadow:0 10px 26px rgba(40,28,18,.3)}
+  .float-stop.show{display:flex}
+
+  @media (min-width:640px){
+    .hero h1{font-size:2.3rem}
+    .sentence{font-size:1.42rem}
+    .controls{gap:.7rem}
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<div class="sheet-wrap" id="sheetWrap" aria-hidden="true">
+  <div class="backdrop" data-close-sheet></div>
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true">
+    <div class="grab"></div>
+    <div id="sheetBody"></div>
+  </div>
+</div>
+
+<div class="float-stop" id="floatStop">
+  <span id="floatStopLabel">▶︎ 전체 듣기</span>
+  <button data-stop-all>■ 멈추기</button>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<input type="file" id="importFile" accept=".json,application/json" hidden />
+
+<script>
+const BOOKS = [
+ {
+  "id": "aesop",
+  "emoji": "🦊",
+  "title": "이솝 우화",
+  "en": "Aesop's Fables",
+  "author": "Aesop · V. S. Vernon Jones 역",
+  "level": "입문 · 5분",
+  "blurb": "짧고 또렷한 문장으로 시작하는 따라 읽기",
+  "chapters": [
+   {
+    "id": "the-fox-and-the-grapes",
+    "title": "The Fox and the Grapes",
+    "ko": "여우와 포도",
+    "emoji": "🦊",
+    "paras": [
+     "A hungry Fox saw some fine bunches of Grapes hanging from a vine that was trained along a high trellis, and did his best to reach them by jumping as high as he could into the air. But it was all in vain, for they were just out of reach: so he gave up trying, and walked away with an air of dignity and unconcern, remarking, “I thought those Grapes were ripe, but I see now they are quite sour.”"
+    ]
+   },
+   {
+    "id": "the-goose-that-laid-the-golden-eggs",
+    "title": "The Goose That Laid the Golden Eggs",
+    "ko": "황금알을 낳는 거위",
+    "emoji": "🥚",
+    "paras": [
+     "A Man and his Wife had the good fortune to possess a Goose which laid a Golden Egg every day. Lucky though they were, they soon began to think they were not getting rich fast enough, and, imagining the bird must be made of gold inside, they decided to kill it in order to secure the whole store of precious metal at once. But when they cut it open they found it was just like any other goose. Thus, they neither got rich all at once, as they had hoped, nor enjoyed any longer the daily addition to their wealth."
+    ],
+    "moral": "Much wants more and loses all."
+   },
+   {
+    "id": "the-lion-and-the-mouse",
+    "title": "The Lion and the Mouse",
+    "ko": "사자와 쥐",
+    "emoji": "🦁",
+    "paras": [
+     "A Lion asleep in his lair was waked up by a Mouse running over his face. Losing his temper he seized it with his paw and was about to kill it. The Mouse, terrified, piteously entreated him to spare its life. “Please let me go,” it cried, “and one day I will repay you for your kindness.” The idea of so insignificant a creature ever being able to do anything for him amused the Lion so much that he laughed aloud, and good-humouredly let it go. But the Mouse’s chance came, after all. One day the Lion got entangled in a net which had been spread for game by some hunters, and the Mouse heard and recognised his roars of anger and ran to the spot. Without more ado it set to work to gnaw the ropes with its teeth, and succeeded before long in setting the Lion free. “There!” said the Mouse, “you laughed at me when I promised I would repay you: but now you see, even a Mouse can help a Lion.”"
+    ]
+   },
+   {
+    "id": "the-crow-and-the-pitcher",
+    "title": "The Crow and the Pitcher",
+    "ko": "까마귀와 물병",
+    "emoji": "🐦‍⬛",
+    "paras": [
+     "A thirsty Crow found a Pitcher with some water in it, but so little was there that, try as she might, she could not reach it with her beak, and it seemed as though she would die of thirst within sight of the remedy. At last she hit upon a clever plan. She began dropping pebbles into the Pitcher, and with each pebble the water rose a little higher until at last it reached the brim, and the knowing bird was enabled to quench her thirst."
+    ],
+    "moral": "Necessity is the mother of invention."
+   },
+   {
+    "id": "the-north-wind-and-the-sun",
+    "title": "The North Wind and the Sun",
+    "ko": "북풍과 태양",
+    "emoji": "☀️",
+    "paras": [
+     "A dispute arose between the North Wind and the Sun, each claiming that he was stronger than the other. At last they agreed to try their powers upon a traveller, to see which could soonest strip him of his cloak. The North Wind had the first try; and, gathering up all his force for the attack, he came whirling furiously down upon the man, and caught up his cloak as though he would wrest it from him by one single effort: but the harder he blew, the more closely the man wrapped it round himself. Then came the turn of the Sun. At first he beamed gently upon the traveller, who soon unclasped his cloak and walked on with it hanging loosely about his shoulders: then he shone forth in his full strength, and the man, before he had gone many steps, was glad to throw his cloak right off and complete his journey more lightly clad."
+    ],
+    "moral": "Persuasion is better than force."
+   },
+   {
+    "id": "the-hare-and-the-tortoise",
+    "title": "The Hare and the Tortoise",
+    "ko": "토끼와 거북이",
+    "emoji": "🐢",
+    "paras": [
+     "A Hare was one day making fun of a Tortoise for being so slow upon his feet. “Wait a bit,” said the Tortoise; “I’ll run a race with you, and I’ll wager that I win.” “Oh, well,” replied the Hare, who was much amused at the idea, “let’s try and see”; and it was soon agreed that the fox should set a course for them, and be the judge. When the time came both started off together, but the Hare was soon so far ahead that he thought he might as well have a rest: so down he lay and fell fast asleep. Meanwhile the Tortoise kept plodding on, and in time reached the goal. At last the Hare woke up with a start, and dashed on at his fastest, but only to find that the Tortoise had already won the race."
+    ],
+    "moral": "Slow and steady wins the race."
+   }
+  ]
+ },
+ {
+  "id": "velveteen",
+  "emoji": "🐰",
+  "title": "벨벳 토끼",
+  "en": "The Velveteen Rabbit",
+  "author": "Margery Williams (1922)",
+  "level": "초급 · 따뜻한 이야기",
+  "blurb": "장난감 토끼가 진짜가 되어 가는 일곱 장",
+  "chapters": [
+   {
+    "id": "christmas-morning",
+    "title": "Christmas Morning",
+    "ko": "크리스마스 아침",
+    "paras": [
+     "There was once a velveteen rabbit, and in the beginning he was really splendid. He was fat and bunchy, as a rabbit should be; his coat was spotted brown and white, he had real thread whiskers, and his ears were lined with pink sateen. On Christmas morning, when he sat wedged in the top of the Boy's stocking, with a sprig of holly between his paws, the effect was charming.",
+     "There were other things in the stocking, nuts and oranges and a toy engine, and chocolate almonds and a clockwork mouse, but the Rabbit was quite the best of all. For at least two hours the Boy loved him, and then Aunts and Uncles came to dinner, and there was a great rustling of tissue paper and unwrapping of parcels, and in the excitement of looking at all the new presents the Velveteen Rabbit was forgotten.",
+     "For a long time he lived in the toy cupboard or on the nursery floor, and no one thought very much about him. He was naturally shy, and being only made of velveteen, some of the more expensive toys quite snubbed him. The mechanical toys were very superior, and looked down upon every one else; they were full of modern ideas, and pretended they were real. The model boat, who had lived through two seasons and lost most of his paint, caught the tone from them and never missed an opportunity of referring to his rigging in technical terms. The Rabbit could not claim to be a model of anything, for he didn't know that real rabbits existed; he thought they were all stuffed with sawdust like himself, and he understood that sawdust was quite out-of-date and should never be mentioned in modern circles. Even Timothy, the jointed wooden lion, who was made by the disabled soldiers, and should have had broader views, put on airs and pretended he was connected with Government. Between them all the poor little Rabbit was made to feel himself very insignificant and commonplace, and the only person who was kind to him at all was the Skin Horse."
+    ]
+   },
+   {
+    "id": "the-skin-horse-tells-his-story",
+    "title": "The Skin Horse Tells His Story",
+    "ko": "가죽말이 들려준 이야기",
+    "paras": [
+     "The Skin Horse had lived longer in the nursery than any of the others. He was so old that his brown coat was bald in patches and showed the seams underneath, and most of the hairs in his tail had been pulled out to string bead necklaces. He was wise, for he had seen a long succession of mechanical toys arrive to boast and swagger, and by-and-by break their mainsprings and pass away, and he knew that they were only toys, and would never turn into anything else. For nursery magic is very strange and wonderful, and only those playthings that are old and wise and experienced like the Skin Horse understand all about it.",
+     "\"What is REAL?\" asked the Rabbit one day, when they were lying side by side near the nursery fender, before Nana came to tidy the room. \"Does it mean having things that buzz inside you and a stick-out handle?\"",
+     "\"Real isn't how you are made,\" said the Skin Horse. \"It's a thing that happens to you. When a child loves you for a long, long time, not just to play with, but REALLY loves you, then you become Real.\"",
+     "\"Does it hurt?\" asked the Rabbit.",
+     "\"Sometimes,\" said the Skin Horse, for he was always truthful. \"When you are Real you don't mind being hurt.\"",
+     "\"Does it happen all at once, like being wound up,\" he asked, \"or bit by bit?\"",
+     "\"It doesn't happen all at once,\" said the Skin Horse. \"You become. It takes a long time. That's why it doesn't happen often to people who break easily, or have sharp edges, or who have to be carefully kept. Generally, by the time you are Real, most of your hair has been loved off, and your eyes drop out and you get loose in the joints and very shabby. But these things don't matter at all, because once you are Real you can't be ugly, except to people who don't understand.\"",
+     "\"I suppose you are real?\" said the Rabbit. And then he wished he had not said it, for he thought the Skin Horse might be sensitive. But the Skin Horse only smiled.",
+     "\"The Boy's Uncle made me Real,\" he said. \"That was a great many years ago; but once you are Real you can't become unreal again. It lasts for always.\"",
+     "The Rabbit sighed. He thought it would be a long time before this magic called Real happened to him. He longed to become Real, to know what it felt like; and yet the idea of growing shabby and losing his eyes and whiskers was rather sad. He wished that he could become it without these uncomfortable things happening to him.",
+     "There was a person called Nana who ruled the nursery. Sometimes she took no notice of the playthings lying about, and sometimes, for no reason whatever, she went swooping about like a great wind and hustled them away in cupboards. She called this \"tidying up,\" and the playthings all hated it, especially the tin ones. The Rabbit didn't mind it so much, for wherever he was thrown he came down soft.",
+     "One evening, when the Boy was going to bed, he couldn't find the china dog that always slept with him. Nana was in a hurry, and it was too much trouble to hunt for china dogs at bedtime, so she simply looked about her, and seeing that the toy cupboard door stood open, she made a swoop.",
+     "\"Here,\" she said, \"take your old Bunny! He'll do to sleep with you!\" And she dragged the Rabbit out by one ear, and put him into the Boy's arms.",
+     "That night, and for many nights after, the Velveteen Rabbit slept in the Boy's bed. At first he found it rather uncomfortable, for the Boy hugged him very tight, and sometimes he rolled over on him, and sometimes he pushed him so far under the pillow that the Rabbit could scarcely breathe. And he missed, too, those long moonlight hours in the nursery, when all the house was silent, and his talks with the Skin Horse. But very soon he grew to like it, for the Boy used to talk to him, and made nice tunnels for him under the bedclothes that he said were like the burrows the real rabbits lived in. And they had splendid games together, in whispers, when Nana had gone away to her supper and left the night-light burning on the mantelpiece. And when the Boy dropped off to sleep, the Rabbit would snuggle down close under his little warm chin and dream, with the Boy's hands clasped close round him all night long.",
+     "And so time went on, and the little Rabbit was very happy–so happy that he never noticed how his beautiful velveteen fur was getting shabbier and shabbier, and his tail becoming unsewn, and all the pink rubbed off his nose where the Boy had kissed him."
+    ]
+   },
+   {
+    "id": "spring-time",
+    "title": "Spring Time",
+    "ko": "봄",
+    "paras": [
+     "Spring came, and they had long days in the garden, for wherever the Boy went the Rabbit went too. He had rides in the wheelbarrow, and picnics on the grass, and lovely fairy huts built for him under the raspberry canes behind the flower border. And once, when the Boy was called away suddenly to go out to tea, the Rabbit was left out on the lawn until long after dusk, and Nana had to come and look for him with the candle because the Boy couldn't go to sleep unless he was there. He was wet through with the dew and quite earthy from diving into the burrows the Boy had made for him in the flower bed, and Nana grumbled as she rubbed him off with a corner of her apron.",
+     "\"You must have your old Bunny!\" she said. \"Fancy all that fuss for a toy!\"",
+     "The Boy sat up in bed and stretched out his hands.",
+     "\"Give me my Bunny!\" he said. \"You mustn't say that. He isn't a toy. He's REAL!\"",
+     "When the little Rabbit heard that he was happy, for he knew that what the Skin Horse had said was true at last. The nursery magic had happened to him, and he was a toy no longer. He was Real. The Boy himself had said it.",
+     "That night he was almost too happy to sleep, and so much love stirred in his little sawdust heart that it almost burst. And into his boot-button eyes, that had long ago lost their polish, there came a look of wisdom and beauty, so that even Nana noticed it next morning when she picked him up, and said, \"I declare if that old Bunny hasn't got quite a knowing expression!\""
+    ]
+   },
+   {
+    "id": "summer-days",
+    "title": "Summer Days",
+    "ko": "여름날",
+    "paras": [
+     "That was a wonderful Summer!",
+     "Near the house where they lived there was a wood, and in the long June evenings the Boy liked to go there after tea to play. He took the Velveteen Rabbit with him, and before he wandered off to pick flowers, or play at brigands among the trees, he always made the Rabbit a little nest somewhere among the bracken, where he would be quite cosy, for he was a kind-hearted little boy and he liked Bunny to be comfortable. One evening, while the Rabbit was lying there alone, watching the ants that ran to and fro between his velvet paws in the grass, he saw two strange beings creep out of the tall bracken near him.",
+     "They were rabbits like himself, but quite furry and brand-new. They must have been very well made, for their seams didn't show at all, and they changed shape in a queer way when they moved; one minute they were long and thin and the next minute fat and bunchy, instead of always staying the same like he did. Their feet padded softly on the ground, and they crept quite close to him, twitching their noses, while the Rabbit stared hard to see which side the clockwork stuck out, for he knew that people who jump generally have something to wind them up. But he couldn't see it. They were evidently a new kind of rabbit altogether.",
+     "They stared at him, and the little Rabbit stared back. And all the time their noses twitched.",
+     "\"Why don't you get up and play with us?\" one of them asked.",
+     "\"I don't feel like it,\" said the Rabbit, for he didn't want to explain that he had no clockwork.",
+     "\"Ho!\" said the furry rabbit. \"It's as easy as anything,\" And he gave a big hop sideways and stood on his hind legs.",
+     "\"I don't believe you can!\" he said.",
+     "\"I can!\" said the little Rabbit. \"I can jump higher than anything!\" He meant when the Boy threw him, but of course he didn't want to say so.",
+     "\"Can you hop on your hind legs?\" asked the furry rabbit.",
+     "That was a dreadful question, for the Velveteen Rabbit had no hind legs at all! The back of him was made all in one piece, like a pincushion. He sat still in the bracken, and hoped that the other rabbits wouldn't notice.",
+     "\"I don't want to!\" he said again.",
+     "But the wild rabbits have very sharp eyes. And this one stretched out his neck and looked.",
+     "\"He hasn't got any hind legs!\" he called out. \"Fancy a rabbit without any hind legs!\" And he began to laugh.",
+     "\"I have!\" cried the little Rabbit. \"I have got hind legs! I am sitting on them!\"",
+     "\"Then stretch them out and show me, like this!\" said the wild rabbit. And he began to whirl round and dance, till the little Rabbit got quite dizzy.",
+     "\"I don't like dancing,\" he said. \"I'd rather sit still!\"",
+     "But all the while he was longing to dance, for a funny new tickly feeling ran through him, and he felt he would give anything in the world to be able to jump about like these rabbits did.",
+     "The strange rabbit stopped dancing, and came quite close. He came so close this time that his long whiskers brushed the Velveteen Rabbit's ear, and then he wrinkled his nose suddenly and flattened his ears and jumped backwards.",
+     "\"He doesn't smell right!\" he exclaimed. \"He isn't a rabbit at all! He isn't real!\"",
+     "\"I am Real!\" said the little Rabbit. \"I am Real! The Boy said so!\" And he nearly began to cry.",
+     "Just then there was a sound of footsteps, and the Boy ran past near them, and with a stamp of feet and a flash of white tails the two strange rabbits disappeared.",
+     "\"Come back and play with me!\" called the little Rabbit. \"Oh, do come back! I know I am Real!\"",
+     "But there was no answer, only the little ants ran to and fro, and the bracken swayed gently where the two strangers had passed. The Velveteen Rabbit was all alone.",
+     "\"Oh, dear!\" he thought. \"Why did they run away like that? Why couldn't they stop and talk to me?\"",
+     "For a long time he lay very still, watching the bracken, and hoping that they would come back. But they never returned, and presently the sun sank lower and the little white moths fluttered out, and the Boy came and carried him home."
+    ]
+   },
+   {
+    "id": "anxious-times",
+    "title": "Anxious Times",
+    "ko": "근심스러운 날들",
+    "paras": [
+     "Weeks passed, and the little Rabbit grew very old and shabby, but the Boy loved him just as much. He loved him so hard that he loved all his whiskers off, and the pink lining to his ears turned grey, and his brown spots faded. He even began to lose his shape, and he scarcely looked like a rabbit any more, except to the Boy. To him he was always beautiful, and that was all that the little Rabbit cared about. He didn't mind how he looked to other people, because the nursery magic had made him Real, and when you are Real shabbiness doesn't matter.",
+     "And then, one day, the Boy was ill.",
+     "His face grew very flushed, and he talked in his sleep, and his little body was so hot that it burned the Rabbit when he held him close. Strange people came and went in the nursery, and a light burned all night and through it all the little Velveteen Rabbit lay there, hidden from sight under the bedclothes, and he never stirred, for he was afraid that if they found him some one might take him away, and he knew that the Boy needed him.",
+     "It was a long weary time, for the Boy was too ill to play, and the little Rabbit found it rather dull with nothing to do all day long. But he snuggled down patiently, and looked forward to the time when the Boy should be well again, and they would go out in the garden amongst the flowers and the butterflies and play splendid games in the raspberry thicket like they used to. All sorts of delightful things he planned, and while the Boy lay half asleep he crept up close to the pillow and whispered them in his ear. And presently the fever turned, and the Boy got better. He was able to sit up in bed and look at picture-books, while the little Rabbit cuddled close at his side. And one day, they let him get up and dress.",
+     "It was a bright, sunny morning, and the windows stood wide open. They had carried the Boy out on to the balcony, wrapped in a shawl, and the little Rabbit lay tangled up among the bedclothes, thinking.",
+     "The Boy was going to the seaside to-morrow. Everything was arranged, and now it only remained to carry out the doctor's orders. They talked about it all, while the little Rabbit lay under the bedclothes, with just his head peeping out, and listened. The room was to be disinfected, and all the books and toys that the Boy had played with in bed must be burnt.",
+     "\"Hurrah!\" thought the little Rabbit. \"To-morrow we shall go to the seaside!\" For the boy had often talked of the seaside, and he wanted very much to see the big waves coming in, and the tiny crabs, and the sand castles.",
+     "Just then Nana caught sight of him.",
+     "\"How about his old Bunny?\" she asked.",
+     "\"That?\" said the doctor. \"Why, it's a mass of scarlet fever germs!–Burn it at once. What? Nonsense! Get him a new one. He mustn't have that any more!\"",
+     "And so the little Rabbit was put into a sack with the old picture-books and a lot of rubbish, and carried out to the end of the garden behind the fowl-house. That was a fine place to make a bonfire, only the gardener was too busy just then to attend to it. He had the potatoes to dig and the green peas to gather, but next morning he promised to come quite early and burn the whole lot.",
+     "That night the Boy slept in a different bedroom, and he had a new bunny to sleep with him. It was a splendid bunny, all white plush with real glass eyes, but the Boy was too excited to care very much about it. For to-morrow he was going to the seaside, and that in itself was such a wonderful thing that he could think of nothing else.",
+     "And while the Boy was asleep, dreaming of the seaside, the little Rabbit lay among the old picture-books in the corner behind the fowl-house, and he felt very lonely. The sack had been left untied, and so by wriggling a bit he was able to get his head through the opening and look out. He was shivering a little, for he had always been used to sleeping in a proper bed, and by this time his coat had worn so thin and threadbare from hugging that it was no longer any protection to him. Near by he could see the thicket of raspberry canes, growing tall and close like a tropical jungle, in whose shadow he had played with the Boy on bygone mornings. He thought of those long sunlit hours in the garden–how happy they were–and a great sadness came over him. He seemed to see them all pass before him, each more beautiful than the other, the fairy huts in the flower-bed, the quiet evenings in the wood when he lay in the bracken and the little ants ran over his paws; the wonderful day when he first knew that he was Real. He thought of the Skin Horse, so wise and gentle, and all that he had told him. Of what use was it to be loved and lose one's beauty and become Real if it all ended like this? And a tear, a real tear, trickled down his little shabby velvet nose and fell to the ground."
+    ]
+   },
+   {
+    "id": "the-fairy-flower",
+    "title": "The Fairy Flower",
+    "ko": "요정의 꽃",
+    "paras": [
+     "And then a strange thing happened. For where the tear had fallen a flower grew out of the ground, a mysterious flower, not at all like any that grew in the garden. It had slender green leaves the colour of emeralds, and in the centre of the leaves a blossom like a golden cup. It was so beautiful that the little Rabbit forgot to cry, and just lay there watching it. And presently the blossom opened, and out of it there stepped a fairy.",
+     "She was quite the loveliest fairy in the whole world. Her dress was of pearl and dew-drops, and there were flowers round her neck and in her hair, and her face was like the most perfect flower of all. And she came close to the little Rabbit and gathered him up in her arms and kissed him on his velveteen nose that was all damp from crying.",
+     "\"Little Rabbit,\" she said, \"don't you know who I am?\"",
+     "The Rabbit looked up at her, and it seemed to him that he had seen her face before, but he couldn't think where.",
+     "\"I am the nursery magic Fairy,\" she said. \"I take care of all the playthings that the children have loved. When they are old and worn out and the children don't need them any more, then I come and take them away with me and turn them into Real.\"",
+     "\"Wasn't I Real before?\" asked the little Rabbit.",
+     "\"You were Real to the Boy,\" the Fairy said, \"because he loved you. Now you shall be Real to every one.\""
+    ]
+   },
+   {
+    "id": "at-last-at-last",
+    "title": "At Last! At Last!",
+    "ko": "드디어, 드디어!",
+    "paras": [
+     "And she held the little Rabbit close in her arms and flew with him into the wood.",
+     "It was light now, for the moon had risen. All the forest was beautiful, and the fronds of the bracken shone like frosted silver. In the open glade between the tree-trunks the wild rabbits danced with their shadows on the velvet grass, but when they saw the Fairy they all stopped dancing and stood round in a ring to stare at her.",
+     "\"I've brought you a new playfellow,\" the Fairy said. \"You must be very kind to him and teach him all he needs to know in Rabbit-land, for he is going to live with you for ever and ever!\"",
+     "And she kissed the little Rabbit again and put him down on the grass.",
+     "\"Run and play, little Rabbit!\" she said.",
+     "But the little Rabbit sat quite still for a moment and never moved. For when he saw all the wild rabbits dancing around him he suddenly remembered about his hind legs, and he didn't want them to see that he was made all in one piece. He did not know that when the Fairy kissed him that last time she had changed him altogether. And he might have sat there a long time, too shy to move, if just then something hadn't tickled his nose, and before he thought what he was doing he lifted his hind toe to scratch it.",
+     "And he found that he actually had hind legs! Instead of dingy velveteen he had brown fur, soft and shiny, his ears twitched by themselves, and his whiskers were so long that they brushed the grass. He gave one leap and the joy of using those hind legs was so great that he went springing about the turf on them, jumping sideways and whirling round as the others did, and he grew so excited that when at last he did stop to look for the Fairy she had gone.",
+     "He was a Real Rabbit at last, at home with the other rabbits.",
+     "Autumn passed and Winter, and in the Spring, when the days grew warm and sunny, the Boy went out to play in the wood behind the house. And while he was playing, two rabbits crept out from the bracken and peeped at him. One of them was brown all over, but the other had strange markings under his fur, as though long ago he had been spotted, and the spots still showed through. And about his little soft nose and his round black eyes there was something familiar, so that the Boy thought to himself:",
+     "\"Why, he looks just like my old Bunny that was lost when I had scarlet fever!\"",
+     "But he never knew that it really was his own Bunny, come back to look at the child who had first helped him to be Real."
+    ]
+   }
+  ]
+ },
+ {
+  "id": "alice",
+  "emoji": "🐇",
+  "title": "이상한 나라의 앨리스",
+  "en": "Alice's Adventures in Wonderland",
+  "author": "Lewis Carroll (1865)",
+  "level": "중급 · 20분",
+  "blurb": "토끼굴에 빠진 앨리스, 1장 전체",
+  "chapters": [
+   {
+    "id": "down-the-rabbit-hole",
+    "title": "Chapter 1 · Down the Rabbit-Hole",
+    "ko": "토끼굴 아래로",
+    "paras": [
+     "Alice was beginning to get very tired of sitting by her sister on the bank, and of having nothing to do: once or twice she had peeped into the book her sister was reading, but it had no pictures or conversations in it, “and what is the use of a book,” thought Alice “without pictures or conversations?”",
+     "So she was considering in her own mind (as well as she could, for the hot day made her feel very sleepy and stupid), whether the pleasure of making a daisy-chain would be worth the trouble of getting up and picking the daisies, when suddenly a White Rabbit with pink eyes ran close by her.",
+     "There was nothing so very remarkable in that; nor did Alice think it so very much out of the way to hear the Rabbit say to itself, “Oh dear! Oh dear! I shall be late!” (when she thought it over afterwards, it occurred to her that she ought to have wondered at this, but at the time it all seemed quite natural); but when the Rabbit actually took a watch out of its waistcoat-pocket, and looked at it, and then hurried on, Alice started to her feet, for it flashed across her mind that she had never before seen a rabbit with either a waistcoat-pocket, or a watch to take out of it, and burning with curiosity, she ran across the field after it, and fortunately was just in time to see it pop down a large rabbit-hole under the hedge.",
+     "In another moment down went Alice after it, never once considering how in the world she was to get out again.",
+     "The rabbit-hole went straight on like a tunnel for some way, and then dipped suddenly down, so suddenly that Alice had not a moment to think about stopping herself before she found herself falling down a very deep well.",
+     "Either the well was very deep, or she fell very slowly, for she had plenty of time as she went down to look about her and to wonder what was going to happen next. First, she tried to look down and make out what she was coming to, but it was too dark to see anything; then she looked at the sides of the well, and noticed that they were filled with cupboards and bookshelves; here and there she saw maps and pictures hung upon pegs. She took down a jar from one of the shelves as she passed; it was labelled “Orange Marmalade,” but to her great disappointment it was empty: she did not like to drop the jar for fear of killing somebody, so managed to put it into one of the cupboards as she fell past it.",
+     "“Well!” thought Alice to herself, “after such a fall as this, I shall think nothing of tumbling down stairs! How brave they’ll all think me at home! Why, I wouldn’t say anything about it, even if I fell off the top of the house!” (Which was very likely true.)",
+     "Down, down, down. Would the fall never come to an end! “I wonder how many miles I’ve fallen by this time?” she said aloud. “I must be getting somewhere near the centre of the earth. Let me see: that would be four thousand miles down, I think—” (for, you see, Alice had learnt several things of this sort in her lessons in the schoolroom, and though this was not a very good opportunity for showing off her knowledge, as there was no one to listen to her, still it was good practice to say it over) “—yes, that’s about the right distance—but then I wonder what Latitude or Longitude I’ve got to?” (Alice had no idea what Latitude was, or Longitude either, but thought they were nice grand words to say.)",
+     "Presently she began again. “I wonder if I shall fall right through the earth! How funny it’ll seem to come out among the people that walk with their heads downward! The Antipathies, I think—” (she was rather glad there was no one listening, this time, as it didn’t sound at all the right word) “—but I shall have to ask them what the name of the country is, you know. Please, Ma’am, is this New Zealand or Australia?” (and she tried to curtsey as she spoke—fancy curtseying as you’re falling through the air! Do you think you could manage it?) “And what an ignorant little girl she’ll think me for asking! No, it’ll never do to ask: perhaps I shall see it written up somewhere.”",
+     "Down, down, down. There was nothing else to do, so Alice soon began talking again. “Dinah’ll miss me very much tonight, I should think!” (Dinah was the cat.) “I hope they’ll remember her saucer of milk at teatime. Dinah my dear! I wish you were down here with me! There are no mice in the air, I’m afraid, but you might catch a bat, and that’s very like a mouse, you know. But do cats eat bats, I wonder?” And here Alice began to get rather sleepy, and went on saying to herself, in a dreamy sort of way, “Do cats eat bats? Do cats eat bats?” and sometimes, “Do bats eat cats?” for, you see, as she couldn’t answer either question, it didn’t much matter which way she put it. She felt that she was dozing off, and had just begun to dream that she was walking hand in hand with Dinah, and saying to her very earnestly, “Now, Dinah, tell me the truth: did you ever eat a bat?” when suddenly, thump! thump! down she came upon a heap of sticks and dry leaves, and the fall was over.",
+     "Alice was not a bit hurt, and she jumped up on to her feet in a moment: she looked up, but it was all dark overhead; before her was another long passage, and the White Rabbit was still in sight, hurrying down it. There was not a moment to be lost: away went Alice like the wind, and was just in time to hear it say, as it turned a corner, “Oh my ears and whiskers, how late it’s getting!” She was close behind it when she turned the corner, but the Rabbit was no longer to be seen: she found herself in a long, low hall, which was lit up by a row of lamps hanging from the roof.",
+     "There were doors all round the hall, but they were all locked; and when Alice had been all the way down one side and up the other, trying every door, she walked sadly down the middle, wondering how she was ever to get out again.",
+     "Suddenly she came upon a little three-legged table, all made of solid glass; there was nothing on it except a tiny golden key, and Alice’s first thought was that it might belong to one of the doors of the hall; but, alas! either the locks were too large, or the key was too small, but at any rate it would not open any of them. However, on the second time round, she came upon a low curtain she had not noticed before, and behind it was a little door about fifteen inches high: she tried the little golden key in the lock, and to her great delight it fitted!",
+     "Alice opened the door and found that it led into a small passage, not much larger than a rat-hole: she knelt down and looked along the passage into the loveliest garden you ever saw. How she longed to get out of that dark hall, and wander about among those beds of bright flowers and those cool fountains, but she could not even get her head through the doorway; “and even if my head would go through,” thought poor Alice, “it would be of very little use without my shoulders. Oh, how I wish I could shut up like a telescope! I think I could, if I only know how to begin.” For, you see, so many out-of-the-way things had happened lately, that Alice had begun to think that very few things indeed were really impossible.",
+     "There seemed to be no use in waiting by the little door, so she went back to the table, half hoping she might find another key on it, or at any rate a book of rules for shutting people up like telescopes: this time she found a little bottle on it, (“which certainly was not here before,” said Alice,) and round the neck of the bottle was a paper label, with the words “Drink Me” beautifully printed on it in large letters.",
+     "It was all very well to say “Drink me,” but the wise little Alice was not going to do that in a hurry. “No, I’ll look first,” she said, “and see whether it’s marked ‘poison’ or not”; for she had read several nice little histories about children who had got burnt, and eaten up by wild beasts and other unpleasant things, all because they would not remember the simple rules their friends had taught them: such as, that a red-hot poker will burn you if you hold it too long; and that if you cut your finger very deeply with a knife, it usually bleeds; and she had never forgotten that, if you drink much from a bottle marked “poison,” it is almost certain to disagree with you, sooner or later.",
+     "However, this bottle was not marked “poison,” so Alice ventured to taste it, and finding it very nice, (it had, in fact, a sort of mixed flavour of cherry-tart, custard, pineapple, roast turkey, toffee, and hot buttered toast,) she very soon finished it off.",
+     "“What a curious feeling!” said Alice; “I must be shutting up like a telescope.”",
+     "And so it was indeed: she was now only ten inches high, and her face brightened up at the thought that she was now the right size for going through the little door into that lovely garden. First, however, she waited for a few minutes to see if she was going to shrink any further: she felt a little nervous about this; “for it might end, you know,” said Alice to herself, “in my going out altogether, like a candle. I wonder what I should be like then?” And she tried to fancy what the flame of a candle is like after the candle is blown out, for she could not remember ever having seen such a thing.",
+     "After a while, finding that nothing more happened, she decided on going into the garden at once; but, alas for poor Alice! when she got to the door, she found she had forgotten the little golden key, and when she went back to the table for it, she found she could not possibly reach it: she could see it quite plainly through the glass, and she tried her best to climb up one of the legs of the table, but it was too slippery; and when she had tired herself out with trying, the poor little thing sat down and cried.",
+     "“Come, there’s no use in crying like that!” said Alice to herself, rather sharply; “I advise you to leave off this minute!” She generally gave herself very good advice, (though she very seldom followed it), and sometimes she scolded herself so severely as to bring tears into her eyes; and once she remembered trying to box her own ears for having cheated herself in a game of croquet she was playing against herself, for this curious child was very fond of pretending to be two people. “But it’s no use now,” thought poor Alice, “to pretend to be two people! Why, there’s hardly enough of me left to make one respectable person!”",
+     "Soon her eye fell on a little glass box that was lying under the table: she opened it, and found in it a very small cake, on which the words “Eat Me” were beautifully marked in currants. “Well, I’ll eat it,” said Alice, “and if it makes me grow larger, I can reach the key; and if it makes me grow smaller, I can creep under the door; so either way I’ll get into the garden, and I don’t care which happens!”",
+     "She ate a little bit, and said anxiously to herself, “Which way? Which way?”, holding her hand on the top of her head to feel which way it was growing, and she was quite surprised to find that she remained the same size: to be sure, this generally happens when one eats cake, but Alice had got so much into the way of expecting nothing but out-of-the-way things to happen, that it seemed quite dull and stupid for life to go on in the common way.",
+     "So she set to work, and very soon finished off the cake."
+    ]
+   }
+  ]
+ }
+];
+/* =========================================================
+   📖 원서 따라 읽기 — shadowing reader
+   ========================================================= */
+const LS_KEY = 'readingShadow.v1';
+const DEF_ST = { v: 1, books: [], prog: {}, words: [], settings: { speed: 1, view: 'sent', autoNext: false, last: null } };
+
+function clone(o) { return JSON.parse(JSON.stringify(o)); }
+function loadState() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return clone(DEF_ST);
+    const s = JSON.parse(raw) || {};
+    const st = Object.assign(clone(DEF_ST), s);
+    st.settings = Object.assign(clone(DEF_ST.settings), s.settings || {});
+    st.prog = s.prog || {};
+    st.books = s.books || [];
+    st.words = s.words || [];
+    return st;
+  } catch (e) { return clone(DEF_ST); }
+}
+let ST = loadState();
+
+let saveWarned = false;
+function save() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(ST)); }
+  catch (e) {
+    if (!saveWarned) { saveWarned = true; toast('저장 공간이 부족해 기록을 저장하지 못했어요'); }
+  }
+}
+
+/* ---------------- tiny utils ---------------- */
+const $ = (s, r) => (r || document).querySelector(s);
+const $$ = (s, r) => Array.prototype.slice.call((r || document).querySelectorAll(s));
+const on = (sel, ev, fn) => { const el = $(sel); if (el) el.addEventListener(ev, fn); };
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+let toastT = 0;
+function toast(msg) {
+  const el = $('#toast'); if (!el) return;
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => el.classList.remove('show'), 2600);
+}
+function todayStart() { const d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime(); }
+
+/* ---------------- sentence splitting ---------------- */
+const ABBR = new Set(['mr', 'mrs', 'ms', 'dr', 'st', 'prof', 'sr', 'jr', 'vs', 'etc', 'no', 'mt', 'capt', 'col', 'gen', 'lt', 'sgt', 'rev', 'hon', 'fig', 'ch', 'p', 'e.g', 'i.e', 'a.m', 'p.m']);
+
+function splitSentences(par) {
+  const t = String(par || '').replace(/\s+/g, ' ').trim();
+  if (!t) return [];
+  const out = [];
+  let start = 0;
+  for (let i = 0; i < t.length; i++) {
+    const c = t[i];
+    if (c !== '.' && c !== '!' && c !== '?') continue;
+    if (c === '.' && t[i + 1] === '.') continue;            // "..." run
+    let j = i + 1;
+    while (j < t.length && /["'”’)\]]/.test(t[j])) j++;      // closing quotes/brackets
+    if (j < t.length && !/\s/.test(t[j])) { i = j - 1; continue; }  // 3.5 , U.S. etc.
+    const raw = t.slice(start, j).trim();
+    const lastWord = (raw.match(/([A-Za-z.]+)\.$/) || [])[1];
+    if (c === '.' && lastWord && ABBR.has(lastWord.toLowerCase())) { i = j - 1; continue; }
+    const nextCh = (t.slice(j).match(/^\s*([\s\S])/) || [])[1];
+    if (nextCh && !/[A-Z0-9"“'‘(\[]/.test(nextCh)) { i = j - 1; continue; }  // lowercase continues
+    if (raw) out.push(raw);
+    start = j; i = j - 1;
+  }
+  const rest = t.slice(start).trim();
+  if (rest) out.push(rest);
+  return out;
+}
+
+const SCACHE = {};
+function sents(book, ch) {
+  const k = book.id + '/' + ch.id;
+  if (SCACHE[k]) return SCACHE[k];
+  const out = [];
+  (ch.paras || []).forEach((p, pi) => {
+    splitSentences(p).forEach(t => out.push({ t: t, pi: pi }));
+  });
+  SCACHE[k] = out;
+  return out;
+}
+
+/* ---------------- books / progress ---------------- */
+function allBooks() { return BOOKS.concat(ST.books || []); }
+function getBook(id) { return allBooks().filter(b => b.id === id)[0] || null; }
+function getChap(book, cid) { return book && (book.chapters || []).filter(c => c.id === cid)[0] || null; }
+function paint(b) { return b.id === 'alice' ? 'l' : b.id === 'velveteen' ? 'v' : b.id === 'aesop' ? 'a' : 'c'; }
+function pkey(b, c) { return b.id + '/' + c.id; }
+function pget(b, c) { const k = pkey(b, c); if (!ST.prog[k]) ST.prog[k] = { done: {}, last: 0 }; return ST.prog[k]; }
+function doneRead(b, c) { return ST.prog[pkey(b, c)] || null; }
+function chapterDone(b, c) {
+  const p = doneRead(b, c); const n = sents(b, c).length; let k = 0;
+  if (p) for (const i in p.done) if (+i < n) k++;
+  return k;
+}
+function bookTotals(b) {
+  let total = 0, done = 0;
+  (b.chapters || []).forEach(c => { total += sents(b, c).length; done += chapterDone(b, c); });
+  return { total: total, done: done, pct: total ? Math.round(done / total * 100) : 0 };
+}
+function stats() {
+  const start = todayStart();
+  let total = 0, done = 0, today = 0;
+  allBooks().forEach(b => (b.chapters || []).forEach(c => {
+    const list = sents(b, c); total += list.length;
+    const p = doneRead(b, c); if (!p) return;
+    for (const i in p.done) {
+      if (+i >= list.length) continue;
+      done++;
+      if (((p.done[i] || {}).at || 0) >= start) today++;
+    }
+  }));
+  return { total: total, done: done, today: today, words: (ST.words || []).length };
+}
+function markDone(b, c, idx, acc) {
+  const p = pget(b, c);
+  const prev = p.done[idx];
+  p.done[idx] = { acc: Math.round((acc || 0) * 100), at: (prev && prev.at) || Date.now() };
+  p.last = idx; save();
+}
+function touchLast(b, c, idx) {
+  const p = pget(b, c); p.last = idx; save();
+}
+function resumePoint(b) {
+  let best = null;
+  (b.chapters || []).forEach(c => {
+    const p = doneRead(b, c); if (!p) return;
+    const at = Object.keys(p.done).reduce((m, k) => Math.max(m, (p.done[k] || {}).at || 0), 0) || ((p.last || 0) > 0 ? 1 : 0);
+    const hasAny = Object.keys(p.done).length > 0 || (p.last || 0) > 0;
+    if (hasAny && (!best || at > best.at)) best = { c: c, i: p.last || 0, at: at };
+  });
+  if (!best) best = { c: b.chapters[0], i: 0, at: 0 };
+  const list = sents(b, best.c);
+  if (best.i >= list.length) best.i = Math.max(0, list.length - 1);
+  return best;
+}
+
+/* ---------------- routing ---------------- */
+let ROUTE = { view: 'lib' };
+let DEPTH = 0;
+function renderAll() {
+  const app = $('#app');
+  stopAllPlay();
+  if (ROUTE.view === 'book') {
+    const b = getBook(ROUTE.bid);
+    if (!b) { ROUTE = { view: 'lib' }; return renderAll(); }
+    app.innerHTML = viewBook(b); bindBook(b);
+  } else if (ROUTE.view === 'reader') {
+    const b = getBook(ROUTE.bid), c = getChap(b, ROUTE.cid);
+    if (!b || !c) { ROUTE = { view: 'lib' }; return renderAll(); }
+    RT.bookId = b.id; RT.chapId = c.id;
+    const list = sents(b, c);
+    RT.i = Math.max(0, Math.min(ROUTE.i || 0, Math.max(0, list.length - 1)));
+    RT.fb = null; RT.heard = null; RT.marks = null; RT.acc = null; RT.recActive = false;
+    app.innerHTML = readerHTML(); bindReader();
+    document.title = c.title + ' · 원서 따라 읽기';
+  } else if (ROUTE.view === 'add') {
+    app.innerHTML = viewAdd(ROUTE.bid); bindAdd(ROUTE.bid);
+  } else if (ROUTE.view === 'words') {
+    app.innerHTML = viewWords(); bindWords();
+  } else {
+    app.innerHTML = viewLib(); bindLib();
+    document.title = '📖 원서 따라 읽기';
+  }
+  window.scrollTo(0, 0);
+  updateStopBar();
+}
+function go(route, replace) {
+  ROUTE = route;
+  try {
+    if (replace) history.replaceState(route, '', location.href);
+    else { history.pushState(route, '', location.href); DEPTH++; }
+  } catch (e) {}
+  renderAll();
+}
+function back() {
+  if (DEPTH > 0) { try { history.back(); return; } catch (e) {} }
+  go({ view: 'lib' }, true);
+}
+window.addEventListener('popstate', e => {
+  DEPTH = Math.max(0, DEPTH - 1);
+  ROUTE = e.state || { view: 'lib' };
+  renderAll();
+});
+
+/* =========================================================
+   TTS  (Google translate audio → speechSynthesis fallback)
+   ========================================================= */
+const TTS = { el: null, seq: 0, rate: 1 };
+let enVoiceCache = null, voiceHook = false;
+function enVoice() {
+  if (enVoiceCache) return enVoiceCache;
+  let vs = [];
+  try { vs = speechSynthesis.getVoices() || []; } catch (e) { return null; }
+  if (!vs.length) return null;
+  const us = vs.filter(v => /en[-_]US/i.test(v.lang || '') || /en[-_]US/i.test(v.name || ''));
+  const pool = us.length ? us : vs.filter(v => /^en/i.test(v.lang || ''));
+  if (!pool.length) return null;
+  const local = pool.filter(v => v.localService);
+  enVoiceCache = local.length ? local[0] : pool[0];
+  return enVoiceCache;
+}
+function ttsEl() {
+  if (TTS.el) return TTS.el;
+  const el = document.createElement('audio');
+  el.preload = 'auto';
+  el.setAttribute('playsinline', '');
+  el.setAttribute('webkit-playsinline', '');
+  try { el.preservesPitch = true; el.webkitPreservesPitch = true; } catch (e) {}
+  document.body.appendChild(el);
+  TTS.el = el;
+  return el;
+}
+function ttsUrls(text) {
+  const q = encodeURIComponent(text);
+  const a = 'https://translate.googleapis.com/translate_tts?ie=UTF-8&client=gtx&tl=en-US&q=' + q;
+  const b = 'https://translate.googleapis.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q=' + q;
+  const short = !/[.!?,;:\u2014]/.test(text) && text.split(/\s+/).length <= 5;
+  return short ? [a, b, 'https://dict.youdao.com/dictvoice?audio=' + q + '&type=2'] : [a, b];
+}
+function chunkText(text, max) {
+  const t = String(text || '').trim();
+  if (!t) return [];
+  if (t.length <= max) return [t];
+  const words = t.split(/\s+/), out = [];
+  let cur = '';
+  words.forEach(w => {
+    if (!cur) cur = w;
+    else if ((cur + ' ' + w).length <= max) cur += ' ' + w;
+    else { out.push(cur); cur = w; }
+  });
+  if (cur) out.push(cur);
+  return out;
+}
+function stopAudio() {
+  TTS.seq++;
+  try { if (TTS.el) { TTS.el.onended = null; TTS.el.onerror = null; TTS.el.pause(); } } catch (e) {}
+  try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e2) {}
+}
+function synthChunk(text, rate, seq) {
+  return new Promise(resolve => {
+    if (!window.speechSynthesis || typeof SpeechSynthesisUtterance === 'undefined') return resolve(false);
+    if (seq !== TTS.seq) return resolve(false);
+    try {
+      if (!voiceHook && speechSynthesis.addEventListener) {
+        voiceHook = true;
+        speechSynthesis.addEventListener('voiceschanged', () => { enVoiceCache = null; });
+      }
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'en-US';
+      u.rate = rate;
+      const v = enVoice(); if (v) u.voice = v;
+      let settled = false;
+      const fin = ok => { if (settled) return; settled = true; resolve(ok); };
+      u.onend = () => fin(true);
+      u.onerror = () => fin(false);
+      window.__lastUtt = u;
+      if (speechSynthesis.speaking || speechSynthesis.pending) speechSynthesis.cancel();
+      setTimeout(() => {
+        if (seq !== TTS.seq || settled) return fin(false);
+        try { speechSynthesis.resume(); speechSynthesis.speak(u); } catch (e) { fin(false); }
+      }, 60);
+    } catch (e) { resolve(false); }
+  });
+}
+function playChunk(text, rate, seq) {
+  return new Promise(resolve => {
+    const el = ttsEl();
+    const urls = ttsUrls(text);
+    let i = 0, settled = false;
+    const fin = ok => {
+      if (settled) return;
+      settled = true;
+      el.onended = null; el.onerror = null;
+      resolve(ok);
+    };
+    function next() {
+      if (settled) return;
+      if (seq !== TTS.seq) return fin(false);
+      if (i >= urls.length) { synthChunk(text, rate, seq).then(fin); return; }
+      const src = urls[i++];
+      el.onended = () => fin(true);
+      el.onerror = () => next();
+      el.onloadedmetadata = () => { try { el.playbackRate = rate; } catch (e) {} };
+      try { el.src = src; el.playbackRate = rate; } catch (e) { next(); return; }
+      const p = el.play();
+      if (p && typeof p.catch === 'function') p.catch(() => { if (seq !== TTS.seq || settled) return; next(); });
+    }
+    try { el.pause(); el.currentTime = 0; } catch (e) {}
+    next();
+  });
+}
+async function speakChunked(text, rate, seq) {
+  const chunks = chunkText(text, 160);
+  for (let k = 0; k < chunks.length; k++) {
+    if (seq !== TTS.seq) return false;
+    const ok = await playChunk(chunks[k], rate, seq);
+    if (!ok) return false;
+  }
+  return seq === TTS.seq;
+}
+function speakText(text, rate) {
+  stopAudio();
+  const seq = TTS.seq;
+  return speakChunked(text, rate || ST.settings.speed || 1, seq);
+}
+function sayWord(w) {
+  stopAudio();
+  const seq = TTS.seq;
+  return speakChunked(w, 1, seq);
+}
+
+/* =========================================================
+   Speech recognition + scoring
+   ========================================================= */
+function recSupported() { return !!(window.SpeechRecognition || window.webkitSpeechRecognition); }
+function normSpeech(s) {
+  return String(s || '').toLowerCase()
+    .replace(/[’‘`´]/g, "'")
+    .replace(/[^a-z0-9' ]/g, ' ')
+    .replace(/\s+/g, ' ').trim();
+}
+function normWord(w) {
+  return String(w || '').toLowerCase().replace(/[’‘`´]/g, "'").replace(/^[^a-z0-9']+|[^a-z0-9']+$/g, '');
+}
+function lev(a, b) {
+  if (a === b) return 0;
+  const n = a.length, m = b.length;
+  if (!n) return m; if (!m) return n;
+  if (Math.abs(n - m) > 1) return 99;
+  let prev = new Array(m + 1);
+  for (let j = 0; j <= m; j++) prev[j] = j;
+  for (let i = 1; i <= n; i++) {
+    const cur = [i];
+    for (let j = 1; j <= m; j++) {
+      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    }
+    prev = cur;
+  }
+  return prev[m];
+}
+function sameWord(a, b) {
+  if (a === b) return true;
+  if (a.length >= 4 && b.length >= 4 && Math.abs(a.length - b.length) <= 1 && lev(a, b) <= 1) return true;
+  return false;
+}
+function alignMarks(target, heard) {
+  const n = target.length, m = heard.length;
+  const marks = new Array(n).fill(false);
+  if (!n || !m) return marks;
+  const dp = [];
+  for (let i = 0; i <= n; i++) dp.push(new Int32Array(m + 1));
+  for (let i = 1; i <= n; i++) {
+    for (let j = 1; j <= m; j++) {
+      const hit = sameWord(target[i - 1], heard[j - 1]) ? dp[i - 1][j - 1] + 1 : 0;
+      dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1], hit);
+    }
+  }
+  let i = n, j = m;
+  while (i > 0 && j > 0) {
+    if (sameWord(target[i - 1], heard[j - 1]) && dp[i][j] === dp[i - 1][j - 1] + 1) {
+      marks[i - 1] = true; i--; j--;
+    } else if (dp[i - 1][j] >= dp[i][j - 1]) i--;
+    else j--;
+  }
+  return marks;
+}
+function cmpParts(w) {
+  return String(w || '').toLowerCase()
+    .replace(/[’‘`´]/g, "'")
+    .replace(/[^a-z0-9'\-\u2013\u2014 ]/g, ' ')
+    .split(/[-\u2013\u2014]/)
+    .map(function (x) { return x.replace(/'/g, '').replace(/[^a-z0-9']/g, ''); })
+    .filter(Boolean);
+}
+function scoreSentence(text, heard) {
+  const tokens = String(text || '').split(/\s+/).filter(Boolean);
+  const exp = [], map = [];
+  tokens.forEach(function (tok, k) {
+    cmpParts(tok).forEach(function (part) { exp.push(part); map.push(k); });
+  });
+  const heardTokens = normSpeech(heard).split(' ').filter(Boolean)
+    .map(function (w) { return w.replace(/'/g, ''); });
+  const raw = alignMarks(exp, heardTokens);
+  const marks = new Array(tokens.length).fill(false);
+  let matched = 0;
+  exp.forEach(function (w, i) { if (raw[i]) { matched++; marks[map[i]] = true; } });
+  tokens.forEach(function (tok, k) { if (!cmpParts(tok).length) marks[k] = true; });
+  const total = exp.length || 1;
+  return { marks: marks, acc: matched / total, matched: matched, total: total };
+}
+
+/* =========================================================
+   reader state
+   ========================================================= */
+const RT = { bookId: null, chapId: null, i: 0, fb: null, heard: null, marks: null, acc: null, recActive: false, rec: null };
+function curBook() { return getBook(RT.bookId); }
+function curChap() { const b = curBook(); return b ? getChap(b, RT.chapId) : null; }
+function curSents() { const b = curBook(), c = curChap(); return b && c ? sents(b, c) : []; }
+
+function setFb(kind, html) { RT.fb = { kind: kind, html: html }; }
+function fbHTML() {
+  if (!RT.fb) return '';
+  return '<div class="feedback show ' + RT.fb.kind + '">' + RT.fb.html + '</div>';
+}
+function wordSpans(text, marks) {
+  const parts = String(text || '').split(/\s+/).filter(Boolean);
+  return parts.map((w, i) => {
+    let cls = 'w';
+    if (marks) cls += marks[i] ? ' ok' : ' miss';
+    return '<span class="' + cls + '" data-w="' + esc(normWord(w)) + '">' + esc(w) + '</span>';
+  }).join(' ');
+}
+
+/* =========================================================
+   views
+   ========================================================= */
+function viewLib() {
+  const st = stats();
+  return '' +
+    '<div class="topbar">' +
+      '<div class="tb-body"><span class="tb-title">📖 원서 따라 읽기</span><span class="tb-sub">듣고 · 따라 읽고 · 발음 확인</span></div>' +
+      '<button class="tb-act" data-go-words aria-label="내 단어장">⭐</button>' +
+      '<button class="tb-act" data-sheet="settings" aria-label="설정">⚙︎</button>' +
+    '</div>' +
+    '<div class="shell screen">' +
+      '<div class="hero">' +
+        '<p class="eyebrow">SHADOWING · 따라 읽기</p>' +
+        '<h1>한 문장씩,<br />귀로 듣고 <em>입으로</em>.</h1>' +
+        '<p>원어민 발음을 한 번 듣고 그대로 따라 읽어 보세요. 정확도 75%가 넘으면 그 문장은 완료! 놓친 단어는 빨간색으로 짚어 드려요.</p>' +
+        '<div class="stat-row">' +
+          '<div class="stat"><b>' + st.today + '</b><span>오늘 읽은 문장</span></div>' +
+          '<div class="stat"><b>' + st.done + '</b><span>완료한 문장</span></div>' +
+          '<div class="stat"><b>' + st.words + '</b><span>내 단어장</span></div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="sec-head"><h2>내 서재</h2><button class="link" data-go-words>⭐ 단어장 ' + st.words + '</button></div>' +
+      allBooks().map(bookCard).join('') +
+      '<button class="add-card" data-go-add>＋ 내 원서 추가</button>' +
+      '<p class="foot">수록 원문은 모두 저작권이 만료된 퍼블릭 도메인 작품이에요. · Aesop\u2019s Fables (V. S. Vernon Jones, Standard Ebooks) · The Velveteen Rabbit (Margery Williams, 1922) · Alice\u2019s Adventures in Wonderland (Lewis Carroll, 1865, Standard Ebooks)<br />기록은 이 기기 브라우저에만 저장되고, 설정에서 JSON으로 백업할 수 있어요.</p>' +
+    '</div>';
+}
+function bookCard(b) {
+  const t = bookTotals(b);
+  const pct = t.total ? Math.round(t.done / t.total * 100) : 0;
+  const chips = '<span class="chip">' + esc(b.level || '내 원서') + '</span>' +
+    (b.author ? '<span class="chip gray">' + esc(b.author) + '</span>' : '');
+  return '<button class="book" data-book="' + esc(b.id) + '">' +
+    '<span class="cover ' + paint(b) + '">' + (b.emoji || '📖') + '</span>' +
+    '<span class="book-body">' +
+      '<span class="book-title">' + esc(b.title) + '</span>' +
+      '<span class="book-en serif">' + esc(b.en || '') + '</span>' +
+      '<span class="chips">' + chips + '</span>' +
+      '<span class="bar-row"><span class="bar"><i style="width:' + pct + '%"></i></span><span class="num">' + t.done + '/' + t.total + '</span></span>' +
+    '</span>' +
+  '</button>';
+}
+function bindLib() {
+  $$('[data-book]').forEach(el => el.addEventListener('click', () => go({ view: 'book', bid: el.getAttribute('data-book') })));
+  $$('[data-go-add]').forEach(el => el.addEventListener('click', () => go({ view: 'add' })));
+  $$('[data-go-words]').forEach(el => el.addEventListener('click', () => go({ view: 'words' })));
+  $$('[data-sheet]').forEach(el => el.addEventListener('click', () => openSheet(el.getAttribute('data-sheet'))));
+}
+
+function viewBook(b) {
+  const t = bookTotals(b);
+  const r = resumePoint(b);
+  const rList = sents(b, r.c);
+  const rDone = chapterDone(b, r.c);
+  const resumeLabel = t.done ? '이어 읽기 · ' + esc(r.c.ko || r.c.title) + ' ' + (r.i + 1) + '번째 문장' : '첫 문장부터 시작하기';
+  const chapters = (b.chapters || []).map((c, k) => {
+    const n = sents(b, c).length, d = chapterDone(b, c);
+    const pct = n ? Math.round(d / n * 100) : 0;
+    return '<button class="chap' + (d >= n && n > 0 ? ' done' : '') + '" data-chap="' + esc(c.id) + '">' +
+      '<span class="n">' + (d >= n && n > 0 ? '✓' : (k + 1)) + '</span>' +
+      '<span class="chap-body"><span class="chap-title">' + esc(c.title) + '</span>' +
+      '<span class="chap-ko">' + esc(c.ko || '') + ' · ' + n + '문장' + (r.c.id === c.id && rDone ? ' · 읽던 곳' : '') + '</span></span>' +
+      '<span class="chap-pct' + (pct === 100 ? ' full' : '') + '">' + pct + '%</span>' +
+    '</button>';
+  }).join('');
+  return '' +
+    '<div class="topbar">' +
+      '<button class="tb-nav" data-back aria-label="뒤로">‹</button>' +
+      '<div class="tb-body"><span class="tb-title">' + esc(b.title) + '</span><span class="tb-sub">' + esc(b.en || '') + '</span></div>' +
+      '<button class="tb-act" data-sheet="bookmenu" aria-label="이 책 메뉴">⋯</button>' +
+    '</div>' +
+    '<div class="shell screen">' +
+      '<div class="book-head">' +
+        '<span class="cover ' + paint(b) + '">' + (b.emoji || '📖') + '</span>' +
+        '<div><h1>' + esc(b.title) + '</h1><span class="en serif">' + esc(b.en || '') + '</span>' +
+        '<span class="au">' + esc(b.author || '') + '</span>' +
+        '<div class="chips"><span class="chip">' + t.total + '문장</span><span class="chip gray">완료 ' + t.done + '</span></div></div>' +
+      '</div>' +
+      '<button class="resume" data-read="' + esc(r.c.id) + '" data-i="' + r.i + '">▶ ' + resumeLabel + '</button>' +
+      '<div class="sec-head"><h2>장 고르기</h2><span class="link" style="pointer-events:none">' + rList.length + '문장</span></div>' +
+      chapters +
+      (b.custom ? '<button class="add-card" data-add-chapter>＋ 이 책에 장 추가</button>' : '') +
+      '<p class="foot">' + esc(b.blurb || '') + '</p>' +
+    '</div>';
+}
+function bindBook(b) {
+  $$('[data-chap]').forEach(el => el.addEventListener('click', () => {
+    const cid = el.getAttribute('data-chap');
+    const c = getChap(b, cid);
+    const p = doneRead(b, c);
+    const i = p && p.last ? p.last : 0;
+    go({ view: 'reader', bid: b.id, cid: cid, i: i });
+  }));
+  const rd = $('[data-read]');
+  if (rd) rd.addEventListener('click', () => go({ view: 'reader', bid: b.id, cid: rd.getAttribute('data-read'), i: +rd.getAttribute('data-i') || 0 }));
+  const ac = $('[data-add-chapter]');
+  if (ac) ac.addEventListener('click', () => go({ view: 'add', bid: b.id }));
+  $$('[data-back]').forEach(el => el.addEventListener('click', back));
+  $$('[data-sheet]').forEach(el => el.addEventListener('click', () => openSheet(el.getAttribute('data-sheet'), b)));
+}
+
+function readerHTML() {
+  const b = curBook(), c = curChap();
+  if (!b || !c) return '';
+  const list = curSents();
+  const total = list.length;
+  const p = doneRead(b, c);
+  let done = 0; if (p) for (const k in p.done) if (+k < total) done++;
+  const pct = total ? Math.round(done / total * 100) : 0;
+  const s = list[RT.i] || { t: '' };
+  const isDone = !!(p && p.done[RT.i]);
+  const view = ST.settings.view === 'para' ? 'para' : 'sent';
+  const speed = ST.settings.speed === 0.8 ? 0.8 : 1;
+  const moral = (RT.i === total - 1 && c.moral) ? '<div class="moral"><b>MORAL</b>' + esc(c.moral) + '</div>' : '';
+  const lastSentenceNote = (RT.i === total - 1 && !c.moral) ? '<div class="moral"><b>THE END</b>이 장의 마지막 문장이에요. 수고했어요!</div>' : '';
+
+  const body = view === 'sent'
+    ? '<div class="sentence-card" id="card">' +
+        '<div class="sent-meta"><span class="lbl">Sentence ' + (RT.i + 1) + ' / ' + total + '</span>' +
+          '<span class="st' + (isDone ? ' ok' : '') + '">' + (isDone ? '✅ 완료' : (RT.fb && RT.fb.kind === 'bad' ? '다시 읽어 볼까요' : '듣고 따라 읽어 보세요')) + '</span></div>' +
+        '<p class="sentence serif" id="sentEl">' + wordSpans(s.t, RT.marks) + '</p>' +
+        moral + lastSentenceNote +
+        fbHTML() +
+      '</div>'
+    : paraViewHTML(list, p);
+
+  return '' +
+    '<div class="topbar">' +
+      '<button class="tb-nav" data-back aria-label="뒤로">‹</button>' +
+      '<div class="tb-body"><span class="tb-title">' + esc(c.title) + '</span><span class="tb-sub">' + esc(b.title) + (c.ko ? ' · ' + esc(c.ko) : '') + '</span></div>' +
+      '<button class="tb-act" data-sheet="settings" aria-label="설정">⚙︎</button>' +
+    '</div>' +
+    '<div class="shell screen">' +
+      '<div class="progline"><div class="bar"><i style="width:' + pct + '%"></i></div><span class="num">' + done + '/' + total + ' 완료</span></div>' +
+      '<div class="segmented">' +
+        '<button data-view="sent" class="' + (view === 'sent' ? 'on' : '') + '">한 문장씩</button>' +
+        '<button data-view="para" class="' + (view === 'para' ? 'on' : '') + '">문단으로 보기</button>' +
+      '</div>' +
+      body +
+      (view === 'sent' ?
+        '<div class="controls">' +
+          '<button class="btn btn-primary" id="btnListen">🔊 듣기</button>' +
+          '<button class="btn btn-mic' + (RT.recActive ? ' rec' : '') + '" id="btnRec">' + (RT.recActive ? '🎤 듣는 중…' : '🎤 따라 읽기') + '</button>' +
+          '<button class="btn btn-ghost" id="btnAll">▶︎ 전체 연속 듣기</button>' +
+        '</div>' +
+        '<div class="mini-row">' +
+          '<div class="speed">' +
+            '<button data-speed="0.8" class="' + (speed === 0.8 ? 'on' : '') + '">0.8x 느리게</button>' +
+            '<button data-speed="1" class="' + (speed === 1 ? 'on' : '') + '">1.0x 보통</button>' +
+          '</div>' +
+          '<button class="mini-link" id="btnManual">✅ 읽기 완료</button>' +
+        '</div>'
+      :
+        '<div class="mini-row" style="justify-content:flex-end">' +
+          '<button class="mini-link" id="btnAll2">▶︎ 처음부터 전체 듣기</button>' +
+        '</div>'
+      ) +
+      '<div class="story-nav">' +
+        '<button data-nav="-1"' + (RT.i <= 0 ? ' disabled' : '') + '>‹ 이전</button>' +
+        '<span class="count">' + (RT.i + 1) + ' / ' + total + '</span>' +
+        '<button data-nav="1"' + (RT.i >= total - 1 ? ' disabled' : '') + '>다음 ›</button>' +
+      '</div>' +
+      '<div class="hint">' +
+        (recSupported()
+          ? '<b>이렇게 해요</b> ① 🔊 듣기로 발음을 한 번 듣고 ② 🎤 따라 읽기를 눌러 소리 내어 읽어요. 75% 이상이면 ✅ 완료! 단어를 톡 누르면 사전과 발음을 볼 수 있어요.'
+          : '이 브라우저(또는 앱)는 마이크 인식을 지원하지 않아요. 🔊 듣기로 듣고 <b>✅ 읽기 완료</b>로 직접 표시할 수 있어요. iPhone은 <b>사파리</b>에서 열면 마이크 따라 읽기가 돼요.') +
+      '</div>' +
+    '</div>';
+}
+function paraViewHTML(list, p) {
+  let html = '', curP = -1;
+  for (let i = 0; i < list.length; i++) {
+    const s = list[i];
+    if (s.pi !== curP) { if (curP >= 0) html += '</p>'; html += '<p>'; curP = s.pi; }
+    const cls = 's' + (i === RT.i ? ' cur' : '') + (p && p.done[i] ? ' done' : '');
+    html += '<span class="' + cls + '" data-s="' + i + '">' + esc(s.t) + ' </span>';
+  }
+  if (curP >= 0) html += '</p>';
+  return '<div class="sentence-card para-view">' + html + '</div>';
+}
+function bindReader() {
+  const list = curSents();
+  $$('[data-back]').forEach(el => el.addEventListener('click', back));
+  $$('[data-sheet]').forEach(el => el.addEventListener('click', () => openSheet(el.getAttribute('data-sheet'))));
+  $$('[data-view]').forEach(el => el.addEventListener('click', () => {
+    ST.settings.view = el.getAttribute('data-view'); save();
+    renderReader(true);
+  }));
+  $$('[data-speed]').forEach(el => el.addEventListener('click', () => {
+    ST.settings.speed = +el.getAttribute('data-speed') === 0.8 ? 0.8 : 1; save();
+    renderReader(true);
+    toast(ST.settings.speed === 0.8 ? '0.8배속 · 천천히 들어 보세요' : '1.0배속 · 보통 속도');
+  }));
+  $$('[data-nav]').forEach(el => el.addEventListener('click', () => move(+el.getAttribute('data-nav'))));
+  on('#btnListen', 'click', listenCurrent);
+  on('#btnRec', 'click', startRec);
+  on('#btnAll', 'click', toggleAll);
+  on('#btnAll2', 'click', () => { RT.i = 0; renderReader(true); toggleAll(); });
+  on('#btnManual', 'click', manualDone);
+  const sEl = $('#sentEl');
+  if (sEl) sEl.addEventListener('click', e => {
+    const w = e.target.closest('.w');
+    if (w && w.getAttribute('data-w')) openWord(w.getAttribute('data-w'));
+  });
+  const pv = $('.para-view');
+  if (pv) pv.addEventListener('click', e => {
+    const sp = e.target.closest('[data-s]');
+    if (!sp) return;
+    RT.i = +sp.getAttribute('data-s');
+    RT.marks = null; RT.fb = null;
+    ST.settings.view = 'sent'; save();
+    touchLast(curBook(), curChap(), RT.i);
+    renderReader(true);
+  });
+  const stopBtn = $('[data-stop-all]');
+  if (stopBtn) stopBtn.addEventListener('click', stopAllPlay);
+}
+function renderReader(keepScroll) {
+  const y = keepScroll ? window.scrollY : 0;
+  const app = $('#app');
+  app.innerHTML = readerHTML();
+  bindReader();
+  if (keepScroll) window.scrollTo(0, y);
+  updateStopBar();
+}
+function move(d) {
+  const list = curSents();
+  const next = RT.i + d;
+  if (next < 0 || next >= list.length) return;
+  stopAllPlay();
+  RT.i = next; RT.marks = null; RT.fb = null; RT.heard = null; RT.acc = null; RT.recActive = false;
+  touchLast(curBook(), curChap(), RT.i);
+  renderReader(false);
+}
+function manualDone() {
+  const b = curBook(), c = curChap(); if (!b || !c) return;
+  markDone(b, c, RT.i, 1);
+  setFb('ok', '<b>✅ 완료로 표시했어요.</b> 마이크 없이도 진도는 그대로 쌓여요.');
+  renderReader(true);
+  maybeAutoNext();
+}
+function maybeAutoNext() {
+  if (!ST.settings.autoNext) return;
+  const list = curSents();
+  if (RT.i >= list.length - 1) return;
+  const at = RT.i;
+  setTimeout(() => {
+    if (RT.i !== at || ROUTE.view !== 'reader') return;
+    move(1);
+  }, 1200);
+}
+
+/* ---------------- playback actions ---------------- */
+let ALLON = false;
+function setPlaying(on) {
+  const card = $('#card');
+  if (card) card.classList.toggle('playing', !!on);
+  const b = $('#btnListen');
+  if (b) b.disabled = false;
+}
+function updateStopBar() {
+  const el = $('#floatStop');
+  if (!el) return;
+  el.classList.toggle('show', ALLON);
+  const lb = $('#floatStopLabel');
+  if (lb && ALLON) lb.textContent = '▶︎ 전체 듣기 ' + (RT.i + 1) + '번째 문장';
+}
+function listenCurrent() {
+  const list = curSents();
+  const s = list[RT.i]; if (!s) return;
+  ALLON = false; updateStopBar();
+  stopAudio();
+  const seq = TTS.seq;
+  setPlaying(true);
+  speakChunked(s.t, ST.settings.speed, seq).then(ok => {
+    if (seq !== TTS.seq) return;
+    setPlaying(false);
+    if (!ok) toast('발음을 재생할 수 없어요 · 기기 음량을 확인해 주세요');
+  });
+}
+async function toggleAll() {
+  if (ALLON) { stopAllPlay(); return; }
+  stopAudio();
+  const seq = TTS.seq;
+  ALLON = true; updateStopBar();
+  const list = curSents();
+  for (let i = RT.i; i < list.length; i++) {
+    if (!ALLON || seq !== TTS.seq) break;
+    RT.i = i;
+    RT.marks = null; RT.fb = null;
+    touchLast(curBook(), curChap(), RT.i);
+    renderReader(true);
+    setPlaying(true);
+    updateStopBar();
+    const ok = await speakChunked(list[i].t, ST.settings.speed, seq);
+    setPlaying(false);
+    if (!ALLON || seq !== TTS.seq) break;
+    if (!ok) { toast('발음을 재생할 수 없어요 · 기기 음량을 확인해 주세요'); break; }
+    await sleep(260);
+  }
+  ALLON = false; updateStopBar();
+}
+function stopAllPlay() {
+  ALLON = false;
+  stopAudio();
+  updateStopBar();
+  setPlaying(false);
+}
+
+/* ---------------- recognition ---------------- */
+function startRec() {
+  const b = curBook(), c = curChap(); if (!b || !c) return;
+  if (RT.recActive) return;
+  if (!recSupported()) {
+    toast('이 브라우저에서는 마이크 인식을 쓸 수 없어요 · “읽기 완료”로 표시해 주세요');
+    return;
+  }
+  stopAllPlay();
+  const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let rec;
+  try { rec = new Rec(); } catch (e) { toast('마이크를 켤 수 없어요'); return; }
+  const s = curSents()[RT.i]; if (!s) return;
+  rec.lang = 'en-US'; rec.interimResults = false; rec.continuous = false; rec.maxAlternatives = 1;
+  RT.recActive = true; RT.rec = rec; RT.fb = null; RT.marks = null;
+  renderReader(true);
+  let finished = false;
+  rec.onresult = ev => {
+    if (finished) return; finished = true;
+    let heard = '';
+    try { heard = (ev.results && ev.results[0] && ev.results[0][0] && ev.results[0][0].transcript) || ''; } catch (e) {}
+    const sc = scoreSentence(s.t, heard);
+    RT.recActive = false; RT.heard = heard; RT.marks = sc.marks; RT.acc = sc.acc;
+    const pct = Math.round(sc.acc * 100);
+    if (sc.acc >= 0.75) {
+      markDone(b, c, RT.i, sc.acc);
+      setFb('ok', '<span class="pct">' + pct + '%</span> 정확해요! ' + sc.matched + '/' + sc.total + ' 단어를 알아들었어요. ✅ 이 문장 완료!' +
+        (heard ? '<span class="heard">들린 문장: “' + esc(heard) + '”</span>' : ''));
+      try { rec.stop(); } catch (e) {}
+      renderReader(true);
+      maybeAutoNext();
+    } else {
+      setFb('bad', '<span class="pct">' + pct + '%</span> 조금만 더 또박또박 읽어 볼까요? 빨간 단어를 다시 읽어 보세요.' +
+        (heard ? '<span class="heard">들린 문장: “' + esc(heard) + '”</span>' : '<span class="heard">소리가 잘 들리지 않았어요. 조금 크게 읽어 주세요.</span>'));
+      try { rec.stop(); } catch (e) {}
+      renderReader(true);
+    }
+  };
+  rec.onerror = ev => {
+    if (finished) return; finished = true;
+    RT.recActive = false;
+    const code = (ev && ev.error) || '';
+    if (code === 'not-allowed' || code === 'service-not-allowed') {
+      setFb('warn', '마이크 사용이 허용되지 않았어요. 주소창의 마이크 권한을 허용하거나, <b>✅ 읽기 완료</b>로 표시해 주세요.');
+    } else if (code === 'no-speech') {
+      setFb('warn', '소리가 들리지 않았어요. 🎤를 다시 누르고 조금 크게 읽어 보세요.');
+    } else {
+      setFb('warn', '잘 듣지 못했어요. 다시 한 번 눌러 볼까요?');
+    }
+    renderReader(true);
+  };
+  rec.onend = () => {
+    RT.recActive = false;
+    if (!finished) {
+      finished = true;
+      if (!RT.fb) setFb('warn', '잘 듣지 못했어요. 🎤를 다시 눌러 읽어 보세요.');
+      renderReader(true);
+    }
+  };
+  try { rec.start(); }
+  catch (e) {
+    RT.recActive = false;
+    toast('마이크를 켤 수 없어요 · 권한을 확인해 주세요');
+    renderReader(true);
+  }
+}
+
+/* =========================================================
+   sheets
+   ========================================================= */
+let SHEET_BOOK = null;
+function openSheet(kind, book) {
+  SHEET_BOOK = book || null;
+  const body = $('#sheetBody');
+  if (kind === 'settings') body.innerHTML = settingsHTML();
+  else if (kind === 'bookmenu') body.innerHTML = bookMenuHTML(book);
+  $('#sheetWrap').classList.add('show');
+  $('#sheetWrap').setAttribute('aria-hidden', 'false');
+}
+function closeSheet() {
+  $('#sheetWrap').classList.remove('show');
+  $('#sheetWrap').setAttribute('aria-hidden', 'true');
+}
+function wordSaved(w) { return (ST.words || []).some(x => x.w.toLowerCase() === String(w).toLowerCase()); }
+function openWord(w) {
+  if (!w) return;
+  $('#sheetBody').innerHTML = wordHTML(w);
+  $('#sheetWrap').classList.add('show');
+  $('#sheetWrap').setAttribute('aria-hidden', 'false');
+}
+function wordHTML(w) {
+  const saved = wordSaved(w);
+  const q = encodeURIComponent(w);
+  return '<h3 class="serif">' + esc(w) + '</h3>' +
+    '<p class="sub">문장 속 단어예요. 발음을 듣고 뜻은 사전에서 확인해 보세요.</p>' +
+    '<div class="sheet-row">' +
+      '<button class="btn btn-primary" data-say="' + esc(w) + '">🔊 발음 듣기</button>' +
+      '<a class="btn btn-line" href="https://en.dict.naver.com/#/search?query=' + q + '" target="_blank" rel="noopener">📖 네이버 사전</a>' +
+    '</div>' +
+    '<button class="btn btn-star' + (saved ? ' on' : '') + '" data-save="' + esc(w) + '" style="width:100%">' + (saved ? '★ 내 단어장에 저장됨' : '☆ 내 단어장에 저장') + '</button>' +
+    '<p class="sheet-note">단어장은 서재 위 ⭐에서 모아 볼 수 있어요.</p>';
+}
+function settingsHTML() {
+  const st = stats();
+  return '<h3>설정</h3>' +
+    '<p class="sub">기록은 이 기기 브라우저에만 저장돼요. 폰을 바꾸기 전에는 백업해 두세요.</p>' +
+    '<div class="sheet-row"><button class="btn btn-line" data-act="autoNext">자동 넘김 · ' + (ST.settings.autoNext ? '켜짐' : '꺼짐') + '</button></div>' +
+    '<div class="sheet-row"><button class="btn btn-line" data-act="export">⬇︎ 기록 백업 (JSON)</button><button class="btn btn-line" data-act="import">⬆︎ 백업 복원</button></div>' +
+    '<div class="sheet-row"><button class="btn btn-line" data-act="reset" style="color:#a8453a">학습 기록 초기화</button></div>' +
+    '<p class="sheet-note">완료한 문장 ' + st.done + ' / ' + st.total + ' · 저장한 단어 ' + st.words + '개<br />수록 작품: 이솝 우화 · 벨벳 토끼 · 이상한 나라의 앨리스 (퍼블릭 도메인)</p>' +
+    '<p class="sheet-note">마이크가 안 되면 iPhone은 사파리에서 열어 주세요. 홈 화면에 추가하면 앱처럼 열려요.</p>';
+}
+function bookMenuHTML(b) {
+  if (!b) return settingsHTML();
+  const custom = !!b.custom;
+  return '<h3>' + esc(b.title) + '</h3>' +
+    '<p class="sub">' + esc(b.en || '') + '</p>' +
+    (custom ? '<div class="sheet-row"><button class="btn btn-line" data-act="addChapter">＋ 이 책에 장 추가</button></div>' : '') +
+    '<div class="sheet-row"><button class="btn btn-line" data-act="clearBook" style="color:#a8453a">이 책의 읽기 기록 지우기</button></div>' +
+    (custom ? '<div class="sheet-row"><button class="btn btn-line" data-act="delBook" style="color:#a8453a">서재에서 이 책 삭제</button></div>' : '') +
+    '<p class="sheet-note">' + (custom ? '내가 추가한 원서는 이 기기에만 저장돼요.' : '원문은 앱에 들어 있어요. 기록만 지우면 처음부터 다시 읽을 수 있어요.') + '</p>';
+}
+$('#sheetBody').addEventListener('click', e => {
+  const say = e.target.closest('[data-say]');
+  if (say) { sayWord(say.getAttribute('data-say')); return; }
+  const sv = e.target.closest('[data-save]');
+  if (sv) {
+    const w = sv.getAttribute('data-save');
+    if (wordSaved(w)) {
+      ST.words = ST.words.filter(x => x.w.toLowerCase() !== w.toLowerCase());
+      toast('단어장에서 뺐어요');
+    } else {
+      ST.words.unshift({ w: w, at: Date.now() });
+      toast('단어장에 저장했어요 ★');
+    }
+    save();
+    $('#sheetBody').innerHTML = wordHTML(w);
+    return;
+  }
+  const act = e.target.closest('[data-act]');
+  if (act) doSheetAct(act.getAttribute('data-act'));
+});
+$('#sheetWrap').addEventListener('click', e => { if (e.target.closest('[data-close-sheet]')) closeSheet(); });
+$('#floatStop').addEventListener('click', e => { if (e.target.closest('[data-stop-all]')) stopAllPlay(); });
+
+function doSheetAct(act) {
+  if (act === 'autoNext') {
+    ST.settings.autoNext = !ST.settings.autoNext; save();
+    $('#sheetBody').innerHTML = settingsHTML();
+    toast(ST.settings.autoNext ? '따라 읽기 성공하면 다음 문장으로 넘어가요' : '자동 넘김을 껐어요');
+  } else if (act === 'export') {
+    exportBackup(); closeSheet();
+  } else if (act === 'import') {
+    const f = $('#importFile'); if (f) f.click();
+  } else if (act === 'reset') {
+    if (!confirm('완료한 문장과 저장한 단어를 모두 지울까요? (내가 추가한 원서는 그대로 남아요)')) return;
+    ST.prog = {}; ST.words = []; ST.settings.last = null; save();
+    closeSheet(); renderAll(); toast('학습 기록을 초기화했어요');
+  } else if (act === 'addChapter') {
+    const b = SHEET_BOOK; closeSheet();
+    if (b) go({ view: 'add', bid: b.id });
+  } else if (act === 'clearBook') {
+    const b = SHEET_BOOK; if (!b) return;
+    if (!confirm('“' + b.title + '”의 읽기 기록을 지울까요?')) return;
+    (b.chapters || []).forEach(c => { delete ST.prog[pkey(b, c)]; });
+    save(); closeSheet(); renderAll(); toast('이 책의 읽기 기록을 지웠어요');
+  } else if (act === 'delBook') {
+    const b = SHEET_BOOK; if (!b || !b.custom) return;
+    if (!confirm('“' + b.title + '”을(를) 서재에서 삭제할까요?')) return;
+    (b.chapters || []).forEach(c => { delete ST.prog[pkey(b, c)]; });
+    ST.books = ST.books.filter(x => x.id !== b.id);
+    save(); closeSheet(); go({ view: 'lib' }); toast('서재에서 삭제했어요');
+  }
+}
+function exportBackup() {
+  try {
+    const blob = new Blob([JSON.stringify(ST, null, 1)], { type: 'application/json' });
+    const a = document.createElement('a');
+    const d = new Date();
+    const pad = n => (n < 10 ? '0' + n : '' + n);
+    a.href = URL.createObjectURL(blob);
+    a.download = '원서따라읽기-백업-' + d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + '.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    toast('백업 파일을 내려받았어요');
+  } catch (e) { toast('백업 파일을 만들지 못했어요'); }
+}
+$('#importFile').addEventListener('change', ev => {
+  const f = ev.target.files && ev.target.files[0];
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const data = JSON.parse(String(r.result || '{}'));
+      if (!data || typeof data !== 'object') throw new Error('bad');
+      if (!confirm('지금 기록을 백업 파일 내용으로 바꿀까요?')) return;
+      ST = Object.assign(clone(DEF_ST), data);
+      ST.settings = Object.assign(clone(DEF_ST.settings), data.settings || {});
+      ST.prog = data.prog || {}; ST.books = data.books || []; ST.words = data.words || [];
+      save(); closeSheet(); renderAll(); toast('백업을 불러왔어요');
+    } catch (e) { toast('백업 파일을 읽지 못했어요'); }
+  };
+  r.readAsText(f);
+  ev.target.value = '';
+});
+
+/* =========================================================
+   words / add
+   ========================================================= */
+function viewWords() {
+  const words = ST.words || [];
+  const list = words.length
+    ? words.map((x, i) => '<div class="wlist-item"><span class="w" data-word="' + esc(x.w) + '">' + esc(x.w) +
+        '<small>' + (x.at ? new Date(x.at).toLocaleDateString('ko-KR') + ' 저장' : '') + '</small></span>' +
+        '<button data-say2="' + esc(x.w) + '" aria-label="발음">🔊</button>' +
+        '<button data-del-word="' + i + '" aria-label="삭제">✕</button></div>').join('')
+    : '<div class="empty">아직 저장한 단어가 없어요.<br />문장 속 단어를 톡 누르면 여기에 모여요.</div>';
+  return '<div class="topbar">' +
+      '<button class="tb-nav" data-back aria-label="뒤로">‹</button>' +
+      '<div class="tb-body"><span class="tb-title">⭐ 내 단어장</span><span class="tb-sub">' + words.length + '개 · 톡 눌러 발음과 사전</span></div>' +
+    '</div>' +
+    '<div class="shell screen">' + list +
+      (words.length ? '<p class="foot">단어를 누르면 발음과 네이버 사전을 볼 수 있어요. ✕는 삭제예요.</p>' : '') +
+    '</div>';
+}
+function bindWords() {
+  $$('[data-back]').forEach(el => el.addEventListener('click', back));
+  $$('[data-say2]').forEach(el => el.addEventListener('click', () => { sayWord(el.getAttribute('data-say2')); }));
+  $$('[data-del-word]').forEach(el => el.addEventListener('click', () => {
+    const i = +el.getAttribute('data-del-word');
+    ST.words.splice(i, 1); save(); renderAll();
+  }));
+  $$('[data-word]').forEach(el => el.addEventListener('click', () => openWord(el.getAttribute('data-word'))));
+}
+
+function viewAdd(bid) {
+  const b = bid ? getBook(bid) : null;
+  const isChap = !!(b && b.custom);
+  return '<div class="topbar">' +
+      '<button class="tb-nav" data-back aria-label="뒤로">‹</button>' +
+      '<div class="tb-body"><span class="tb-title">' + (isChap ? '장 추가' : '내 원서 추가') + '</span><span class="tb-sub">' + (isChap ? esc(b.title) : '붙여넣은 글도 똑같이 따라 읽어요') + '</span></div>' +
+    '</div>' +
+    '<div class="shell screen">' +
+      '<p class="hint" style="margin-top:0">붙여넣은 글은 문장 단위로 자동으로 나뉘어요. 문단은 빈 줄로 구분하고, 줄바꿈은 문장 안에서 이어 붙여요.</p>' +
+      (isChap ? '' : '<div class="field"><label>책 제목</label><input id="fTitle" type="text" placeholder="예: Diary of a Wimpy Kid" /></div>') +
+      '<div class="field"><label>장 제목' + (isChap ? '' : ' (선택)') + '</label><input id="fChap" type="text" placeholder="예: Chapter 1 · September" /></div>' +
+      '<div class="field"><label>영어 본문</label><textarea id="fText" placeholder="영어 지문을 붙여넣으세요. 아이폰 라이브 텍스트로 찍은 페이지도 좋아요."></textarea>' +
+        '<div class="help">같은 화면에서 듣기 · 따라 읽기 · 단어 사전을 그대로 쓸 수 있어요.</div></div>' +
+      '<button class="primary-wide" id="btnSaveBook">' + (isChap ? '이 책에 장 추가' : '서재에 추가') + '</button>' +
+    '</div>';
+}
+function bindAdd(bid) {
+  $$('[data-back]').forEach(el => el.addEventListener('click', back));
+  on('#btnSaveBook', 'click', () => {
+    const titleEl = $('#fTitle'), chapEl = $('#fChap'), textEl = $('#fText');
+    const text = textEl ? textEl.value : '';
+    const paras = text.split(/\n\s*\n/).map(p => p.replace(/-\s*\n\s*/g, '').replace(/\s*\n\s*/g, ' ').replace(/\s+/g, ' ').trim()).filter(Boolean);
+    if (!paras.length) { toast('본문을 먼저 붙여넣어 주세요'); if (textEl) textEl.focus(); return; }
+    const nSents = paras.reduce((n, p) => n + splitSentences(p).length, 0);
+    if (nSents === 0) { toast('영어 문장을 찾지 못했어요'); return; }
+    const chapTitle = (chapEl && chapEl.value.trim()) || 'Chapter 1';
+    const b = bid ? getBook(bid) : null;
+    if (b && b.custom) {
+      b.chapters.push({ id: 'c' + Date.now(), title: chapTitle, ko: '', paras: paras });
+      save();
+      toast(nSents + '문장을 추가했어요');
+      go({ view: 'book', bid: b.id });
+      return;
+    }
+    const title = (titleEl && titleEl.value.trim()) || '내 원서';
+    const id = 'my' + Date.now();
+    const nb = { id: id, custom: true, emoji: '📝', title: title, en: '', author: '내가 추가한 원서', level: '내 원서', blurb: '', chapters: [{ id: id + '-1', title: chapTitle, ko: '', paras: paras }] };
+    ST.books.unshift(nb); save();
+    toast(nSents + '문장을 서재에 담았어요');
+    go({ view: 'book', bid: id });
+  });
+}
+
+/* =========================================================
+   boot
+   ========================================================= */
+try { history.replaceState({ view: 'lib' }, '', location.href); } catch (e) {}
+renderAll();
+
+</script>
+</body>
+</html>
