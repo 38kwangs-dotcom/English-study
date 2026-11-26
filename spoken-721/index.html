@@ -118,9 +118,9 @@ a{color:inherit;text-decoration:none}
 /* 플래시카드 */
 .flash{perspective:1200px;margin-bottom:12px}
 .flash-in{position:relative;background:var(--paper);border:1px solid var(--line);border-radius:20px;
-  min-height:270px;display:grid;place-items:center;text-align:center;padding:22px 18px;box-shadow:var(--shadow)}
+  min-height:285px;display:grid;place-items:center;text-align:center;padding:22px 18px;box-shadow:var(--shadow)}
 .flash-in .fs{font-size:13px;color:var(--ink2);font-weight:700;position:absolute;top:14px;left:0;right:0}
-.flash-in .fw{font-size:34px;font-weight:800;letter-spacing:-1px;line-height:1.15}
+.flash-in .fw{font-size:38px;font-weight:800;letter-spacing:-1px;line-height:1.15;word-break:break-word}
 .flash-in .fp{font-size:14px;color:var(--ink2);font-weight:600;margin-top:8px}
 .flash-in .fm{font-size:21px;font-weight:800;line-height:1.4}
 .flash-in .fe{font-size:15px;font-weight:600;margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)}
@@ -718,7 +718,7 @@ function renderQuizSetup() {
       '<div class="card">' +
         '<div class="cardhead"><h2>범위 고르기</h2></div>' +
         '<div class="links">' +
-          '<button data-range="day">📅 오늘 Day (' + dayWords(learnDay || todayDay()).length + '단어)</button>' +
+          '<button data-range="day">📅 Day ' + (learnDay || todayDay()) + ' (' + dayWords(learnDay || todayDay()).length + '단어)</button>' +
           '<button data-range="all">🌏 전체 721단어에서</button>' +
           '<button data-range="wrong" ' + (wrongN ? '' : 'disabled') + '>🔁 틀린 단어 복습 (' + wrongN + '개)</button>' +
         '</div>' +
