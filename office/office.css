@@ -203,7 +203,7 @@ main{padding:0 15px;}
 /* 현황 */
 .status-top .big-stat{display:flex;gap:8px;margin-top:6px;}
 .status-top .big-stat>div{flex:1;background:#FAF7F1;border-radius:13px;padding:10px 8px;text-align:center;}
-.status-top .big-stat b{display:block;font-family:inherit;font-size:21px;font-weight:800;letter-spacing:-.03em;color:var(--accent);font-variant-numeric:tabular-nums;}
+.status-top .big-stat b{display:block;font-family:inherit;font-size:21px;font-weight:800;letter-spacing:-.03em;color:var(--accent);}
 .status-top .big-stat span{font-size:10.5px;color:var(--muted);font-weight:800;}
 .add-part h3{font-size:14px;font-weight:800;}
 .add-form{display:flex;gap:7px;margin-top:11px;}
