@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="description" content="은진 님의 비서실 오피스맵 — 4개 파트 진행 현황·할 일·메모를 한 화면에서" />
+<meta name="theme-color" content="#F4F1EC" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="은진 오피스" />
+<meta name="format-detection" content="telephone=no" />
+<link rel="apple-touch-icon" href="./icon-180.png" />
+<link rel="icon" type="image/png" href="./icon-180.png" />
+<title>은진님 오피스 · 똑똑이 비서실</title>
+<link rel="stylesheet" href="./office.css" />
+</head>
+<body>
+<div class="app">
+
+  <header class="topbar" id="topbar">
+    <div class="topbar-row">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">똑</span>
+        <span class="brand-txt">
+          <strong>은진님 오피스</strong>
+          <em id="brandSub">똑똑이 비서실 · 4개 파트 가동 중</em>
+        </span>
+      </div>
+      <span class="live" id="liveBadge"><i></i>LIVE</span>
+    </div>
+
+    <div class="toolbar">
+      <button class="tbtn" id="btnBackup" type="button"><span aria-hidden="true">⬇</span> 백업</button>
+      <button class="tbtn" id="btnRestore" type="button"><span aria-hidden="true">⬆</span> 복원</button>
+      <button class="tbtn icon" id="btnReset" type="button" title="처음 상태로 초기화" aria-label="초기화">↺</button>
+      <span class="sync" id="syncState"><i class="dot"></i><span id="syncTxt">연결 준비 중…</span></span>
+    </div>
+
+    <nav class="tabs" id="tabs" role="tablist">
+      <button role="tab" data-tab="office" class="on" aria-selected="true">오피스</button>
+      <button role="tab" data-tab="status" aria-selected="false">현황</button>
+      <button role="tab" data-tab="tasks" aria-selected="false">할 일</button>
+      <button role="tab" data-tab="memo" aria-selected="false">메모</button>
+    </nav>
+  </header>
+
+  <main id="main">
+    <!-- 오피스 -->
+    <section class="view" id="view-office">
+      <article class="card workspace">
+        <span class="eyebrow">Workspace</span>
+        <h2 id="workHead">은진 님, 4개 파트가 기다리고 있어요</h2>
+        <p id="workSub">방을 눌러 파트별 현황·할 일·메모를 바로 볼 수 있어요.</p>
+      </article>
+
+      <div class="chips">
+        <span class="chip on"><i></i>오피스 ON</span>
+        <span class="chip">가동 <b id="chipParts">4</b>파트</span>
+        <span class="chip">할 일 <b id="chipTasks">0</b>개</span>
+      </div>
+
+      <div class="card map-card">
+        <div class="map-shell">
+          <div class="map" id="map"></div>
+        </div>
+        <p class="map-hint">방을 눌러 파트를 열어보세요 · 오른쪽 위 백업으로 JSON 저장</p>
+      </div>
+
+      <div class="part-list" id="partList"></div>
+    </section>
+
+    <!-- 현황 -->
+    <section class="view" id="view-status" hidden>
+      <article class="card status-top">
+        <span class="eyebrow">Status</span>
+        <div class="big-stat">
+          <div><b id="stDone">0</b><span>완료</span></div>
+          <div><b id="stLeft">0</b><span>남은 일</span></div>
+          <div><b id="stRate">0%</b><span>진행률</span></div>
+        </div>
+        <div class="bar big"><i id="stBar"></i></div>
+      </article>
+      <div id="statusList" class="part-list"></div>
+      <article class="card add-part">
+        <h3>파트 추가</h3>
+        <p class="muted">새 업무 파트를 하나 더 만들 수 있어요. (오피스 화면에는 목록으로 표시돼요)</p>
+        <form id="addPartForm" class="add-form">
+          <input id="newPartName" type="text" placeholder="예) 🧾 집안 살림·행정" maxlength="30" />
+          <button class="primary" type="submit">추가</button>
+        </form>
+      </article>
+    </section>
+
+    <!-- 할 일 -->
+    <section class="view" id="view-tasks" hidden>
+      <article class="card">
+        <span class="eyebrow">To-do</span>
+        <h2 class="h2">남은 일 <b id="taskCount" class="num">0</b></h2>
+        <p class="muted">체크하면 바로 저장되고 클라우드에도 반영돼요.</p>
+      </article>
+      <div id="tasksOpen" class="task-groups"></div>
+      <div id="tasksDoneWrap" class="done-wrap">
+        <button class="fold" id="doneFold" type="button"><span>완료한 일 <b id="doneCount">0</b></span><span class="arrow">▾</span></button>
+        <div id="tasksDone" class="task-groups" hidden></div>
+      </div>
+    </section>
+
+    <!-- 메모 -->
+    <section class="view" id="view-memo" hidden>
+      <article class="card">
+        <span class="eyebrow">Memo</span>
+        <h2 class="h2">파트 메모</h2>
+        <p class="muted">파트를 고르고 바로 적으면 0.6초 뒤 자동 저장돼요.</p>
+        <div class="memo-tabs" id="memoTabs"></div>
+      </article>
+      <article class="card memo-card">
+        <h3 id="memoTitle">메모</h3>
+        <textarea id="memoBox" class="memo-box" placeholder="이 파트에 대해 기억할 것, 다음에 할 일…"></textarea>
+        <p class="saved" id="memoState">자동 저장</p>
+      </article>
+    </section>
+  </main>
+
+  <p class="foot">똑똑이 비서실 · <span id="footStamp"></span></p>
+</div>
+
+<!-- 파트 패널 -->
+<div class="sheet-wrap" id="sheetWrap" hidden>
+  <div class="scrim" id="scrim"></div>
+  <section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <div class="grab" id="grab"><span></span></div>
+    <div class="sheet-body" id="sheetBody"></div>
+  </section>
+</div>
+
+<input type="file" id="fileInput" accept="application/json,.json" hidden />
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./office.js"></script>
+</body>
+</html>
