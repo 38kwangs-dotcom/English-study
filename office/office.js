@@ -194,7 +194,7 @@
     var z1 = z0 + h;
     return polygon([pt(x, y + d, z1), pt(x + w, y + d, z1), pt(x + w, y + d, z0), pt(x, y + d, z0)].join(' '), c.l) +
       polygon([pt(x + w, y, z1), pt(x + w, y + d, z1), pt(x + w, y + d, z0), pt(x + w, y, z0)].join(' '), c.r) +
-      polygon([pt(x, y, z1), pt(x + w, y, z1), pt(x + w, y + d, z1), pt(x, y + d, z1)].join(' '), c.t, extra || '');
+      polygon([pt(x, y, z1), pt(x + w, y, z1), pt(x + w, y + d, z1), pt(x, y + d, z1)].join(' '), c.t, (extra || '') + ' stroke="#9B8A6B" stroke-opacity=".22" stroke-width=".7" stroke-linejoin="round"');
   }
   function shadow(x, y, w, d, op) {
     var c = P(x + w / 2, y + d / 2, 0.3);
