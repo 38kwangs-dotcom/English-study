@@ -389,6 +389,7 @@
     s += rug(182, 138, 124, 100, '#F9E8E3', '#EED4CD');
 
     /* ===== 유학 데스크 (뒤-왼쪽) ===== */
+    if (partById('study')) {
     s += '<g class="zone-g" data-part="study" role="button" tabindex="0" aria-label="유학 데스크 열기">';
     s += '<rect x="0" y="0" width="0" height="0"/>';
     /* 책장 */
@@ -429,8 +430,10 @@
     s += polygon([pt(14, 12, 0.9), pt(138, 12, 0.9), pt(138, 116, 0.9), pt(14, 116, 0.9)].join(' '), 'transparent', 'class="zone-hit"');
     s += '<polygon class="zone-ring" points="' + [pt(14, 12, 0.85), pt(138, 12, 0.85), pt(138, 116, 0.85), pt(14, 116, 0.85)].join(' ') + '" fill="none" stroke="#8FB2D9" stroke-width="2"/>';
     s += '</g>';
+    }
 
     /* ===== 여행 스튜디오 (뒤-오른쪽) ===== */
+    if (partById('travel')) {
     s += '<g class="zone-g" data-part="travel" role="button" tabindex="0" aria-label="여행 스튜디오 열기">';
     s += deskUnit(200, 24, 100, 48, C.white);
     /* 카메라 삼각대 */
@@ -465,8 +468,10 @@
     s += polygon([pt(182, 12, 0.9), pt(306, 12, 0.9), pt(306, 116, 0.9), pt(182, 116, 0.9)].join(' '), 'transparent', 'class="zone-hit"');
     s += '<polygon class="zone-ring" points="' + [pt(182, 12, 0.85), pt(306, 12, 0.85), pt(306, 116, 0.85), pt(182, 116, 0.85)].join(' ') + '" fill="none" stroke="#E3C69E" stroke-width="2"/>';
     s += '</g>';
+    }
 
     /* ===== 영어 랩 (앞-왼쪽) ===== */
+    if (partById('english')) {
     s += '<g class="zone-g" data-part="english" role="button" tabindex="0" aria-label="영어 랩 열기">';
     /* 낮은 서랍장 */
     s += shadow(18, 148, 30, 34, 0.09);
@@ -502,8 +507,10 @@
     s += polygon([pt(14, 138, 0.9), pt(138, 138, 0.9), pt(138, 238, 0.9), pt(14, 238, 0.9)].join(' '), 'transparent', 'class="zone-hit"');
     s += '<polygon class="zone-ring" points="' + [pt(14, 138, 0.85), pt(138, 138, 0.85), pt(138, 238, 0.85), pt(14, 238, 0.85)].join(' ') + '" fill="none" stroke="#9CC4B2" stroke-width="2"/>';
     s += '</g>';
+    }
 
     /* ===== 패밀리 라운지 (앞-오른쪽) ===== */
+    if (partById('family')) {
     s += '<g class="zone-g" data-part="family" role="button" tabindex="0" aria-label="패밀리 라운지 열기">';
     s += shadow(198, 148, 104, 46, 0.10);
     s += box(200, 148, 100, 12, 32, C.white, 0);
@@ -532,6 +539,7 @@
     s += polygon([pt(182, 138, 0.9), pt(306, 138, 0.9), pt(306, 238, 0.9), pt(182, 238, 0.9)].join(' '), 'transparent', 'class="zone-hit"');
     s += '<polygon class="zone-ring" points="' + [pt(182, 138, 0.85), pt(306, 138, 0.85), pt(306, 238, 0.85), pt(182, 238, 0.85)].join(' ') + '" fill="none" stroke="#E3B3AC" stroke-width="2"/>';
     s += '</g>';
+    }
 
     /* ===== 중앙 러그 + 똑똑이 ===== */
     s += rug(130, 112, 62, 62, '#F2EEE4', '#E6DFD0');
@@ -553,7 +561,7 @@
       var pend = pendingOf(p);
       s += '<button class="zlabel" data-part="' + l.id + '" style="left:' + f(left) + '%;top:' + f(top) + '%">' +
         '<i class="zdot" style="background:' + esc(p.accent || '#8C95A3') + '"></i>' + esc(l.name) +
-        (pend ? '<span class="zc">' + pend + '</span>' : '<span class="zc done">✓</span>') +
+        (p.tasks.length ? (pend ? '<span class="zc">' + pend + '</span>' : '<span class="zc done">✓</span>') : '<span class="zc">–</span>') +
         '</button>';
     });
     var bp = P(161, 132, 0);
@@ -1034,7 +1042,12 @@
     persist();
     return sb.from(SYNC_TABLE).upsert({ id: MY_ROW, doc: doc, updated_at: new Date().toISOString() }, { onConflict: 'id' })
       .then(function (res) {
-        if (res && res.error) throw res.error;
+        if (res && res.error) {
+          cloud.msg = '저장 실패';
+          renderSync();
+          console.warn('[office] 저장 실패', res.error);
+          return;
+        }
         cloud.last = Date.now(); cloud.msg = '';
         renderSync(); renderFoot();
       }, function (err) {
