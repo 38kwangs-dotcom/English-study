@@ -129,7 +129,7 @@ main{padding:0 15px;}
     linear-gradient(180deg,#FCFAF6 0%,#F0EBE2 100%);
   border:1px solid #EFEAE0;
 }
-.map{position:relative;width:100%;aspect-ratio:576/460;}
+.map{position:relative;width:100%;aspect-ratio:524/404;}
 .map svg{display:block;width:100%;height:100%;}
 .zone-hit{fill:transparent;pointer-events:all;cursor:pointer;}
 .zone-g{cursor:pointer;}

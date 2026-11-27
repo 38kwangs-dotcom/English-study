@@ -181,7 +181,7 @@
   /* ================= 아이소메트릭 오피스맵 ================= */
   var W = 320, Dp = 250, WALL = 98;
   var CX = 0.866, CY = 0.5;
-  var VBX = -256, VBY = -128, VBW = 576, VBH = 460;
+  var VBX = -230, VBY = -108, VBW = 524, VBH = 404;
 
   function P(x, y, z) { return [(x - y) * CX, (x + y) * CY - (z || 0)]; }
   function f(n) { return Math.round(n * 100) / 100; }
@@ -541,10 +541,10 @@
 
     /* 라벨 — 각 방의 바깥 모서리에 작게 */
     var labels = [
-      { id: 'study', e: '🎓', name: '유학 데스크', ax: 34, ay: 4 },
-      { id: 'travel', e: '✈️', name: '여행 스튜디오', ax: 300, ay: 26 },
-      { id: 'english', e: '🗣️', name: '영어 랩', ax: 16, ay: 216 },
-      { id: 'family', e: '🏡', name: '패밀리 라운지', ax: 292, ay: 228 }
+      { id: 'study', e: '🎓', name: '유학 데스크', ax: 40, ay: 8 },
+      { id: 'travel', e: '✈️', name: '여행 스튜디오', ax: 296, ay: 30 },
+      { id: 'english', e: '🗣️', name: '영어 랩', ax: 34, ay: 208 },
+      { id: 'family', e: '🏡', name: '패밀리 라운지', ax: 288, ay: 226 }
     ];
     labels.forEach(function (l) {
       var p = partById(l.id); if (!p) return;
